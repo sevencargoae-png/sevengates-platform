@@ -1,0 +1,422 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>لوحة SEVENGATES</title>
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;700;800&family=Tajawal:wght@400;500;700&display=swap">
+<style>
+  :root{
+    --surface:#f7fbfb; --surface-card:#ffffff; --surface-sunken:#eef6f7;
+    --text-primary:#0b2027; --text-secondary:#48626a; --text-muted:#83999e;
+    --accent:#0ea5b7; --accent-strong:#077a88; --accent-tint:#e2f6f8;
+    --border:rgba(11,32,39,0.10); --shadow:0 14px 32px -20px rgba(6,40,48,0.35); --radius:16px; color-scheme:light;
+    --st-pending:#2a78d6; --st-approved:#4a3aa7; --st-progress:#fab219; --st-done:#0ca30c; --st-rejected:#d03b3b;
+    --c1:#2a78d6; --c2:#eb6834; --c3:#1baf7a; --c4:#eda100; --c5:#e87ba4; --c6:#008300; --c7:#4a3aa7;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --surface:#0a1417; --surface-card:#101e22; --surface-sunken:#0d1a1e;
+      --text-primary:#f2fafb; --text-secondary:#a9c3c8; --text-muted:#6f8c91;
+      --accent:#29c7da; --accent-strong:#63e0ee; --accent-tint:#12333a;
+      --border:rgba(255,255,255,0.12); --shadow:0 14px 32px -18px rgba(0,0,0,0.6); color-scheme:dark;
+      --st-pending:#3987e5; --st-approved:#9085e9; --st-progress:#fab219; --st-done:#0ca30c; --st-rejected:#e66767;
+      --c1:#3987e5; --c2:#d95926; --c3:#199e70; --c4:#c98500; --c5:#d55181; --c6:#008300; --c7:#9085e9;
+    }
+  }
+  *{box-sizing:border-box;} html,body{margin:0;}
+  body{background:var(--surface);color:var(--text-primary);font-family:'Tajawal',system-ui,sans-serif;line-height:1.55;}
+  h1,h2,h3{font-family:'Cairo',system-ui,sans-serif;}
+  .tabular{font-variant-numeric:tabular-nums;}
+  button{font-family:inherit;}
+  .shell{max-width:1180px;margin:0 auto;padding:16px 18px 60px;}
+  .topbar{position:sticky;top:0;z-index:40;background:color-mix(in srgb, var(--surface) 90%, transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);margin-bottom:18px;}
+  .topbar-in{max-width:1180px;margin:0 auto;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+  .brand{display:flex;align-items:center;gap:10px;}
+  .brand .mark{width:36px;height:36px;border-radius:10px;background:linear-gradient(155deg,var(--accent),var(--accent-strong));display:flex;align-items:center;justify-content:center;color:#04252b;font-weight:800;font-size:.95rem;}
+  .brand b{font-family:'Cairo';font-weight:800;font-size:1.05rem;display:block;}
+  .brand small{color:var(--text-muted);font-size:.72rem;}
+  .top-right{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+  .status-pill{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:100px;font-size:.76rem;font-weight:700;background:var(--surface-sunken);border:1px solid var(--border);color:var(--text-secondary);}
+  .status-pill.ok{color:var(--st-done);}
+  .btn{display:inline-flex;align-items:center;gap:8px;justify-content:center;padding:10px 18px;border-radius:100px;font-weight:700;font-size:.88rem;border:1px solid transparent;cursor:pointer;}
+  .btn-primary{background:linear-gradient(155deg,var(--accent),var(--accent-strong));color:#04252b;}
+  .btn-ghost{background:transparent;border-color:var(--border);color:var(--text-primary);}
+  .btn-ghost:hover{background:var(--surface-sunken);}
+  .btn-sm{padding:7px 13px;font-size:.78rem;}
+  .btn-approve{background:color-mix(in srgb, var(--st-done) 16%, transparent);color:var(--st-done);border-color:transparent;}
+  .btn[disabled]{opacity:.5;cursor:not-allowed;}
+  .tabs{display:flex;gap:6px;border-bottom:1px solid var(--border);margin-bottom:22px;overflow-x:auto;}
+  .tab{padding:11px 16px;font-weight:700;font-size:.88rem;color:var(--text-secondary);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;}
+  .tab.active{color:var(--accent-strong);border-color:var(--accent-strong);}
+  .view{display:none;} .view.active{display:block;}
+  .tiles{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));margin-bottom:20px;}
+  .tile{background:var(--surface-card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);}
+  .tile .lbl{font-size:.78rem;color:var(--text-muted);font-weight:700;margin-bottom:8px;}
+  .tile .val{font-family:'Cairo';font-size:1.7rem;font-weight:800;}
+  .tile .sub{font-size:.74rem;color:var(--text-secondary);margin-top:4px;}
+  .panels{display:grid;gap:16px;grid-template-columns:1fr;margin-bottom:16px;}
+  @media(min-width:900px){.panels{grid-template-columns:1.3fr 1fr;}}
+  .panel{background:var(--surface-card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);}
+  .panel h3{margin:0 0 4px;font-size:1rem;}
+  .panel .desc{font-size:.78rem;color:var(--text-muted);margin-bottom:16px;}
+  .barrow{display:flex;align-items:center;gap:10px;margin-bottom:12px;font-size:.84rem;}
+  .barrow .lb{width:108px;flex:none;color:var(--text-secondary);display:flex;align-items:center;gap:7px;}
+  .barrow .dot{width:9px;height:9px;border-radius:50%;flex:none;}
+  .barrow .track{flex:1;background:var(--surface-sunken);border-radius:100px;height:10px;overflow:hidden;}
+  .barrow .fill{height:100%;border-radius:100px;min-width:3px;transition:width .4s ease;}
+  .barrow .vv{width:30px;flex:none;text-align:left;font-weight:700;}
+  .trend{display:flex;align-items:flex-end;gap:4px;height:120px;margin-top:6px;}
+  .trend .col{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:6px;}
+  .trend .bar{width:100%;max-width:22px;background:var(--accent);border-radius:5px 5px 2px 2px;min-height:3px;}
+  .trend .day{font-size:.62rem;color:var(--text-muted);}
+  .trend-caption{font-size:.78rem;color:var(--text-secondary);margin-bottom:8px;min-height:1.2em;}
+  .toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:16px;}
+  .toolbar input[type="search"], .toolbar select{padding:10px 13px;border-radius:11px;border:1px solid var(--border);background:var(--surface-sunken);color:var(--text-primary);font-family:'Tajawal';font-size:.86rem;}
+  .toolbar input[type="search"]{flex:1;min-width:180px;}
+  .order-card{background:var(--surface-card);border:1px solid var(--border);border-radius:14px;margin-bottom:10px;box-shadow:var(--shadow);overflow:hidden;}
+  .order-card.is-pending{border-color:color-mix(in srgb, var(--st-pending) 45%, var(--border));}
+  .order-head{display:flex;align-items:center;gap:10px;padding:14px 16px;cursor:pointer;flex-wrap:wrap;}
+  .order-head .who{flex:1;min-width:160px;}
+  .order-head .who b{display:block;font-size:.92rem;}
+  .order-head .who span{font-size:.76rem;color:var(--text-muted);}
+  .badge{display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:100px;font-size:.74rem;font-weight:700;white-space:nowrap;}
+  .badge .d{width:7px;height:7px;border-radius:50%;}
+  .order-head .meta{font-size:.76rem;color:var(--text-muted);}
+  .order-body{display:none;padding:0 16px 18px;border-top:1px solid var(--border);}
+  .order-card.open .order-body{display:block;}
+  .order-body .grid2{display:grid;gap:14px;grid-template-columns:1fr;margin-top:14px;}
+  @media(min-width:640px){.order-body .grid2{grid-template-columns:1fr 1fr;}}
+  .kv{font-size:.85rem;margin-bottom:8px;}
+  .kv b{color:var(--text-muted);font-weight:700;display:inline-block;min-width:88px;}
+  .order-photo{max-width:200px;border-radius:10px;border:1px solid var(--border);display:block;margin-top:6px;}
+  .status-select{padding:8px 12px;border-radius:10px;border:1px solid var(--border);background:var(--surface-sunken);color:var(--text-primary);font-family:'Tajawal';font-weight:700;font-size:.82rem;}
+  .notes-box{width:100%;min-height:70px;border-radius:10px;border:1px solid var(--border);background:var(--surface-sunken);padding:10px;font-family:'Tajawal';color:var(--text-primary);font-size:.85rem;margin-top:6px;}
+  .returning{color:var(--st-done);font-weight:700;}
+  .assign-tag{display:inline-flex;align-items:center;gap:5px;font-size:.72rem;font-weight:700;color:var(--accent-strong);background:var(--accent-tint);padding:4px 10px;border-radius:100px;white-space:nowrap;}
+  .assign-tag.unassigned{color:var(--st-progress);background:color-mix(in srgb, var(--st-progress) 14%, transparent);}
+  .assign-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+  .assign-row input{flex:1;min-width:140px;}
+  .cust-card{background:var(--surface-card);border:1px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:10px;box-shadow:var(--shadow);display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+  .cust-card .who{flex:1;min-width:160px;}
+  .cust-card .who b{display:block;font-size:.94rem;}
+  .cust-card .who span{font-size:.78rem;color:var(--text-muted);}
+  .cust-stat{text-align:center;min-width:72px;}
+  .cust-stat b{display:block;font-family:'Cairo';font-weight:800;font-size:1.05rem;}
+  .cust-stat span{font-size:.68rem;color:var(--text-muted);}
+  .empty{text-align:center;padding:40px 20px;color:var(--text-muted);font-size:.88rem;}
+  .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(8px);background:var(--text-primary);color:var(--surface);padding:11px 20px;border-radius:100px;font-size:.84rem;font-weight:700;opacity:0;pointer-events:none;transition:opacity .2s, transform .2s;z-index:200;}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+  input[type="text"], input[type="tel"], select, textarea{
+    padding:11px 13px;border-radius:11px;border:1px solid var(--border);background:var(--surface-sunken);color:var(--text-primary);font-family:'Tajawal';font-size:.9rem;
+  }
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="topbar-in">
+    <div class="brand"><span class="mark">7G</span><div><b>لوحة تحكم SEVENGATES</b><small>الطلبات والعملاء والإحصائيات</small></div></div>
+    <div class="top-right">
+      <span class="status-pill ok" id="liveDot">● متصل</span>
+      <button class="btn btn-ghost btn-sm" id="logoutBtn">خروج</button>
+    </div>
+  </div>
+</div>
+
+<div class="shell">
+  <div class="tabs">
+    <div class="tab active" data-tab="overview">نظرة عامة</div>
+    <div class="tab" data-tab="orders">الطلبات</div>
+    <div class="tab" data-tab="customers">العملاء</div>
+  </div>
+
+  <div class="view active" id="view-overview">
+    <div class="tiles">
+      <div class="tile"><div class="lbl">إجمالي الطلبات</div><div class="val tabular" id="statTotal">0</div><div class="sub" id="statTotalSub">—</div></div>
+      <div class="tile"><div class="lbl">طلبات محتاجة موافقة</div><div class="val tabular" id="statPending">0</div><div class="sub">لسه ما اتراجعتش</div></div>
+      <div class="tile"><div class="lbl">عملاء مسجّلين</div><div class="val tabular" id="statCustomers">0</div><div class="sub" id="statCustomersSub">—</div></div>
+      <div class="tile"><div class="lbl">محتاجة تكليف فني</div><div class="val tabular" id="statUnassigned">0</div><div class="sub">طلبات نشطة من غير فني</div></div>
+    </div>
+    <div class="panels">
+      <div class="panel">
+        <h3>الطلبات خلال آخر 14 يوم</h3>
+        <div class="desc">عدد الطلبات الجديدة يوميًا</div>
+        <div class="trend-caption" id="trendCaption">مرّر على أي عمود لعرض التفاصيل</div>
+        <div class="trend" id="trendChart"></div>
+      </div>
+      <div class="panel">
+        <h3>الطلبات حسب الحالة</h3>
+        <div class="desc">التوزيع الحالي لكل الطلبات</div>
+        <div id="statusBars"></div>
+      </div>
+    </div>
+    <div class="panel">
+      <h3>الطلبات حسب نوع الجهاز</h3>
+      <div class="desc">أكتر الأجهزة اللي بيتم طلب صيانتها</div>
+      <div id="deviceBars"></div>
+    </div>
+  </div>
+
+  <div class="view" id="view-orders">
+    <div class="toolbar">
+      <input type="search" id="orderSearch" placeholder="بحث بالاسم أو رقم الهاتف أو الجهاز…">
+      <select id="orderStatusFilter">
+        <option value="">كل الحالات</option>
+        <option>قيد المراجعة</option><option>تمت الموافقة</option><option>جاري التنفيذ</option><option>مكتمل</option><option>مرفوض</option>
+      </select>
+      <select id="orderTechFilter"><option value="">كل الفنيين</option><option value="__unassigned__">غير مُكلّفة</option></select>
+    </div>
+    <div id="ordersList"></div>
+  </div>
+
+  <div class="view" id="view-customers">
+    <div class="toolbar"><input type="search" id="custSearch" placeholder="بحث بالاسم أو رقم الهاتف…"></div>
+    <div id="customersList"></div>
+  </div>
+</div>
+
+<datalist id="techList"></datalist>
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+  var allOrders=[], allCustomers=[], seenIds=null, canWrite=true;
+  var STATUS_COLORS = { "قيد المراجعة":"var(--st-pending)", "تمت الموافقة":"var(--st-approved)", "جاري التنفيذ":"var(--st-progress)", "مكتمل":"var(--st-done)", "مرفوض":"var(--st-rejected)" };
+  var DEVICE_COLORS = ["var(--c1)","var(--c2)","var(--c3)","var(--c4)","var(--c5)","var(--c6)","var(--c7)"];
+  var DEVICE_ORDER = ["تكييف","ثلاجة","غسالة","سخان","فرن / بوتاجاز","تمديدات كهربائية","أخرى"];
+  var ACTIVE_STATUSES = ["قيد المراجعة","تمت الموافقة","جاري التنفيذ"];
+
+  function $(id){ return document.getElementById(id); }
+  function esc(s){ return (s==null?"":String(s)).replace(/[&<>"]/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]; }); }
+  function toast(msg){ var t=$('toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(t._h); t._h=setTimeout(function(){ t.classList.remove('show'); }, 2800); }
+  function fmtDate(iso){
+    if(!iso) return "—";
+    var d = new Date(iso);
+    return d.toLocaleDateString('ar-EG',{day:'2-digit',month:'2-digit',year:'numeric'}) + " " + d.toLocaleTimeString('ar-EG',{hour:'2-digit',minute:'2-digit'});
+  }
+
+  async function api(path, opts){
+    opts = opts || {};
+    opts.headers = Object.assign({'Content-Type':'application/json'}, opts.headers||{});
+    var res = await fetch(path, opts);
+    if(res.status===401){ window.location.href='/staff/login'; throw new Error('unauthenticated'); }
+    return res;
+  }
+
+  function updateTechLists(){
+    var names = Array.from(new Set(allOrders.map(function(o){ return (o.assigned_to||"").trim(); }).filter(Boolean))).sort();
+    $('techList').innerHTML = names.map(function(n){ return '<option value="'+esc(n)+'"></option>'; }).join('');
+    var filt = $('orderTechFilter'); var current = filt.value;
+    filt.innerHTML = '<option value="">كل الفنيين</option><option value="__unassigned__">غير مُكلّفة</option>' + names.map(function(n){ return '<option value="'+esc(n)+'">'+esc(n)+'</option>'; }).join('');
+    if(names.indexOf(current)>-1 || current==="__unassigned__") filt.value = current;
+  }
+
+  function renderOverview(){
+    var total = allOrders.length;
+    $('statTotal').textContent = total;
+    $('statTotalSub').textContent = total ? "منذ أول طلب مسجّل" : "لسه مفيش طلبات";
+    var pending = allOrders.filter(function(o){ return o.status==="قيد المراجعة"; }).length;
+    $('statPending').textContent = pending;
+    $('statCustomers').textContent = allCustomers.length;
+    var withMulti = allCustomers.filter(function(c){ return (c.orders_count||0) > 1; }).length;
+    $('statCustomersSub').textContent = allCustomers.length ? (withMulti + " عميل عائد") : "لسه مفيش عملاء";
+    var needsAssign = allOrders.filter(function(o){ return !o.assigned_to && ACTIVE_STATUSES.indexOf(o.status)>-1; }).length;
+    $('statUnassigned').textContent = needsAssign;
+    updateTechLists();
+
+    var statuses = ["قيد المراجعة","تمت الموافقة","جاري التنفيذ","مكتمل","مرفوض"];
+    var maxCount = Math.max(1, total);
+    var html='';
+    statuses.forEach(function(s){
+      var c = allOrders.filter(function(o){ return (o.status||"قيد المراجعة")===s; }).length;
+      var pct = Math.round(c/maxCount*100);
+      html += '<div class="barrow"><div class="lb"><span class="dot" style="background:'+STATUS_COLORS[s]+'"></span>'+s+'</div><div class="track"><div class="fill" style="width:'+pct+'%;background:'+STATUS_COLORS[s]+'"></div></div><div class="vv tabular">'+c+'</div></div>';
+    });
+    $('statusBars').innerHTML = html || '<div class="empty">مفيش طلبات لسه</div>';
+
+    var counts={};
+    allOrders.forEach(function(o){ var d=o.device||"أخرى"; counts[d]=(counts[d]||0)+1; });
+    var devKeys = DEVICE_ORDER.filter(function(d){ return counts[d]; });
+    Object.keys(counts).forEach(function(d){ if(devKeys.indexOf(d)===-1) devKeys.push(d); });
+    var maxDev = Math.max(1, Math.max.apply(null, devKeys.map(function(d){return counts[d];}).concat([1])));
+    html='';
+    devKeys.forEach(function(d){
+      var c = counts[d]; var pct = Math.round(c/maxDev*100);
+      var color = DEVICE_COLORS[DEVICE_ORDER.indexOf(d) % DEVICE_COLORS.length] || DEVICE_COLORS[6];
+      html += '<div class="barrow"><div class="lb"><span class="dot" style="background:'+color+'"></span>'+esc(d)+'</div><div class="track"><div class="fill" style="width:'+pct+'%;background:'+color+'"></div></div><div class="vv tabular">'+c+'</div></div>';
+    });
+    $('deviceBars').innerHTML = html || '<div class="empty">مفيش طلبات لسه</div>';
+
+    var days=[];
+    for(var i=13;i>=0;i--){ var d=new Date(); d.setHours(0,0,0,0); d.setDate(d.getDate()-i); days.push(d); }
+    var dayCounts = days.map(function(d){
+      return allOrders.filter(function(o){
+        var od=new Date(o.created_at||0);
+        return od.getFullYear()===d.getFullYear() && od.getMonth()===d.getMonth() && od.getDate()===d.getDate();
+      }).length;
+    });
+    var maxDay = Math.max(1, Math.max.apply(null, dayCounts));
+    var tHtml='';
+    days.forEach(function(d,i){
+      var h = Math.round(dayCounts[i]/maxDay*100);
+      var lbl = d.toLocaleDateString('ar-EG',{day:'2-digit',month:'2-digit'});
+      tHtml += '<div class="col"><div class="bar" style="height:'+Math.max(h,3)+'%" data-count="'+dayCounts[i]+'" data-lbl="'+lbl+'"></div>' + (i%2===0 ? '<div class="day">'+lbl+'</div>' : '<div class="day"></div>') + '</div>';
+    });
+    $('trendChart').innerHTML = tHtml;
+    Array.prototype.forEach.call($('trendChart').querySelectorAll('.bar'), function(el){
+      el.addEventListener('mouseenter', function(){ $('trendCaption').textContent = el.getAttribute('data-lbl') + ': ' + el.getAttribute('data-count') + ' طلب'; });
+      el.addEventListener('mouseleave', function(){ $('trendCaption').textContent = 'مرّر على أي عمود لعرض التفاصيل'; });
+    });
+  }
+
+  function orderRow(o){
+    var color = STATUS_COLORS[o.status||"قيد المراجعة"] || STATUS_COLORS["قيد المراجعة"];
+    var photoHtml = o.photo_data ? '<img class="order-photo" src="'+o.photo_data+'" alt="صورة المشكلة">' : '';
+    var isPending = o.status === "قيد المراجعة";
+    return '<div class="order-card'+(isPending?' is-pending':'')+'" data-id="'+o.id+'">' +
+      '<div class="order-head" data-toggle="'+o.id+'">' +
+        '<div class="who"><b>#'+o.id+' — '+esc(o.name||"—")+'</b><span>'+esc(o.phone||"")+' · '+esc(o.device||"")+'</span></div>' +
+        '<span class="badge" style="background:color-mix(in srgb, '+color+' 16%, transparent);color:'+color+'"><span class="d" style="background:'+color+'"></span>'+esc(o.status||"قيد المراجعة")+'</span>' +
+        (o.assigned_to ? '<span class="assign-tag">👷 '+esc(o.assigned_to)+'</span>' : '<span class="assign-tag unassigned">⚠ غير مُكلّفة</span>') +
+        (isPending ? '<button class="btn btn-approve btn-sm" data-approve="'+o.id+'" type="button">✅ موافقة</button>' : '') +
+        '<div class="meta">'+fmtDate(o.created_at)+'</div>' +
+      '</div>' +
+      '<div class="order-body"><div class="grid2">' +
+        '<div>' +
+          '<div class="kv"><b>الخدمة</b>'+esc(o.service||"—")+'</div>' +
+          '<div class="kv"><b>العنوان</b>'+esc(o.address||"—")+'</div>' +
+          (o.location_url ? '<div class="kv"><b>الموقع</b><a href="'+esc(o.location_url)+'" target="_blank" rel="noopener" style="color:var(--accent-strong);font-weight:700;">📍 فتح على الخريطة</a></div>' : '') +
+          '<div class="kv"><b>الوصف</b>'+esc(o.description||"—")+'</div>' +
+          (photoHtml ? '<div class="kv"><b>صورة</b></div>'+photoHtml : '') +
+        '</div>' +
+        '<div>' +
+          '<div class="field"><label>تكليف فني</label><div class="assign-row">' +
+            '<input type="text" list="techList" data-assign="'+o.id+'" value="'+esc(o.assigned_to||"")+'" placeholder="اسم الفني المسؤول">' +
+            '<button class="btn btn-ghost btn-sm" type="button" data-saveassign="'+o.id+'">تعيين</button>' +
+          '</div></div>' +
+          '<div class="field"><label>تحديث الحالة</label><select class="status-select" data-order="'+o.id+'">' +
+            ["قيد المراجعة","تمت الموافقة","جاري التنفيذ","مكتمل","مرفوض"].map(function(s){ return '<option '+(o.status===s?'selected':'')+'>'+s+'</option>'; }).join('') +
+          '</select></div>' +
+          '<div class="field"><label>ملاحظات داخلية</label><textarea class="notes-box" data-notes="'+o.id+'" placeholder="اكتب ملاحظة…">'+esc(o.notes||"")+'</textarea>' +
+            '<button class="btn btn-ghost btn-sm" style="margin-top:8px;" data-savenote="'+o.id+'">حفظ الملاحظة</button></div>' +
+        '</div>' +
+      '</div></div>' +
+    '</div>';
+  }
+
+  function renderOrders(){
+    var q = ($('orderSearch').value||"").trim().toLowerCase();
+    var st = $('orderStatusFilter').value;
+    var tech = $('orderTechFilter').value;
+    var list = allOrders.filter(function(o){
+      if(st && (o.status||"قيد المراجعة")!==st) return false;
+      if(tech==="__unassigned__" && o.assigned_to) return false;
+      if(tech && tech!=="__unassigned__" && o.assigned_to!==tech) return false;
+      if(!q) return true;
+      return (o.name||"").toLowerCase().indexOf(q)>-1 || (o.phone||"").indexOf(q)>-1 || (o.device||"").toLowerCase().indexOf(q)>-1;
+    });
+    var openIds = Array.prototype.map.call(document.querySelectorAll('.order-card.open'), function(el){ return el.getAttribute('data-id'); });
+    $('ordersList').innerHTML = list.length ? list.map(orderRow).join('') : '<div class="empty">مفيش طلبات مطابقة</div>';
+    openIds.forEach(function(id){ var el = document.querySelector('.order-card[data-id="'+id+'"]'); if(el) el.classList.add('open'); });
+  }
+
+  function custRow(c){
+    var isReturning = (c.orders_count||0) > 1;
+    return '<div class="cust-card">' +
+      '<div class="who"><b>'+esc(c.name||"—")+(isReturning?' <span class="returning">· عميل متكرر</span>':'')+'</b><span>'+esc(c.phone||"")+'</span></div>' +
+      '<div class="cust-stat"><b class="tabular">'+(c.orders_count||0)+'</b><span>طلبات</span></div>' +
+      '<div class="cust-stat"><b style="font-size:.85rem;">'+fmtDate(c.first_contact_at).split(' ')[0]+'</b><span>أول تواصل</span></div>' +
+      '<div class="cust-stat"><b style="font-size:.85rem;">'+fmtDate(c.last_contact_at).split(' ')[0]+'</b><span>آخر تواصل</span></div>' +
+    '</div>';
+  }
+  function renderCustomers(){
+    var q = ($('custSearch').value||"").trim().toLowerCase();
+    var list = allCustomers.filter(function(c){ if(!q) return true; return (c.name||"").toLowerCase().indexOf(q)>-1 || (c.phone||"").indexOf(q)>-1; });
+    $('customersList').innerHTML = list.length ? list.map(custRow).join('') : '<div class="empty">مفيش عملاء مطابقين</div>';
+  }
+
+  function renderAll(){ renderOverview(); renderOrders(); renderCustomers(); }
+
+  Array.prototype.forEach.call(document.querySelectorAll('.tab'), function(t){
+    t.addEventListener('click', function(){
+      document.querySelectorAll('.tab').forEach(function(x){ x.classList.remove('active'); });
+      document.querySelectorAll('.view').forEach(function(x){ x.classList.remove('active'); });
+      t.classList.add('active'); $('view-'+t.getAttribute('data-tab')).classList.add('active');
+    });
+  });
+  $('orderSearch').addEventListener('input', renderOrders);
+  $('orderStatusFilter').addEventListener('change', renderOrders);
+  $('orderTechFilter').addEventListener('change', renderOrders);
+  $('custSearch').addEventListener('input', renderCustomers);
+
+  document.addEventListener('click', function(e){
+    var head = e.target.closest && e.target.closest('[data-toggle]');
+    if(head){ head.closest('.order-card').classList.toggle('open'); return; }
+
+    var approveBtn = e.target.closest && e.target.closest('[data-approve]');
+    if(approveBtn){
+      var apId = approveBtn.getAttribute('data-approve');
+      patchOrder(apId, { status: 'تمت الموافقة' }, 'تمت الموافقة على الطلب');
+      return;
+    }
+    var saveBtn = e.target.closest && e.target.closest('[data-savenote]');
+    if(saveBtn){
+      var id = saveBtn.getAttribute('data-savenote');
+      var val = document.querySelector('[data-notes="'+id+'"]').value;
+      patchOrder(id, { notes: val }, 'تم حفظ الملاحظة');
+    }
+    var assignBtn = e.target.closest && e.target.closest('[data-saveassign]');
+    if(assignBtn){
+      var aid = assignBtn.getAttribute('data-saveassign');
+      var aval = document.querySelector('[data-assign="'+aid+'"]').value.trim();
+      patchOrder(aid, { assignedTo: aval }, aval ? ('تم تكليف '+aval+' بالطلب') : 'تم إلغاء التكليف');
+    }
+  });
+  document.addEventListener('change', function(e){
+    if(e.target.matches('.status-select')){
+      patchOrder(e.target.getAttribute('data-order'), { status: e.target.value }, 'تم تحديث الحالة');
+    }
+  });
+
+  function patchOrder(id, patch, okMsg){
+    api('/api/staff/orders/'+id, { method:'PATCH', body: JSON.stringify(patch) })
+      .then(function(res){ if(!res.ok) throw new Error('bad'); return res.json(); })
+      .then(function(){ toast(okMsg); loadData(); })
+      .catch(function(){ toast('حصل خطأ، حاول تاني'); });
+  }
+
+  $('logoutBtn').addEventListener('click', function(){
+    api('/api/staff/logout', { method:'POST' }).then(function(){ window.location.href = '/staff/login'; });
+  });
+
+  function loadData(){
+    Promise.all([
+      api('/api/staff/orders').then(function(r){ return r.json(); }),
+      api('/api/staff/customers').then(function(r){ return r.json(); })
+    ]).then(function(results){
+      var newOrders = results[0].orders || [];
+      if(seenIds){
+        var freshPending = newOrders.filter(function(o){ return o.status==="قيد المراجعة" && !seenIds.has(o.id); });
+        if(freshPending.length){
+          toast('📨 طلب جديد من ' + freshPending[0].name + '!');
+          document.title = '(' + freshPending.length + ') طلب جديد — لوحة SEVENGATES';
+        }
+      }
+      seenIds = new Set(newOrders.map(function(o){ return o.id; }));
+      allOrders = newOrders;
+      allCustomers = results[1].customers || [];
+      $('liveDot').textContent = '● متصل';
+      renderAll();
+    }).catch(function(){
+      $('liveDot').textContent = '○ انقطع الاتصال';
+    });
+  }
+
+  loadData();
+  setInterval(loadData, 8000);
+  window.addEventListener('focus', function(){ document.title = 'لوحة SEVENGATES'; loadData(); });
+})();
+</script>
+</body>
+</html>
