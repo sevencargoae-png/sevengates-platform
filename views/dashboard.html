@@ -12,8 +12,9 @@
     --text-primary:#0b2027; --text-secondary:#48626a; --text-muted:#83999e;
     --accent:#0ea5b7; --accent-strong:#077a88; --accent-tint:#e2f6f8;
     --border:rgba(11,32,39,0.10); --shadow:0 14px 32px -20px rgba(6,40,48,0.35); --radius:16px; color-scheme:light;
-    --st-pending:#2a78d6; --st-approved:#4a3aa7; --st-progress:#fab219; --st-done:#0ca30c; --st-rejected:#d03b3b;
+    --st-pending:#2a78d6; --st-approved:#4a3aa7; --st-progress:#fab219; --st-done:#0ca30c; --st-rejected:#d03b3b; --st-waiting:#c98500;
     --c1:#2a78d6; --c2:#eb6834; --c3:#1baf7a; --c4:#eda100; --c5:#e87ba4; --c6:#008300; --c7:#4a3aa7;
+    --gold:#e0982a;
   }
   @media (prefers-color-scheme: dark){
     :root{
@@ -21,8 +22,9 @@
       --text-primary:#f2fafb; --text-secondary:#a9c3c8; --text-muted:#6f8c91;
       --accent:#29c7da; --accent-strong:#63e0ee; --accent-tint:#12333a;
       --border:rgba(255,255,255,0.12); --shadow:0 14px 32px -18px rgba(0,0,0,0.6); color-scheme:dark;
-      --st-pending:#3987e5; --st-approved:#9085e9; --st-progress:#fab219; --st-done:#0ca30c; --st-rejected:#e66767;
+      --st-pending:#3987e5; --st-approved:#9085e9; --st-progress:#fab219; --st-done:#0ca30c; --st-rejected:#e66767; --st-waiting:#e0a83e;
       --c1:#3987e5; --c2:#d95926; --c3:#199e70; --c4:#c98500; --c5:#d55181; --c6:#008300; --c7:#9085e9;
+      --gold:#f0b247;
     }
   }
   *{box-sizing:border-box;} html,body{margin:0;}
@@ -30,9 +32,9 @@
   h1,h2,h3{font-family:'Cairo',system-ui,sans-serif;}
   .tabular{font-variant-numeric:tabular-nums;}
   button{font-family:inherit;}
-  .shell{max-width:1180px;margin:0 auto;padding:16px 18px 60px;}
+  .shell{max-width:1220px;margin:0 auto;padding:16px 18px 60px;}
   .topbar{position:sticky;top:0;z-index:40;background:color-mix(in srgb, var(--surface) 90%, transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);margin-bottom:18px;}
-  .topbar-in{max-width:1180px;margin:0 auto;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+  .topbar-in{max-width:1220px;margin:0 auto;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
   .brand{display:flex;align-items:center;gap:10px;}
   .brand .mark{width:36px;height:36px;border-radius:10px;background:linear-gradient(155deg,var(--accent),var(--accent-strong));display:flex;align-items:center;justify-content:center;color:#04252b;font-weight:800;font-size:.95rem;}
   .brand b{font-family:'Cairo';font-weight:800;font-size:1.05rem;display:block;}
@@ -46,12 +48,15 @@
   .btn-ghost:hover{background:var(--surface-sunken);}
   .btn-sm{padding:7px 13px;font-size:.78rem;}
   .btn-approve{background:color-mix(in srgb, var(--st-done) 16%, transparent);color:var(--st-done);border-color:transparent;}
+  .btn-danger{background:color-mix(in srgb, var(--st-rejected) 14%, transparent);color:var(--st-rejected);}
   .btn[disabled]{opacity:.5;cursor:not-allowed;}
   .tabs{display:flex;gap:6px;border-bottom:1px solid var(--border);margin-bottom:22px;overflow-x:auto;}
-  .tab{padding:11px 16px;font-weight:700;font-size:.88rem;color:var(--text-secondary);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;}
+  .tab{padding:11px 16px;font-weight:700;font-size:.88rem;color:var(--text-secondary);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;position:relative;}
   .tab.active{color:var(--accent-strong);border-color:var(--accent-strong);}
+  .tab .dot{position:absolute;top:6px;left:2px;width:7px;height:7px;border-radius:50%;background:var(--st-rejected);display:none;}
+  .tab .dot.show{display:block;}
   .view{display:none;} .view.active{display:block;}
-  .tiles{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));margin-bottom:20px;}
+  .tiles{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));margin-bottom:20px;}
   .tile{background:var(--surface-card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);}
   .tile .lbl{font-size:.78rem;color:var(--text-muted);font-weight:700;margin-bottom:8px;}
   .tile .val{font-family:'Cairo';font-size:1.7rem;font-weight:800;}
@@ -62,8 +67,8 @@
   .panel h3{margin:0 0 4px;font-size:1rem;}
   .panel .desc{font-size:.78rem;color:var(--text-muted);margin-bottom:16px;}
   .barrow{display:flex;align-items:center;gap:10px;margin-bottom:12px;font-size:.84rem;}
-  .barrow .lb{width:108px;flex:none;color:var(--text-secondary);display:flex;align-items:center;gap:7px;}
-  .barrow .dot{width:9px;height:9px;border-radius:50%;flex:none;}
+  .barrow .lb{width:118px;flex:none;color:var(--text-secondary);display:flex;align-items:center;gap:7px;}
+  .barrow .dot2{width:9px;height:9px;border-radius:50%;flex:none;}
   .barrow .track{flex:1;background:var(--surface-sunken);border-radius:100px;height:10px;overflow:hidden;}
   .barrow .fill{height:100%;border-radius:100px;min-width:3px;transition:width .4s ease;}
   .barrow .vv{width:30px;flex:none;text-align:left;font-weight:700;}
@@ -77,6 +82,7 @@
   .toolbar input[type="search"]{flex:1;min-width:180px;}
   .order-card{background:var(--surface-card);border:1px solid var(--border);border-radius:14px;margin-bottom:10px;box-shadow:var(--shadow);overflow:hidden;}
   .order-card.is-pending{border-color:color-mix(in srgb, var(--st-pending) 45%, var(--border));}
+  .order-card.is-waiting{border-color:color-mix(in srgb, var(--st-waiting) 45%, var(--border));}
   .order-head{display:flex;align-items:center;gap:10px;padding:14px 16px;cursor:pointer;flex-wrap:wrap;}
   .order-head .who{flex:1;min-width:160px;}
   .order-head .who b{display:block;font-size:.92rem;}
@@ -90,14 +96,15 @@
   @media(min-width:640px){.order-body .grid2{grid-template-columns:1fr 1fr;}}
   .kv{font-size:.85rem;margin-bottom:8px;}
   .kv b{color:var(--text-muted);font-weight:700;display:inline-block;min-width:88px;}
-  .order-photo{max-width:200px;border-radius:10px;border:1px solid var(--border);display:block;margin-top:6px;}
+  .order-photo{max-width:200px;border-radius:10px;border:1px solid var(--border);display:block;margin-top:6px;cursor:zoom-in;}
   .status-select{padding:8px 12px;border-radius:10px;border:1px solid var(--border);background:var(--surface-sunken);color:var(--text-primary);font-family:'Tajawal';font-weight:700;font-size:.82rem;}
   .notes-box{width:100%;min-height:70px;border-radius:10px;border:1px solid var(--border);background:var(--surface-sunken);padding:10px;font-family:'Tajawal';color:var(--text-primary);font-size:.85rem;margin-top:6px;}
   .returning{color:var(--st-done);font-weight:700;}
   .assign-tag{display:inline-flex;align-items:center;gap:5px;font-size:.72rem;font-weight:700;color:var(--accent-strong);background:var(--accent-tint);padding:4px 10px;border-radius:100px;white-space:nowrap;}
   .assign-tag.unassigned{color:var(--st-progress);background:color-mix(in srgb, var(--st-progress) 14%, transparent);}
-  .assign-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
-  .assign-row input{flex:1;min-width:140px;}
+  .assign-tag.waiting{color:var(--st-waiting);background:color-mix(in srgb, var(--st-waiting) 14%, transparent);}
+  .field{margin-bottom:14px;}
+  .field label{display:block;font-size:.8rem;font-weight:700;margin-bottom:6px;color:var(--text-secondary);}
   .cust-card{background:var(--surface-card);border:1px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:10px;box-shadow:var(--shadow);display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
   .cust-card .who{flex:1;min-width:160px;}
   .cust-card .who b{display:block;font-size:.94rem;}
@@ -108,15 +115,40 @@
   .empty{text-align:center;padding:40px 20px;color:var(--text-muted);font-size:.88rem;}
   .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(8px);background:var(--text-primary);color:var(--surface);padding:11px 20px;border-radius:100px;font-size:.84rem;font-weight:700;opacity:0;pointer-events:none;transition:opacity .2s, transform .2s;z-index:200;}
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
-  input[type="text"], input[type="tel"], select, textarea{
+  input[type="text"], input[type="tel"], input[type="password"], input[type="number"], select, textarea{
     padding:11px 13px;border-radius:11px;border:1px solid var(--border);background:var(--surface-sunken);color:var(--text-primary);font-family:'Tajawal';font-size:.9rem;
   }
+  .grid-cards{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));}
+  .tech-card, .cat-card{background:var(--surface-card);border:1px solid var(--border);border-radius:14px;padding:16px;box-shadow:var(--shadow);}
+  .tech-card h4, .cat-card h4{margin:0 0 6px;font-size:.98rem;}
+  .chip{display:inline-flex;align-items:center;gap:4px;font-size:.72rem;font-weight:700;padding:3px 9px;border-radius:100px;background:var(--accent-tint);color:var(--accent-strong);margin:2px 4px 2px 0;}
+  .chip.off{background:color-mix(in srgb, var(--st-rejected) 14%, transparent);color:var(--st-rejected);}
+  .form-card{background:var(--surface-card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);margin-bottom:20px;}
+  .form-card h3{margin:0 0 14px;font-size:1rem;}
+  .form-row{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;}
+  .form-row .field{flex:1;min-width:140px;margin-bottom:0;}
+  .checks{display:flex;flex-wrap:wrap;gap:8px;}
+  .checks label{display:flex;align-items:center;gap:6px;font-size:.82rem;background:var(--surface-sunken);border:1px solid var(--border);border-radius:10px;padding:7px 10px;cursor:pointer;}
+  .checks input{width:auto;}
+  .catalog-list{list-style:none;margin:0;padding:0;}
+  .catalog-list li{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);font-size:.9rem;}
+  .catalog-list li:last-child{border-bottom:none;}
+  .switch{display:inline-flex;align-items:center;gap:6px;font-size:.78rem;cursor:pointer;}
+  .stars-disp{color:var(--gold);letter-spacing:1px;}
+  .review-item, .complaint-item{background:var(--surface-card);border:1px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:10px;box-shadow:var(--shadow);}
+  .review-item .rh, .complaint-item .rh{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px;}
+  .fin-row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid var(--border);font-size:.88rem;}
+  .fin-row:last-child{border-bottom:none;}
+  .fin-row img{width:52px;height:52px;object-fit:cover;border-radius:8px;cursor:zoom-in;border:1px solid var(--border);}
+  .lightbox{position:fixed;inset:0;background:rgba(5,15,20,.82);display:none;align-items:center;justify-content:center;z-index:300;padding:20px;}
+  .lightbox.show{display:flex;}
+  .lightbox img{max-width:100%;max-height:90vh;border-radius:10px;}
 </style>
 </head>
 <body>
 <div class="topbar">
   <div class="topbar-in">
-    <div class="brand"><span class="mark">7G</span><div><b>لوحة تحكم SEVENGATES</b><small>الطلبات والعملاء والإحصائيات</small></div></div>
+    <div class="brand"><span class="mark">7G</span><div><b>لوحة تحكم SEVENGATES</b><small>الطلبات، الفنيين، الفواتير والعملاء</small></div></div>
     <div class="top-right">
       <span class="status-pill ok" id="liveDot">● متصل</span>
       <button class="btn btn-ghost btn-sm" id="logoutBtn">خروج</button>
@@ -127,7 +159,11 @@
 <div class="shell">
   <div class="tabs">
     <div class="tab active" data-tab="overview">نظرة عامة</div>
-    <div class="tab" data-tab="orders">الطلبات</div>
+    <div class="tab" data-tab="orders">الطلبات<span class="dot" id="dotOrders"></span></div>
+    <div class="tab" data-tab="technicians">الفنيين</div>
+    <div class="tab" data-tab="services">الخدمات</div>
+    <div class="tab" data-tab="finance">الفواتير والمالية</div>
+    <div class="tab" data-tab="reviews">التقييمات والشكاوى<span class="dot" id="dotComplaints"></span></div>
     <div class="tab" data-tab="customers">العملاء</div>
   </div>
 
@@ -135,8 +171,10 @@
     <div class="tiles">
       <div class="tile"><div class="lbl">إجمالي الطلبات</div><div class="val tabular" id="statTotal">0</div><div class="sub" id="statTotalSub">—</div></div>
       <div class="tile"><div class="lbl">طلبات محتاجة موافقة</div><div class="val tabular" id="statPending">0</div><div class="sub">لسه ما اتراجعتش</div></div>
-      <div class="tile"><div class="lbl">عملاء مسجّلين</div><div class="val tabular" id="statCustomers">0</div><div class="sub" id="statCustomersSub">—</div></div>
+      <div class="tile"><div class="lbl">قائمة الانتظار</div><div class="val tabular" id="statWaiting">0</div><div class="sub">محتاجة فني متاح</div></div>
       <div class="tile"><div class="lbl">محتاجة تكليف فني</div><div class="val tabular" id="statUnassigned">0</div><div class="sub">طلبات نشطة من غير فني</div></div>
+      <div class="tile"><div class="lbl">شكاوى جديدة</div><div class="val tabular" id="statComplaints">0</div><div class="sub">محتاجة متابعة</div></div>
+      <div class="tile"><div class="lbl">عملاء مسجّلين</div><div class="val tabular" id="statCustomers">0</div><div class="sub" id="statCustomersSub">—</div></div>
     </div>
     <div class="panels">
       <div class="panel">
@@ -163,11 +201,75 @@
       <input type="search" id="orderSearch" placeholder="بحث بالاسم أو رقم الهاتف أو الجهاز…">
       <select id="orderStatusFilter">
         <option value="">كل الحالات</option>
-        <option>قيد المراجعة</option><option>تمت الموافقة</option><option>جاري التنفيذ</option><option>مكتمل</option><option>مرفوض</option>
+        <option>قيد المراجعة</option><option>تمت الموافقة</option><option>جاري التنفيذ</option><option>مكتمل</option><option>قائمة انتظار</option><option>مرفوض</option>
       </select>
       <select id="orderTechFilter"><option value="">كل الفنيين</option><option value="__unassigned__">غير مُكلّفة</option></select>
     </div>
     <div id="ordersList"></div>
+  </div>
+
+  <div class="view" id="view-technicians">
+    <div class="form-card">
+      <h3>إضافة فني جديد</h3>
+      <div class="form-row">
+        <div class="field"><label>الاسم</label><input type="text" id="techName" placeholder="اسم الفني"></div>
+        <div class="field"><label>رقم الهاتف</label><input type="tel" id="techPhone" placeholder="05xxxxxxxx"></div>
+        <div class="field"><label>كلمة مرور دخوله للبوابة</label><input type="password" id="techPassword" placeholder="كلمة مرور"></div>
+      </div>
+      <div class="field" style="margin-top:12px;"><label>التخصصات</label><div class="checks" id="techSpecialtyChecks"></div></div>
+      <button class="btn btn-primary btn-sm" id="addTechBtn" style="margin-top:14px;">➕ إضافة الفني</button>
+      <div style="font-size:.78rem;color:var(--text-muted);margin-top:8px;">الفني هيدخل بوابته من <b>/tech</b> برقم هاتفه وكلمة المرور دي.</div>
+    </div>
+    <div class="grid-cards" id="techniciansList"></div>
+  </div>
+
+  <div class="view" id="view-services">
+    <div class="grid-cards">
+      <div class="form-card">
+        <h3>أنواع الأجهزة (الخدمات المتاحة)</h3>
+        <div class="form-row" style="margin-bottom:14px;">
+          <div class="field"><input type="text" id="newDeviceName" placeholder="اسم جهاز جديد، مثلاً: مكيف سبليت"></div>
+          <button class="btn btn-ghost btn-sm" id="addDeviceBtn">➕ إضافة</button>
+        </div>
+        <ul class="catalog-list" id="deviceCatalogList"></ul>
+      </div>
+      <div class="form-card">
+        <h3>أنواع الخدمة</h3>
+        <div class="form-row" style="margin-bottom:14px;">
+          <div class="field"><input type="text" id="newServiceTypeName" placeholder="نوع خدمة جديد، مثلاً: فحص دوري"></div>
+          <button class="btn btn-ghost btn-sm" id="addServiceTypeBtn">➕ إضافة</button>
+        </div>
+        <ul class="catalog-list" id="serviceTypeCatalogList"></ul>
+      </div>
+    </div>
+    <p style="font-size:.8rem;color:var(--text-muted);margin-top:14px;">لو قفلت جهاز أو خدمة، العميل هيشوفها "غير متاحة حاليًا" في الموقع، وأي طلب ليها بعد كده هيتسجل مباشرة في قائمة الانتظار.</p>
+  </div>
+
+  <div class="view" id="view-finance">
+    <div class="tiles">
+      <div class="tile"><div class="lbl">إجمالي المحصّل</div><div class="val tabular" id="finTotal">0</div><div class="sub">جنيه من الفواتير المرفوعة</div></div>
+      <div class="tile"><div class="lbl">عدد الفواتير</div><div class="val tabular" id="finCount">0</div><div class="sub">طلبات مكتملة بفاتورة</div></div>
+    </div>
+    <div class="panel">
+      <h3>الفواتير المرفوعة</h3>
+      <div class="desc">بيتحدث أول ما الفني يرفع فاتورة طلب منفّذ</div>
+      <div id="invoicesList"></div>
+    </div>
+  </div>
+
+  <div class="view" id="view-reviews">
+    <div class="panels">
+      <div class="panel">
+        <h3>التقييمات</h3>
+        <div class="desc">تقييمات العملاء — تقدر تخفي أي تقييم عن العرض العام</div>
+        <div id="reviewsListStaff"></div>
+      </div>
+      <div class="panel">
+        <h3>الشكاوى</h3>
+        <div class="desc">شكاوى العملاء ومتابعتها</div>
+        <div id="complaintsListStaff"></div>
+      </div>
+    </div>
   </div>
 
   <div class="view" id="view-customers">
@@ -176,15 +278,14 @@
   </div>
 </div>
 
-<datalist id="techList"></datalist>
 <div class="toast" id="toast"></div>
+<div class="lightbox" id="lightbox"><img id="lightboxImg" alt=""></div>
 
 <script>
 (function(){
-  var allOrders=[], allCustomers=[], seenIds=null, canWrite=true;
-  var STATUS_COLORS = { "قيد المراجعة":"var(--st-pending)", "تمت الموافقة":"var(--st-approved)", "جاري التنفيذ":"var(--st-progress)", "مكتمل":"var(--st-done)", "مرفوض":"var(--st-rejected)" };
+  var allOrders=[], allCustomers=[], allTechnicians=[], allCatalog=[], seenIds=null;
+  var STATUS_COLORS = { "قيد المراجعة":"var(--st-pending)", "تمت الموافقة":"var(--st-approved)", "جاري التنفيذ":"var(--st-progress)", "مكتمل":"var(--st-done)", "مرفوض":"var(--st-rejected)", "قائمة انتظار":"var(--st-waiting)" };
   var DEVICE_COLORS = ["var(--c1)","var(--c2)","var(--c3)","var(--c4)","var(--c5)","var(--c6)","var(--c7)"];
-  var DEVICE_ORDER = ["تكييف","ثلاجة","غسالة","سخان","فرن / بوتاجاز","تمديدات كهربائية","أخرى"];
   var ACTIVE_STATUSES = ["قيد المراجعة","تمت الموافقة","جاري التنفيذ"];
 
   function $(id){ return document.getElementById(id); }
@@ -195,6 +296,9 @@
     var d = new Date(iso);
     return d.toLocaleDateString('ar-EG',{day:'2-digit',month:'2-digit',year:'numeric'}) + " " + d.toLocaleTimeString('ar-EG',{hour:'2-digit',minute:'2-digit'});
   }
+  function stars(n){ n = Number(n)||0; return '★★★★★'.slice(0,n) + '☆☆☆☆☆'.slice(0,5-n); }
+  function openLightbox(src){ $('lightboxImg').src = src; $('lightbox').classList.add('show'); }
+  $('lightbox').addEventListener('click', function(){ $('lightbox').classList.remove('show'); });
 
   async function api(path, opts){
     opts = opts || {};
@@ -204,47 +308,44 @@
     return res;
   }
 
-  function updateTechLists(){
-    var names = Array.from(new Set(allOrders.map(function(o){ return (o.assigned_to||"").trim(); }).filter(Boolean))).sort();
-    $('techList').innerHTML = names.map(function(n){ return '<option value="'+esc(n)+'"></option>'; }).join('');
-    var filt = $('orderTechFilter'); var current = filt.value;
-    filt.innerHTML = '<option value="">كل الفنيين</option><option value="__unassigned__">غير مُكلّفة</option>' + names.map(function(n){ return '<option value="'+esc(n)+'">'+esc(n)+'</option>'; }).join('');
-    if(names.indexOf(current)>-1 || current==="__unassigned__") filt.value = current;
-  }
-
+  // ---------------- overview ----------------
   function renderOverview(){
     var total = allOrders.length;
     $('statTotal').textContent = total;
     $('statTotalSub').textContent = total ? "منذ أول طلب مسجّل" : "لسه مفيش طلبات";
     var pending = allOrders.filter(function(o){ return o.status==="قيد المراجعة"; }).length;
     $('statPending').textContent = pending;
+    var waiting = allOrders.filter(function(o){ return o.is_waiting_list || o.status==="قائمة انتظار"; }).length;
+    $('statWaiting').textContent = waiting;
     $('statCustomers').textContent = allCustomers.length;
     var withMulti = allCustomers.filter(function(c){ return (c.orders_count||0) > 1; }).length;
     $('statCustomersSub').textContent = allCustomers.length ? (withMulti + " عميل عائد") : "لسه مفيش عملاء";
-    var needsAssign = allOrders.filter(function(o){ return !o.assigned_to && ACTIVE_STATUSES.indexOf(o.status)>-1; }).length;
+    var needsAssign = allOrders.filter(function(o){ return !o.technician_id && ACTIVE_STATUSES.indexOf(o.status)>-1; }).length;
     $('statUnassigned').textContent = needsAssign;
-    updateTechLists();
+    var newComplaints = allOrders.filter(function(o){ return o.complaint_text && o.complaint_status==='جديدة'; }).length;
+    $('statComplaints').textContent = newComplaints;
+    $('dotComplaints').classList.toggle('show', newComplaints>0);
+    $('dotOrders').classList.toggle('show', pending>0);
 
-    var statuses = ["قيد المراجعة","تمت الموافقة","جاري التنفيذ","مكتمل","مرفوض"];
+    var statuses = ["قيد المراجعة","تمت الموافقة","جاري التنفيذ","مكتمل","قائمة انتظار","مرفوض"];
     var maxCount = Math.max(1, total);
     var html='';
     statuses.forEach(function(s){
       var c = allOrders.filter(function(o){ return (o.status||"قيد المراجعة")===s; }).length;
       var pct = Math.round(c/maxCount*100);
-      html += '<div class="barrow"><div class="lb"><span class="dot" style="background:'+STATUS_COLORS[s]+'"></span>'+s+'</div><div class="track"><div class="fill" style="width:'+pct+'%;background:'+STATUS_COLORS[s]+'"></div></div><div class="vv tabular">'+c+'</div></div>';
+      html += '<div class="barrow"><div class="lb"><span class="dot2" style="background:'+STATUS_COLORS[s]+'"></span>'+s+'</div><div class="track"><div class="fill" style="width:'+pct+'%;background:'+STATUS_COLORS[s]+'"></div></div><div class="vv tabular">'+c+'</div></div>';
     });
     $('statusBars').innerHTML = html || '<div class="empty">مفيش طلبات لسه</div>';
 
     var counts={};
     allOrders.forEach(function(o){ var d=o.device||"أخرى"; counts[d]=(counts[d]||0)+1; });
-    var devKeys = DEVICE_ORDER.filter(function(d){ return counts[d]; });
-    Object.keys(counts).forEach(function(d){ if(devKeys.indexOf(d)===-1) devKeys.push(d); });
+    var devKeys = Object.keys(counts).sort(function(a,b){ return counts[b]-counts[a]; });
     var maxDev = Math.max(1, Math.max.apply(null, devKeys.map(function(d){return counts[d];}).concat([1])));
     html='';
-    devKeys.forEach(function(d){
+    devKeys.forEach(function(d,i){
       var c = counts[d]; var pct = Math.round(c/maxDev*100);
-      var color = DEVICE_COLORS[DEVICE_ORDER.indexOf(d) % DEVICE_COLORS.length] || DEVICE_COLORS[6];
-      html += '<div class="barrow"><div class="lb"><span class="dot" style="background:'+color+'"></span>'+esc(d)+'</div><div class="track"><div class="fill" style="width:'+pct+'%;background:'+color+'"></div></div><div class="vv tabular">'+c+'</div></div>';
+      var color = DEVICE_COLORS[i % DEVICE_COLORS.length];
+      html += '<div class="barrow"><div class="lb"><span class="dot2" style="background:'+color+'"></span>'+esc(d)+'</div><div class="track"><div class="fill" style="width:'+pct+'%;background:'+color+'"></div></div><div class="vv tabular">'+c+'</div></div>';
     });
     $('deviceBars').innerHTML = html || '<div class="empty">مفيش طلبات لسه</div>';
 
@@ -270,15 +371,45 @@
     });
   }
 
+  // ---------------- orders ----------------
+  function techOptionsHtml(selectedId){
+    var opts = '<option value="">— بدون تعيين —</option>';
+    allTechnicians.forEach(function(t){
+      var label = t.name + (t.specialties&&t.specialties.length ? ' ('+t.specialties.join('، ')+')' : '') + (t.status!=='متاح' ? ' — '+t.status : '');
+      opts += '<option value="'+t.id+'" '+(String(selectedId)===String(t.id)?'selected':'')+'>'+esc(label)+'</option>';
+    });
+    return opts;
+  }
+
   function orderRow(o){
-    var color = STATUS_COLORS[o.status||"قيد المراجعة"] || STATUS_COLORS["قيد المراجعة"];
+    var status = o.status || "قيد المراجعة";
+    var color = STATUS_COLORS[status] || STATUS_COLORS["قيد المراجعة"];
     var photoHtml = o.photo_data ? '<img class="order-photo" src="'+o.photo_data+'" alt="صورة المشكلة">' : '';
-    var isPending = o.status === "قيد المراجعة";
-    return '<div class="order-card'+(isPending?' is-pending':'')+'" data-id="'+o.id+'">' +
+    var isPending = status === "قيد المراجعة";
+    var isWaiting = status === "قائمة انتظار";
+    var assignTag = o.technician_id ? '<span class="assign-tag">👷 '+esc(o.assigned_to)+'</span>' : (isWaiting ? '<span class="assign-tag waiting">⏳ قائمة انتظار</span>' : '<span class="assign-tag unassigned">⚠ غير مُكلّفة</span>');
+    var complaintTag = (o.complaint_text) ? '<span class="badge" style="background:color-mix(in srgb, var(--st-rejected) 16%, transparent);color:var(--st-rejected);">🚩 شكوى: '+esc(o.complaint_status||'جديدة')+'</span>' : '';
+    var ratingTag = (o.rating!=null) ? '<span class="badge" style="background:color-mix(in srgb, var(--gold) 16%, transparent);color:var(--gold);">'+stars(o.rating)+'</span>' : '';
+    var invoiceHtml = o.invoice_photo ? (
+      '<div class="kv"><b>الفاتورة</b>'+ (o.invoice_amount ? Number(o.invoice_amount).toLocaleString('ar-EG')+' جنيه' : '') +'</div>' +
+      '<img class="order-photo" src="'+o.invoice_photo+'" alt="صورة الفاتورة" data-lightbox="1">'
+    ) : '';
+    var complaintBlock = o.complaint_text ? (
+      '<div class="field"><label>الشكوى</label><div class="kv" style="background:var(--surface-sunken);border-radius:10px;padding:8px 10px;">'+esc(o.complaint_text)+'</div>' +
+      '<label style="margin-top:8px;">حالة الشكوى</label><select class="status-select" data-complaint="'+o.id+'">' +
+        ["جديدة","قيد المراجعة","تم الحل"].map(function(s){ return '<option '+(o.complaint_status===s?'selected':'')+'>'+s+'</option>'; }).join('') +
+      '</select></div>'
+    ) : '';
+    var reviewBlock = (o.rating!=null) ? (
+      '<div class="field"><label>التقييم</label><div class="kv"><span class="stars-disp">'+stars(o.rating)+'</span></div>' +
+      (o.review_text ? '<div class="kv" style="color:var(--text-secondary);">"'+esc(o.review_text)+'"</div>' : '') +
+      '<label class="switch"><input type="checkbox" data-reviewpublic="'+o.id+'" '+(o.review_public!==false?'checked':'')+'> عرض هذا التقييم للعملاء الآخرين</label></div>'
+    ) : '';
+    return '<div class="order-card'+(isPending?' is-pending':'')+(isWaiting?' is-waiting':'')+'" data-id="'+o.id+'">' +
       '<div class="order-head" data-toggle="'+o.id+'">' +
-        '<div class="who"><b>#'+o.id+' — '+esc(o.name||"—")+'</b><span>'+esc(o.phone||"")+' · '+esc(o.device||"")+'</span></div>' +
-        '<span class="badge" style="background:color-mix(in srgb, '+color+' 16%, transparent);color:'+color+'"><span class="d" style="background:'+color+'"></span>'+esc(o.status||"قيد المراجعة")+'</span>' +
-        (o.assigned_to ? '<span class="assign-tag">👷 '+esc(o.assigned_to)+'</span>' : '<span class="assign-tag unassigned">⚠ غير مُكلّفة</span>') +
+        '<div class="who"><b>#'+o.id+' — '+esc(o.name||"—")+'</b><span>'+esc(o.phone||"")+' · '+esc(o.device||"")+' · '+esc(o.tracking_token||"")+'</span></div>' +
+        '<span class="badge" style="background:color-mix(in srgb, '+color+' 16%, transparent);color:'+color+'"><span class="d" style="background:'+color+'"></span>'+esc(status)+'</span>' +
+        assignTag + complaintTag + ratingTag +
         (isPending ? '<button class="btn btn-approve btn-sm" data-approve="'+o.id+'" type="button">✅ موافقة</button>' : '') +
         '<div class="meta">'+fmtDate(o.created_at)+'</div>' +
       '</div>' +
@@ -288,18 +419,17 @@
           '<div class="kv"><b>العنوان</b>'+esc(o.address||"—")+'</div>' +
           (o.location_url ? '<div class="kv"><b>الموقع</b><a href="'+esc(o.location_url)+'" target="_blank" rel="noopener" style="color:var(--accent-strong);font-weight:700;">📍 فتح على الخريطة</a></div>' : '') +
           '<div class="kv"><b>الوصف</b>'+esc(o.description||"—")+'</div>' +
-          (photoHtml ? '<div class="kv"><b>صورة</b></div>'+photoHtml : '') +
+          (photoHtml ? '<div class="kv"><b>صورة العطل</b></div>'+photoHtml : '') +
+          invoiceHtml +
         '</div>' +
         '<div>' +
-          '<div class="field"><label>تكليف فني</label><div class="assign-row">' +
-            '<input type="text" list="techList" data-assign="'+o.id+'" value="'+esc(o.assigned_to||"")+'" placeholder="اسم الفني المسؤول">' +
-            '<button class="btn btn-ghost btn-sm" type="button" data-saveassign="'+o.id+'">تعيين</button>' +
-          '</div></div>' +
+          '<div class="field"><label>تكليف فني</label><select class="status-select" data-techassign="'+o.id+'" style="width:100%;">'+techOptionsHtml(o.technician_id)+'</select></div>' +
           '<div class="field"><label>تحديث الحالة</label><select class="status-select" data-order="'+o.id+'">' +
-            ["قيد المراجعة","تمت الموافقة","جاري التنفيذ","مكتمل","مرفوض"].map(function(s){ return '<option '+(o.status===s?'selected':'')+'>'+s+'</option>'; }).join('') +
+            ["قيد المراجعة","تمت الموافقة","جاري التنفيذ","مكتمل","قائمة انتظار","مرفوض"].map(function(s){ return '<option '+(status===s?'selected':'')+'>'+s+'</option>'; }).join('') +
           '</select></div>' +
           '<div class="field"><label>ملاحظات داخلية</label><textarea class="notes-box" data-notes="'+o.id+'" placeholder="اكتب ملاحظة…">'+esc(o.notes||"")+'</textarea>' +
             '<button class="btn btn-ghost btn-sm" style="margin-top:8px;" data-savenote="'+o.id+'">حفظ الملاحظة</button></div>' +
+          complaintBlock + reviewBlock +
         '</div>' +
       '</div></div>' +
     '</div>';
@@ -311,16 +441,197 @@
     var tech = $('orderTechFilter').value;
     var list = allOrders.filter(function(o){
       if(st && (o.status||"قيد المراجعة")!==st) return false;
-      if(tech==="__unassigned__" && o.assigned_to) return false;
-      if(tech && tech!=="__unassigned__" && o.assigned_to!==tech) return false;
+      if(tech==="__unassigned__" && o.technician_id) return false;
+      if(tech && tech!=="__unassigned__" && String(o.technician_id)!==tech) return false;
       if(!q) return true;
-      return (o.name||"").toLowerCase().indexOf(q)>-1 || (o.phone||"").indexOf(q)>-1 || (o.device||"").toLowerCase().indexOf(q)>-1;
+      return (o.name||"").toLowerCase().indexOf(q)>-1 || (o.phone||"").indexOf(q)>-1 || (o.device||"").toLowerCase().indexOf(q)>-1 || (o.tracking_token||"").toLowerCase().indexOf(q)>-1;
     });
     var openIds = Array.prototype.map.call(document.querySelectorAll('.order-card.open'), function(el){ return el.getAttribute('data-id'); });
     $('ordersList').innerHTML = list.length ? list.map(orderRow).join('') : '<div class="empty">مفيش طلبات مطابقة</div>';
     openIds.forEach(function(id){ var el = document.querySelector('.order-card[data-id="'+id+'"]'); if(el) el.classList.add('open'); });
+
+    var filt = $('orderTechFilter'); var current = filt.value;
+    filt.innerHTML = '<option value="">كل الفنيين</option><option value="__unassigned__">غير مُكلّفة</option>' + allTechnicians.map(function(t){ return '<option value="'+t.id+'">'+esc(t.name)+'</option>'; }).join('');
+    filt.value = current;
   }
 
+  function patchOrder(id, patch, okMsg){
+    api('/api/staff/orders/'+id, { method:'PATCH', body: JSON.stringify(patch) })
+      .then(function(res){ if(!res.ok) throw new Error('bad'); return res.json(); })
+      .then(function(){ toast(okMsg); loadData(); })
+      .catch(function(){ toast('حصل خطأ، حاول تاني'); });
+  }
+
+  document.addEventListener('click', function(e){
+    var head = e.target.closest && e.target.closest('[data-toggle]');
+    if(head){ head.closest('.order-card').classList.toggle('open'); return; }
+    var img = e.target.closest && e.target.closest('img.order-photo');
+    if(img){ openLightbox(img.src); return; }
+    var approveBtn = e.target.closest && e.target.closest('[data-approve]');
+    if(approveBtn){ patchOrder(approveBtn.getAttribute('data-approve'), { status: 'تمت الموافقة' }, 'تمت الموافقة على الطلب'); return; }
+    var saveBtn = e.target.closest && e.target.closest('[data-savenote]');
+    if(saveBtn){
+      var id = saveBtn.getAttribute('data-savenote');
+      patchOrder(id, { notes: document.querySelector('[data-notes="'+id+'"]').value }, 'تم حفظ الملاحظة');
+    }
+    var finImg = e.target.closest && e.target.closest('img[data-fin]');
+    if(finImg){ openLightbox(finImg.src); return; }
+  });
+  document.addEventListener('change', function(e){
+    if(e.target.matches('.status-select[data-order]')){
+      patchOrder(e.target.getAttribute('data-order'), { status: e.target.value }, 'تم تحديث الحالة');
+    }
+    if(e.target.matches('[data-techassign]')){
+      var id = e.target.getAttribute('data-techassign');
+      var val = e.target.value;
+      patchOrder(id, { technicianId: val ? Number(val) : null }, val ? 'تم تعيين الفني' : 'تم إلغاء التعيين');
+    }
+    if(e.target.matches('[data-complaint]')){
+      patchOrder(e.target.getAttribute('data-complaint'), { complaintStatus: e.target.value }, 'تم تحديث حالة الشكوى');
+    }
+    if(e.target.matches('[data-reviewpublic]')){
+      patchOrder(e.target.getAttribute('data-reviewpublic'), { reviewPublic: e.target.checked }, 'تم تحديث ظهور التقييم');
+    }
+  });
+  $('orderSearch').addEventListener('input', renderOrders);
+  $('orderStatusFilter').addEventListener('change', renderOrders);
+  $('orderTechFilter').addEventListener('change', renderOrders);
+
+  // ---------------- technicians ----------------
+  function renderTechSpecialtyChecks(){
+    var devices = allCatalog.filter(function(c){ return c.category==='device'; });
+    $('techSpecialtyChecks').innerHTML = devices.map(function(d){
+      return '<label><input type="checkbox" value="'+esc(d.name)+'"> '+esc(d.name)+'</label>';
+    }).join('') || '<span style="color:var(--text-muted);font-size:.8rem;">أضف أجهزة من تبويب "الخدمات" الأول</span>';
+  }
+
+  function techCard(t){
+    var chips = (t.specialties||[]).map(function(s){ return '<span class="chip">'+esc(s)+'</span>'; }).join('') || '<span style="color:var(--text-muted);font-size:.78rem;">مفيش تخصص محدد</span>';
+    return '<div class="tech-card">' +
+      '<h4>'+esc(t.name)+' '+(t.active?'':'<span style="color:var(--st-rejected);font-size:.75rem;">(معطّل)</span>')+'</h4>' +
+      '<div style="font-size:.85rem;color:var(--text-secondary);margin-bottom:8px;">📞 '+esc(t.phone)+' · '+(t.active_orders||0)+' طلب نشط</div>' +
+      '<div style="margin-bottom:10px;">'+chips+'</div>' +
+      '<div class="form-row">' +
+        '<div class="field"><label>الحالة</label><select class="status-select" data-techstatus="'+t.id+'">' +
+          ["متاح","غير متاح","إجازة"].map(function(s){ return '<option '+(t.status===s?'selected':'')+'>'+s+'</option>'; }).join('') +
+        '</select></div>' +
+        '<button class="btn btn-sm '+(t.active?'btn-danger':'btn-approve')+'" data-techtoggle="'+t.id+'" data-active="'+(t.active?0:1)+'">'+(t.active?'تعطيل':'تفعيل')+'</button>' +
+      '</div>' +
+    '</div>';
+  }
+  function renderTechnicians(){
+    $('techniciansList').innerHTML = allTechnicians.length ? allTechnicians.map(techCard).join('') : '<div class="empty">لسه مفيش فنيين مضافين</div>';
+  }
+  document.addEventListener('change', function(e){
+    if(e.target.matches('[data-techstatus]')){
+      var id = e.target.getAttribute('data-techstatus');
+      api('/api/staff/technicians/'+id, { method:'PATCH', body: JSON.stringify({ status: e.target.value }) })
+        .then(function(r){ if(!r.ok) throw new Error(); return r.json(); })
+        .then(function(){ toast('تم تحديث حالة الفني'); loadData(); })
+        .catch(function(){ toast('حصل خطأ'); });
+    }
+  });
+  document.addEventListener('click', function(e){
+    var toggleBtn = e.target.closest && e.target.closest('[data-techtoggle]');
+    if(toggleBtn){
+      var id = toggleBtn.getAttribute('data-techtoggle');
+      var active = toggleBtn.getAttribute('data-active') === '1';
+      api('/api/staff/technicians/'+id, { method:'PATCH', body: JSON.stringify({ active: active }) })
+        .then(function(r){ if(!r.ok) throw new Error(); return r.json(); })
+        .then(function(){ toast(active ? 'تم تفعيل الفني' : 'تم تعطيل الفني'); loadData(); })
+        .catch(function(){ toast('حصل خطأ'); });
+    }
+  });
+  $('addTechBtn').addEventListener('click', function(){
+    var name = $('techName').value.trim();
+    var phone = $('techPhone').value.trim();
+    var password = $('techPassword').value.trim();
+    var specialties = Array.prototype.map.call($('techSpecialtyChecks').querySelectorAll('input:checked'), function(c){ return c.value; });
+    if(!name || !phone || !password){ toast('اكتب الاسم ورقم الهاتف وكلمة المرور'); return; }
+    api('/api/staff/technicians', { method:'POST', body: JSON.stringify({ name: name, phone: phone, password: password, specialties: specialties }) })
+      .then(function(r){ if(!r.ok) throw new Error(); return r.json(); })
+      .then(function(){
+        toast('تمت إضافة الفني');
+        $('techName').value=''; $('techPhone').value=''; $('techPassword').value='';
+        Array.prototype.forEach.call($('techSpecialtyChecks').querySelectorAll('input'), function(c){ c.checked=false; });
+        loadData();
+      }).catch(function(){ toast('حصل خطأ — تأكد إن رقم الهاتف مش مستخدم قبل كده'); });
+  });
+
+  // ---------------- services (catalog) ----------------
+  function catalogLi(item){
+    return '<li><span>'+esc(item.name)+(item.active?'':' <span style="color:var(--st-rejected);font-size:.78rem;">(معطّل)</span>')+'</span>' +
+      '<button class="btn btn-sm '+(item.active?'btn-danger':'btn-approve')+'" data-cattoggle="'+item.id+'" data-active="'+(item.active?0:1)+'">'+(item.active?'إخفاء':'إظهار')+'</button></li>';
+  }
+  function renderCatalog(){
+    var devices = allCatalog.filter(function(c){ return c.category==='device'; });
+    var types = allCatalog.filter(function(c){ return c.category==='service_type'; });
+    $('deviceCatalogList').innerHTML = devices.length ? devices.map(catalogLi).join('') : '<li>لسه مفيش أجهزة</li>';
+    $('serviceTypeCatalogList').innerHTML = types.length ? types.map(catalogLi).join('') : '<li>لسه مفيش أنواع خدمة</li>';
+    renderTechSpecialtyChecks();
+  }
+  document.addEventListener('click', function(e){
+    var ct = e.target.closest && e.target.closest('[data-cattoggle]');
+    if(ct){
+      var id = ct.getAttribute('data-cattoggle');
+      var active = ct.getAttribute('data-active') === '1';
+      api('/api/staff/catalog/'+id, { method:'PATCH', body: JSON.stringify({ active: active }) })
+        .then(function(r){ if(!r.ok) throw new Error(); return r.json(); })
+        .then(function(){ toast('تم التحديث'); loadData(); })
+        .catch(function(){ toast('حصل خطأ'); });
+    }
+  });
+  $('addDeviceBtn').addEventListener('click', function(){
+    var name = $('newDeviceName').value.trim();
+    if(!name) return;
+    api('/api/staff/catalog', { method:'POST', body: JSON.stringify({ category:'device', name: name }) })
+      .then(function(r){ if(!r.ok) throw new Error(); return r.json(); })
+      .then(function(){ toast('تمت الإضافة'); $('newDeviceName').value=''; loadData(); })
+      .catch(function(){ toast('العنصر موجود بالفعل أو حصل خطأ'); });
+  });
+  $('addServiceTypeBtn').addEventListener('click', function(){
+    var name = $('newServiceTypeName').value.trim();
+    if(!name) return;
+    api('/api/staff/catalog', { method:'POST', body: JSON.stringify({ category:'service_type', name: name }) })
+      .then(function(r){ if(!r.ok) throw new Error(); return r.json(); })
+      .then(function(){ toast('تمت الإضافة'); $('newServiceTypeName').value=''; loadData(); })
+      .catch(function(){ toast('العنصر موجود بالفعل أو حصل خطأ'); });
+  });
+
+  // ---------------- finance ----------------
+  function renderFinance(){
+    var withInvoice = allOrders.filter(function(o){ return o.invoice_photo; }).sort(function(a,b){ return new Date(b.completed_at||b.updated_at)-new Date(a.completed_at||a.updated_at); });
+    var total = withInvoice.reduce(function(sum,o){ return sum + (Number(o.invoice_amount)||0); }, 0);
+    $('finTotal').textContent = total.toLocaleString('ar-EG');
+    $('finCount').textContent = withInvoice.length;
+    $('invoicesList').innerHTML = withInvoice.length ? withInvoice.map(function(o){
+      return '<div class="fin-row"><img src="'+o.invoice_photo+'" data-fin="1" alt="فاتورة"><div style="flex:1;"><b>#'+o.id+' — '+esc(o.name)+'</b><div style="color:var(--text-muted);font-size:.78rem;">'+esc(o.device)+' · '+esc(o.assigned_to||'—')+' · '+fmtDate(o.completed_at)+'</div></div><b class="tabular" style="font-family:Cairo;">'+(o.invoice_amount?Number(o.invoice_amount).toLocaleString('ar-EG'):'—')+' ج.م</b></div>';
+    }).join('') : '<div class="empty">لسه مفيش فواتير مرفوعة</div>';
+  }
+
+  // ---------------- reviews & complaints ----------------
+  function renderReviewsStaff(){
+    var rated = allOrders.filter(function(o){ return o.rating!=null; }).sort(function(a,b){ return new Date(b.completed_at||b.created_at)-new Date(a.completed_at||a.created_at); });
+    $('reviewsListStaff').innerHTML = rated.length ? rated.map(function(o){
+      return '<div class="review-item"><div class="rh"><b>'+esc(o.name)+'</b><span class="stars-disp">'+stars(o.rating)+'</span></div>' +
+        '<div style="font-size:.78rem;color:var(--text-muted);margin-bottom:6px;">'+esc(o.device)+' · '+esc(o.assigned_to||'—')+' · '+fmtDate(o.completed_at)+'</div>' +
+        (o.review_text ? '<p style="margin:0;font-size:.88rem;">"'+esc(o.review_text)+'"</p>' : '') +
+        '<label class="switch" style="margin-top:8px;"><input type="checkbox" data-reviewpublic="'+o.id+'" '+(o.review_public!==false?'checked':'')+'> ظاهر للعملاء</label>' +
+      '</div>';
+    }).join('') : '<div class="empty">لسه مفيش تقييمات</div>';
+  }
+  function renderComplaintsStaff(){
+    var complaints = allOrders.filter(function(o){ return o.complaint_text; }).sort(function(a,b){ return new Date(b.complaint_at||b.created_at)-new Date(a.complaint_at||a.created_at); });
+    $('complaintsListStaff').innerHTML = complaints.length ? complaints.map(function(o){
+      return '<div class="complaint-item"><div class="rh"><b>'+esc(o.name)+' — <a href="tel:'+esc(o.phone)+'" style="color:var(--accent-strong);">'+esc(o.phone)+'</a></b><span class="badge" style="background:color-mix(in srgb, var(--st-rejected) 16%, transparent);color:var(--st-rejected);">'+esc(o.complaint_status||'جديدة')+'</span></div>' +
+        '<div style="font-size:.78rem;color:var(--text-muted);margin-bottom:6px;">طلب #'+o.id+' · '+esc(o.device)+' · '+esc(o.assigned_to||'—')+' · '+fmtDate(o.complaint_at)+'</div>' +
+        '<p style="margin:0 0 8px;font-size:.88rem;">'+esc(o.complaint_text)+'</p>' +
+        '<select class="status-select" data-complaint="'+o.id+'">' + ["جديدة","قيد المراجعة","تم الحل"].map(function(s){ return '<option '+(o.complaint_status===s?'selected':'')+'>'+s+'</option>'; }).join('') + '</select>' +
+      '</div>';
+    }).join('') : '<div class="empty">لسه مفيش شكاوى — الحمد لله 🎉</div>';
+  }
+
+  // ---------------- customers ----------------
   function custRow(c){
     var isReturning = (c.orders_count||0) > 1;
     return '<div class="cust-card">' +
@@ -335,8 +646,9 @@
     var list = allCustomers.filter(function(c){ if(!q) return true; return (c.name||"").toLowerCase().indexOf(q)>-1 || (c.phone||"").indexOf(q)>-1; });
     $('customersList').innerHTML = list.length ? list.map(custRow).join('') : '<div class="empty">مفيش عملاء مطابقين</div>';
   }
+  $('custSearch').addEventListener('input', renderCustomers);
 
-  function renderAll(){ renderOverview(); renderOrders(); renderCustomers(); }
+  function renderAll(){ renderOverview(); renderOrders(); renderTechnicians(); renderCatalog(); renderFinance(); renderReviewsStaff(); renderComplaintsStaff(); renderCustomers(); }
 
   Array.prototype.forEach.call(document.querySelectorAll('.tab'), function(t){
     t.addEventListener('click', function(){
@@ -345,46 +657,6 @@
       t.classList.add('active'); $('view-'+t.getAttribute('data-tab')).classList.add('active');
     });
   });
-  $('orderSearch').addEventListener('input', renderOrders);
-  $('orderStatusFilter').addEventListener('change', renderOrders);
-  $('orderTechFilter').addEventListener('change', renderOrders);
-  $('custSearch').addEventListener('input', renderCustomers);
-
-  document.addEventListener('click', function(e){
-    var head = e.target.closest && e.target.closest('[data-toggle]');
-    if(head){ head.closest('.order-card').classList.toggle('open'); return; }
-
-    var approveBtn = e.target.closest && e.target.closest('[data-approve]');
-    if(approveBtn){
-      var apId = approveBtn.getAttribute('data-approve');
-      patchOrder(apId, { status: 'تمت الموافقة' }, 'تمت الموافقة على الطلب');
-      return;
-    }
-    var saveBtn = e.target.closest && e.target.closest('[data-savenote]');
-    if(saveBtn){
-      var id = saveBtn.getAttribute('data-savenote');
-      var val = document.querySelector('[data-notes="'+id+'"]').value;
-      patchOrder(id, { notes: val }, 'تم حفظ الملاحظة');
-    }
-    var assignBtn = e.target.closest && e.target.closest('[data-saveassign]');
-    if(assignBtn){
-      var aid = assignBtn.getAttribute('data-saveassign');
-      var aval = document.querySelector('[data-assign="'+aid+'"]').value.trim();
-      patchOrder(aid, { assignedTo: aval }, aval ? ('تم تكليف '+aval+' بالطلب') : 'تم إلغاء التكليف');
-    }
-  });
-  document.addEventListener('change', function(e){
-    if(e.target.matches('.status-select')){
-      patchOrder(e.target.getAttribute('data-order'), { status: e.target.value }, 'تم تحديث الحالة');
-    }
-  });
-
-  function patchOrder(id, patch, okMsg){
-    api('/api/staff/orders/'+id, { method:'PATCH', body: JSON.stringify(patch) })
-      .then(function(res){ if(!res.ok) throw new Error('bad'); return res.json(); })
-      .then(function(){ toast(okMsg); loadData(); })
-      .catch(function(){ toast('حصل خطأ، حاول تاني'); });
-  }
 
   $('logoutBtn').addEventListener('click', function(){
     api('/api/staff/logout', { method:'POST' }).then(function(){ window.location.href = '/staff/login'; });
@@ -393,7 +665,9 @@
   function loadData(){
     Promise.all([
       api('/api/staff/orders').then(function(r){ return r.json(); }),
-      api('/api/staff/customers').then(function(r){ return r.json(); })
+      api('/api/staff/customers').then(function(r){ return r.json(); }),
+      api('/api/staff/technicians').then(function(r){ return r.json(); }),
+      api('/api/staff/catalog').then(function(r){ return r.json(); })
     ]).then(function(results){
       var newOrders = results[0].orders || [];
       if(seenIds){
@@ -406,6 +680,8 @@
       seenIds = new Set(newOrders.map(function(o){ return o.id; }));
       allOrders = newOrders;
       allCustomers = results[1].customers || [];
+      allTechnicians = results[2].technicians || [];
+      allCatalog = results[3].items || [];
       $('liveDot').textContent = '● متصل';
       renderAll();
     }).catch(function(){
