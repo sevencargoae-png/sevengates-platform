@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>بوابة الفنيين — SEVENGATES</title>
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;800;900&family=Tajawal:wght@400;500;700&display=swap">
+<style>
+  :root{
+    --surface:#F5F8FA; --surface-card:#ffffff; --surface-sunken:#EEF3F6;
+    --text-primary:#0B2027; --text-secondary:#4C6470; --text-muted:#8598A1;
+    --accent:#12B5A6; --accent-strong:#0A8F84; --accent-tint:#E3F7F4;
+    --gold:#F2A93C; --gold-tint:#FDF1DF; --danger:#C94040;
+    --border:rgba(11,32,39,0.10); --shadow:0 14px 34px -20px rgba(6,25,40,0.3); --radius:16px;
+  }
+  *{box-sizing:border-box;} html,body{margin:0;}
+  body{background:var(--surface);color:var(--text-primary);font-family:'Tajawal',system-ui,sans-serif;line-height:1.6;padding-bottom:40px;}
+  h1,h2,h3{font-family:'Cairo',system-ui,sans-serif;}
+  .topbar{background:var(--surface-card);border-bottom:1px solid var(--border);padding:14px 18px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:10;}
+  .brand{display:flex;align-items:center;gap:10px;font-family:'Cairo';font-weight:800;}
+  .mark{width:36px;height:36px;border-radius:10px;background:linear-gradient(155deg,var(--accent),var(--accent-strong));display:flex;align-items:center;justify-content:center;color:#04252b;font-weight:900;}
+  .wrap{max-width:640px;margin:0 auto;padding:18px;}
+  .status-pill{font-size:.72rem;font-weight:700;padding:4px 10px;border-radius:100px;background:var(--accent-tint);color:var(--accent-strong);}
+  .btn{display:inline-flex;align-items:center;gap:6px;justify-content:center;padding:10px 16px;border-radius:100px;font-weight:700;font-size:.85rem;border:1px solid transparent;cursor:pointer;text-decoration:none;}
+  .btn-primary{background:linear-gradient(155deg,var(--accent),var(--accent-strong));color:#04252b;}
+  .btn-ghost{background:transparent;border-color:var(--border);color:var(--text-primary);}
+  .btn-block{width:100%;}
+  .btn[disabled]{opacity:.5;cursor:not-allowed;}
+  .card{background:var(--surface-card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);margin-bottom:14px;}
+  .order-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:10px;}
+  .order-head h3{margin:0;font-size:1.05rem;}
+  .meta-line{font-size:.85rem;color:var(--text-secondary);margin:2px 0;}
+  .desc-box{background:var(--surface-sunken);border-radius:10px;padding:10px 12px;font-size:.88rem;margin:10px 0;}
+  .photo-thumb{width:100%;max-width:220px;border-radius:10px;margin-top:8px;border:1px solid var(--border);}
+  .tabs{display:flex;gap:8px;margin-bottom:16px;overflow-x:auto;}
+  .tab{padding:8px 16px;border-radius:100px;font-size:.85rem;font-weight:700;background:var(--surface-sunken);color:var(--text-secondary);cursor:pointer;white-space:nowrap;}
+  .tab.active{background:var(--accent);color:#04252b;}
+  .empty-note{color:var(--text-muted);font-size:.9rem;text-align:center;padding:30px;}
+  .modal-bg{position:fixed;inset:0;background:rgba(8,20,26,.55);display:none;align-items:flex-end;justify-content:center;z-index:50;}
+  .modal-bg.show{display:flex;}
+  .modal{background:var(--surface-card);border-radius:20px 20px 0 0;padding:22px;width:100%;max-width:520px;max-height:88vh;overflow:auto;}
+  @media(min-width:560px){ .modal-bg{align-items:center;} .modal{border-radius:20px;} }
+  .field{margin-bottom:14px;}
+  .field label{display:block;font-size:.85rem;font-weight:700;margin-bottom:7px;}
+  input,textarea{width:100%;padding:12px 14px;border-radius:12px;border:1px solid var(--border);background:var(--surface-sunken);color:var(--text-primary);font-family:'Tajawal';font-size:.95rem;}
+  .file-drop{border:1.5px dashed var(--border);border-radius:12px;padding:16px;text-align:center;background:var(--surface-sunken);cursor:pointer;font-size:.85rem;color:var(--text-secondary);}
+  .file-drop input{display:none;}
+  .file-drop.has-file{border-color:var(--accent);color:var(--text-primary);}
+  .msg{font-size:.82rem;color:var(--danger);margin-top:8px;display:none;}
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="brand"><span class="mark">7G</span><span id="techNameTop">بوابة الفنيين</span></div>
+    <button class="btn btn-ghost" id="logoutBtn">خروج</button>
+  </div>
+  <div class="wrap">
+    <div class="tabs">
+      <div class="tab active" data-f="active">الحالية</div>
+      <div class="tab" data-f="done">المكتملة</div>
+      <div class="tab" data-f="all">الكل</div>
+    </div>
+    <div id="ordersList"><div class="empty-note">جارِ التحميل…</div></div>
+  </div>
+
+  <div class="modal-bg" id="completeModal">
+    <div class="modal">
+      <h3 style="margin:0 0 6px;">إنهاء الطلب ورفع الفاتورة</h3>
+      <p style="color:var(--text-secondary);font-size:.85rem;margin:0 0 16px;">بعد ما العميل يمضي على الفاتورة ويدفع، صوّرها وارفعها هنا.</p>
+      <div class="field"><label>صورة الفاتورة الموقعة</label>
+        <label class="file-drop" id="invoiceDrop"><input type="file" id="invoicePhoto" accept="image/*" capture="environment"><span id="invoiceDropText">اضغط لالتقاط أو اختيار صورة الفاتورة</span></label>
+      </div>
+      <div class="field"><label>المبلغ المحصّل (جنيه)</label><input type="number" id="invoiceAmount" min="0" step="1"></div>
+      <div class="msg" id="completeMsg"></div>
+      <div style="display:flex;gap:10px;margin-top:6px;">
+        <button class="btn btn-ghost btn-block" id="cancelCompleteBtn">إلغاء</button>
+        <button class="btn btn-primary btn-block" id="confirmCompleteBtn">تأكيد الإنهاء</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+(function(){
+  var currentOrders = [];
+  var activeFilter = 'active';
+  var completingId = null;
+
+  fetch('/api/tech/me').then(function(r){return r.json();}).then(function(data){
+    if (!data.authenticated){ location.href = '/tech/login'; return; }
+    document.getElementById('techNameTop').textContent = data.technician.name;
+    loadOrders();
+  }).catch(function(){ location.href = '/tech/login'; });
+
+  document.getElementById('logoutBtn').addEventListener('click', function(){
+    fetch('/api/tech/logout', {method:'POST'}).then(function(){ location.href = '/tech/login'; });
+  });
+
+  Array.prototype.forEach.call(document.querySelectorAll('.tab'), function(tab){
+    tab.addEventListener('click', function(){
+      Array.prototype.forEach.call(document.querySelectorAll('.tab'), function(t){ t.classList.remove('active'); });
+      tab.classList.add('active');
+      activeFilter = tab.getAttribute('data-f');
+      render();
+    });
+  });
+
+  function loadOrders(){
+    fetch('/api/tech/orders').then(function(r){ return r.json(); }).then(function(data){
+      currentOrders = data.orders || [];
+      render();
+    }).catch(function(){
+      document.getElementById('ordersList').innerHTML = '<div class="empty-note">تعذّر تحميل الطلبات.</div>';
+    });
+  }
+
+  function render(){
+    var list = document.getElementById('ordersList');
+    var filtered = currentOrders.filter(function(o){
+      if (activeFilter === 'active') return o.status === 'تمت الموافقة' || o.status === 'جاري التنفيذ';
+      if (activeFilter === 'done') return o.status === 'مكتمل';
+      return true;
+    });
+    if (filtered.length === 0){
+      list.innerHTML = '<div class="empty-note">مفيش طلبات هنا دلوقتي.</div>';
+      return;
+    }
+    list.innerHTML = filtered.map(function(o){
+      var photo = o.photo_data ? '<img class="photo-thumb" src="'+o.photo_data+'" alt="صورة المشكلة">' : '';
+      var loc = o.location_url ? '<a href="'+o.location_url+'" target="_blank" rel="noopener" style="color:var(--accent-strong);font-weight:700;font-size:.85rem;">📍 عرض الموقع على الخريطة</a>' : '';
+      var actions = '';
+      if (o.status === 'تمت الموافقة'){
+        actions = '<button class="btn btn-primary btn-block start-btn" data-id="'+o.id+'" style="margin-top:10px;">▶ بدء التنفيذ</button>';
+      } else if (o.status === 'جاري التنفيذ'){
+        actions = '<button class="btn btn-primary btn-block complete-btn" data-id="'+o.id+'" style="margin-top:10px;">✔ إنهاء الطلب ورفع الفاتورة</button>';
+      } else if (o.status === 'مكتمل'){
+        actions = '<div class="meta-line" style="margin-top:10px;color:var(--accent-strong);font-weight:700;">✔ تم — الفاتورة: '+(o.invoice_amount?Number(o.invoice_amount).toLocaleString('ar-EG')+' جنيه':'—')+'</div>';
+      }
+      return '<div class="card">' +
+        '<div class="order-head"><h3>'+o.device+' — '+o.service+'</h3><span class="status-pill">'+o.status+'</span></div>' +
+        '<div class="meta-line">👤 '+o.name+' — <a href="tel:'+o.phone+'" style="color:var(--accent-strong);font-weight:700;">'+o.phone+'</a></div>' +
+        (o.address ? '<div class="meta-line">🏠 '+o.address+'</div>' : '') +
+        (loc ? '<div class="meta-line">'+loc+'</div>' : '') +
+        '<div class="desc-box">'+o.description+'</div>' +
+        photo + actions +
+      '</div>';
+    }).join('');
+
+    Array.prototype.forEach.call(list.querySelectorAll('.start-btn'), function(btn){
+      btn.addEventListener('click', function(){
+        btn.disabled = true; btn.textContent = 'جارِ التحديث…';
+        fetch('/api/tech/orders/' + btn.getAttribute('data-id') + '/start', {method:'PATCH'})
+          .then(function(r){ if(!r.ok) throw new Error(); return r.json(); })
+          .then(function(){ loadOrders(); })
+          .catch(function(){ btn.disabled = false; btn.textContent = '▶ بدء التنفيذ'; });
+      });
+    });
+    Array.prototype.forEach.call(list.querySelectorAll('.complete-btn'), function(btn){
+      btn.addEventListener('click', function(){ openCompleteModal(btn.getAttribute('data-id')); });
+    });
+  }
+
+  var invoiceFile = null;
+  var invoiceDrop = document.getElementById('invoiceDrop');
+  var invoiceDropText = document.getElementById('invoiceDropText');
+  document.getElementById('invoicePhoto').addEventListener('change', function(e){
+    invoiceFile = e.target.files && e.target.files[0] ? e.target.files[0] : null;
+    if (invoiceFile){ invoiceDrop.classList.add('has-file'); invoiceDropText.textContent = 'تم اختيار: ' + invoiceFile.name; }
+    else { invoiceDrop.classList.remove('has-file'); invoiceDropText.textContent = 'اضغط لالتقاط أو اختيار صورة الفاتورة'; }
+  });
+
+  function openCompleteModal(id){
+    completingId = id;
+    invoiceFile = null;
+    invoiceDrop.classList.remove('has-file');
+    invoiceDropText.textContent = 'اضغط لالتقاط أو اختيار صورة الفاتورة';
+    document.getElementById('invoiceAmount').value = '';
+    document.getElementById('completeMsg').style.display = 'none';
+    document.getElementById('completeModal').classList.add('show');
+  }
+  document.getElementById('cancelCompleteBtn').addEventListener('click', function(){
+    document.getElementById('completeModal').classList.remove('show');
+  });
+
+  function resizeImage(file, maxDim, quality){
+    return new Promise(function(resolve, reject){
+      var img = new Image();
+      var reader = new FileReader();
+      reader.onload = function(e){ img.src = e.target.result; };
+      reader.onerror = reject;
+      img.onload = function(){
+        var w = img.width, h = img.height;
+        if(w > h && w > maxDim){ h = Math.round(h * maxDim / w); w = maxDim; }
+        else if(h >= w && h > maxDim){ w = Math.round(w * maxDim / h); h = maxDim; }
+        var canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+        resolve(canvas.toDataURL('image/jpeg', quality));
+      };
+      img.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+
+  document.getElementById('confirmCompleteBtn').addEventListener('click', function(){
+    var msg = document.getElementById('completeMsg');
+    var amount = Number(document.getElementById('invoiceAmount').value);
+    if (!invoiceFile){ msg.textContent = 'ارفع صورة الفاتورة الأول.'; msg.style.display='block'; return; }
+    if (!Number.isFinite(amount) || amount < 0){ msg.textContent = 'اكتب مبلغ صحيح.'; msg.style.display='block'; return; }
+    var btn = document.getElementById('confirmCompleteBtn');
+    btn.disabled = true; btn.textContent = 'جارِ الرفع…';
+    resizeImage(invoiceFile, 1400, 0.75).then(function(photoData){
+      return fetch('/api/tech/orders/' + completingId + '/complete', {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ invoicePhoto: photoData, invoiceAmount: amount })
+      });
+    }).then(function(r){ if(!r.ok) throw new Error(); return r.json(); })
+      .then(function(){
+        document.getElementById('completeModal').classList.remove('show');
+        loadOrders();
+      }).catch(function(){
+        msg.textContent = 'حصل خطأ أثناء الرفع، جرّب تاني.'; msg.style.display='block';
+      }).finally(function(){
+        btn.disabled = false; btn.textContent = 'تأكيد الإنهاء';
+      });
+  });
+})();
+</script>
+</body>
+</html>
