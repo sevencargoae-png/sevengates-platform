@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>دخول الفنيين — SEVENGATES</title>
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;800&family=Tajawal:wght@400;500;700&display=swap">
+<style>
+  :root{ --surface:#f7fbfb; --surface-card:#ffffff; --surface-sunken:#eef6f7; --text-primary:#0b2027; --text-secondary:#48626a;
+    --accent:#0ea5b7; --accent-strong:#077a88; --border:rgba(11,32,39,0.10); --shadow:0 18px 40px -22px rgba(6,40,48,0.35); color-scheme:light; }
+  @media (prefers-color-scheme: dark){ :root{ --surface:#0a1417; --surface-card:#101e22; --surface-sunken:#0d1a1e; --text-primary:#f2fafb; --text-secondary:#a9c3c8; --accent:#29c7da; --accent-strong:#63e0ee; --border:rgba(255,255,255,0.12); color-scheme:dark; } }
+  *{box-sizing:border-box;} html,body{margin:0;height:100%;}
+  body{background:var(--surface);color:var(--text-primary);font-family:'Tajawal',system-ui,sans-serif;display:flex;align-items:center;justify-content:center;padding:20px;}
+  .card{background:var(--surface-card);border:1px solid var(--border);border-radius:20px;box-shadow:var(--shadow);padding:32px;width:100%;max-width:380px;}
+  .mark{width:46px;height:46px;border-radius:13px;background:linear-gradient(155deg,var(--accent),var(--accent-strong));display:flex;align-items:center;justify-content:center;color:#04252b;font-weight:800;font-family:'Cairo';margin-bottom:16px;}
+  h1{font-family:'Cairo';font-size:1.2rem;margin:0 0 6px;}
+  p{color:var(--text-secondary);font-size:.86rem;margin:0 0 22px;}
+  label{display:block;font-size:.84rem;font-weight:700;margin-bottom:8px;}
+  input{width:100%;padding:12px 14px;border-radius:12px;border:1px solid var(--border);background:var(--surface-sunken);color:var(--text-primary);font-family:'Tajawal';font-size:.95rem;margin-bottom:14px;}
+  input:focus{outline:2px solid var(--accent);outline-offset:1px;}
+  button{width:100%;padding:13px;border-radius:100px;border:none;font-weight:700;font-size:.92rem;cursor:pointer;background:linear-gradient(155deg,var(--accent),var(--accent-strong));color:#04252b;}
+  button[disabled]{opacity:.6;cursor:not-allowed;}
+  .err{color:#c94040;font-size:.82rem;margin-top:-6px;margin-bottom:12px;display:none;}
+</style>
+</head>
+<body>
+  <form class="card" id="loginForm">
+    <div class="mark">7G</div>
+    <h1>دخول بوابة الفنيين</h1>
+    <p>الصفحة دي لفنيي SEVENGATES فقط. سجّل دخولك بالتليفون وكلمة المرور اللي أعطتك إياها الإدارة.</p>
+    <label for="phone">رقم الهاتف</label>
+    <input type="tel" id="phone" autofocus inputmode="numeric">
+    <label for="password">كلمة المرور</label>
+    <input type="password" id="password">
+    <div class="err" id="loginErr">رقم الهاتف أو كلمة المرور غير صحيحة</div>
+    <button type="submit" id="loginBtn">دخول</button>
+  </form>
+<script>
+  document.getElementById('loginForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    var btn = document.getElementById('loginBtn');
+    var err = document.getElementById('loginErr');
+    err.style.display = 'none';
+    btn.disabled = true; btn.textContent = 'جارِ الدخول…';
+    fetch('/api/tech/login', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ phone: document.getElementById('phone').value, password: document.getElementById('password').value })
+    }).then(function(res){
+      if(!res.ok) throw new Error('bad');
+      window.location.href = '/tech';
+    }).catch(function(){
+      err.style.display = 'block';
+      btn.disabled = false; btn.textContent = 'دخول';
+    });
+  });
+</script>
+</body>
+</html>
