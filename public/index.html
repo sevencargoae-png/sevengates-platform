@@ -5,74 +5,94 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>SEVENGATES للصيانة العامة والمقاولات — صيانة تكييفات وأجهزة كهربائية</title>
 <meta name="description" content="SEVENGATES لصيانة التكييفات والأجهزة الكهربائية: تصليح، صيانة دورية، تجديد وإحلال. اطلب الصيانة أونلاين وفريقنا يتواصل معاك فورًا.">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;700;800&family=Tajawal:wght@400;500;700&display=swap">
+<meta name="robots" content="index, follow">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;700;800;900&family=Tajawal:wght@400;500;700&display=swap">
 <style>
   :root{
-    --surface: #f7fbfb; --surface-card: #ffffff; --surface-sunken: #eef6f7;
-    --text-primary: #0b2027; --text-secondary: #48626a; --text-muted: #83999e;
-    --accent: #0ea5b7; --accent-strong: #077a88; --accent-tint: #e2f6f8;
-    --border: rgba(11,32,39,0.10); --shadow: 0 18px 40px -22px rgba(6,40,48,0.35);
-    --good:#0ca30c; --warn:#b9790b; --radius: 18px; color-scheme: light;
+    --navy:#081C30; --navy-2:#0E2A45; --surface:#F5F8FA; --surface-card:#ffffff; --surface-sunken:#EEF3F6;
+    --text-primary:#0B2027; --text-secondary:#4C6470; --text-muted:#8598A1;
+    --accent:#12B5A6; --accent-strong:#0A8F84; --accent-tint:#E3F7F4;
+    --gold:#F2A93C; --gold-tint:#FDF1DF;
+    --border:rgba(11,32,39,0.10); --shadow:0 20px 44px -24px rgba(6,25,40,0.35);
+    --danger:#C94040; --radius:18px; color-scheme: light;
   }
   @media (prefers-color-scheme: dark){
     :root:not([data-theme="light"]){
-      --surface:#0a1417; --surface-card:#101e22; --surface-sunken:#0d1a1e;
-      --text-primary:#f2fafb; --text-secondary:#a9c3c8; --text-muted:#6f8c91;
-      --accent:#29c7da; --accent-strong:#63e0ee; --accent-tint:#12333a;
-      --border:rgba(255,255,255,0.12); --shadow:0 18px 40px -20px rgba(0,0,0,0.6); color-scheme:dark;
+      --surface:#08141A; --surface-card:#0F1F24; --surface-sunken:#0C1A1F;
+      --text-primary:#F1FAFB; --text-secondary:#A9C3C8; --text-muted:#6F8C91;
+      --accent:#2FD1C0; --accent-strong:#6BE3D6; --accent-tint:#0F2E2C;
+      --gold:#F5C374; --gold-tint:#2C2416;
+      --border:rgba(255,255,255,0.12); --shadow:0 20px 44px -20px rgba(0,0,0,0.6); color-scheme:dark;
     }
   }
   *{box-sizing:border-box;}
-  html,body{margin:0;}
-  body{background:var(--surface);color:var(--text-primary);font-family:'Tajawal',system-ui,sans-serif;line-height:1.6;}
+  html,body{margin:0;scroll-behavior:smooth;}
+  body{background:var(--surface);color:var(--text-primary);font-family:'Tajawal',system-ui,sans-serif;line-height:1.65;}
   h1,h2,h3{font-family:'Cairo',system-ui,sans-serif;text-wrap:balance;}
-  .wrap{max-width:1080px;margin:0 auto;padding-inline:20px;}
+  .wrap{max-width:1120px;margin:0 auto;padding-inline:20px;}
   a{color:inherit;}
-  .topbar{position:sticky;top:0;z-index:30;background:color-mix(in srgb, var(--surface) 88%, transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);}
-  .topbar-row{display:flex;align-items:center;justify-content:space-between;padding-block:14px;gap:12px;max-width:1080px;margin:0 auto;padding-inline:20px;}
+  img{max-width:100%;display:block;}
+  .topbar{position:sticky;top:0;z-index:40;background:color-mix(in srgb, var(--surface) 86%, transparent);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);}
+  .topbar-row{display:flex;align-items:center;justify-content:space-between;padding-block:14px;gap:12px;max-width:1120px;margin:0 auto;padding-inline:20px;}
   .brand{display:flex;align-items:center;gap:10px;font-family:'Cairo';font-weight:800;font-size:1.15rem;}
-  .brand .mark{width:38px;height:38px;border-radius:11px;background:linear-gradient(155deg,var(--accent),var(--accent-strong));display:flex;align-items:center;justify-content:center;color:#04252b;font-weight:800;box-shadow:0 6px 16px -6px rgba(14,165,183,.6);}
-  .brand small{display:block;font-family:'Tajawal';font-weight:500;font-size:.68rem;color:var(--text-secondary);margin-top:1px;}
-  .btn{display:inline-flex;align-items:center;gap:8px;justify-content:center;padding:11px 20px;border-radius:100px;font-weight:700;font-size:.92rem;border:1px solid transparent;cursor:pointer;text-decoration:none;transition:transform .15s,box-shadow .15s;}
+  .brand .mark{width:40px;height:40px;border-radius:12px;background:linear-gradient(155deg,var(--accent),var(--accent-strong));display:flex;align-items:center;justify-content:center;color:#04252b;font-weight:900;box-shadow:0 8px 18px -8px rgba(18,181,166,.65);}
+  .brand small{display:block;font-family:'Tajawal';font-weight:500;font-size:.66rem;color:var(--text-secondary);margin-top:1px;}
+  .nav-links{display:none;gap:22px;font-size:.9rem;font-weight:700;}
+  @media(min-width:840px){.nav-links{display:flex;}}
+  .nav-links a{color:var(--text-secondary);text-decoration:none;}
+  .nav-links a:hover{color:var(--accent-strong);}
+  .topbar-actions{display:flex;gap:8px;}
+  .btn{display:inline-flex;align-items:center;gap:8px;justify-content:center;padding:11px 20px;border-radius:100px;font-weight:700;font-size:.9rem;border:1px solid transparent;cursor:pointer;text-decoration:none;transition:transform .15s,box-shadow .15s;white-space:nowrap;}
   .btn:active{transform:scale(.97);}
-  .btn-primary{background:linear-gradient(155deg,var(--accent),var(--accent-strong));color:#04252b;box-shadow:0 10px 24px -10px rgba(14,165,183,.65);}
+  .btn-primary{background:linear-gradient(155deg,var(--accent),var(--accent-strong));color:#04252b;box-shadow:0 10px 24px -10px rgba(18,181,166,.65);}
   .btn-ghost{background:transparent;border-color:var(--border);color:var(--text-primary);}
   .btn-ghost:hover{background:var(--surface-sunken);}
-  .btn-block{width:100%;} .btn-lg{padding:15px 26px;font-size:1rem;}
+  .btn-block{width:100%;} .btn-lg{padding:15px 26px;font-size:1rem;} .btn-sm{padding:8px 14px;font-size:.8rem;}
   .btn[disabled]{opacity:.55;cursor:not-allowed;}
-  .hero{padding-block:56px 40px;}
-  .eyebrow{display:inline-flex;align-items:center;gap:8px;background:var(--accent-tint);color:var(--accent-strong);padding:6px 14px;border-radius:100px;font-weight:700;font-size:.78rem;margin-bottom:18px;}
-  .eyebrow::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--accent-strong);}
-  .hero h1{font-size:clamp(1.9rem,4.4vw,3.1rem);font-weight:800;line-height:1.22;margin:0 0 16px;max-width:16ch;}
-  .hero h1 em{font-style:normal;color:var(--accent-strong);}
-  .hero p.lead{font-size:1.08rem;color:var(--text-secondary);max-width:52ch;margin:0 0 28px;}
-  .hero-actions{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:34px;}
-  .hero-stats{display:flex;flex-wrap:wrap;gap:28px;padding-top:22px;border-top:1px solid var(--border);}
-  .hero-stat b{display:block;font-family:'Cairo';font-size:1.5rem;font-weight:800;}
-  .hero-stat span{font-size:.82rem;color:var(--text-muted);}
-  section{padding-block:44px;}
-  .section-head{max-width:56ch;margin-bottom:30px;}
+
+  .hero{position:relative;background:radial-gradient(1100px 480px at 15% -10%, #123554 0%, var(--navy) 55%),linear-gradient(180deg,var(--navy),var(--navy-2));color:#F3F9FA;padding-block:64px 90px;overflow:hidden;}
+  .hero::after{content:"";position:absolute;inset:0;background:radial-gradient(420px 220px at 92% 18%, rgba(18,181,166,.28), transparent 70%);pointer-events:none;}
+  .hero-inner{position:relative;}
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;background:rgba(18,181,166,.16);color:#7CE7DB;border:1px solid rgba(124,231,219,.25);padding:6px 14px;border-radius:100px;font-weight:700;font-size:.78rem;margin-bottom:20px;}
+  .eyebrow::before{content:"";width:7px;height:7px;border-radius:50%;background:#7CE7DB;}
+  .hero h1{font-size:clamp(2rem,4.6vw,3.3rem);font-weight:900;line-height:1.22;margin:0 0 18px;max-width:17ch;color:#fff;}
+  .hero h1 em{font-style:normal;color:#4FE0CE;}
+  .hero p.lead{font-size:1.08rem;color:#C6D9DF;max-width:54ch;margin:0 0 30px;}
+  .hero-actions{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:38px;}
+  .hero-stats{display:flex;flex-wrap:wrap;gap:30px;padding-top:24px;border-top:1px solid rgba(255,255,255,.14);}
+  .hero-stat b{display:block;font-family:'Cairo';font-size:1.55rem;font-weight:900;color:#fff;}
+  .hero-stat span{font-size:.82rem;color:#9FB7BF;}
+
+  section{padding-block:52px;}
+  .section-head{max-width:58ch;margin-bottom:32px;}
+  .section-head.center{margin-inline:auto;text-align:center;}
   .section-head .tag{color:var(--accent-strong);font-weight:700;font-size:.82rem;margin-bottom:8px;display:block;}
-  .section-head h2{font-size:clamp(1.4rem,2.6vw,2rem);margin:0 0 10px;}
+  .section-head h2{font-size:clamp(1.5rem,2.8vw,2.1rem);margin:0 0 10px;}
   .section-head p{color:var(--text-secondary);margin:0;}
   .grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));}
   .card{background:var(--surface-card);border:1px solid var(--border);border-radius:var(--radius);padding:22px;box-shadow:var(--shadow);}
-  .service-card .ic{width:46px;height:46px;border-radius:13px;background:var(--accent-tint);display:flex;align-items:center;justify-content:center;font-size:1.35rem;margin-bottom:14px;}
+  .service-card{cursor:pointer;transition:transform .18s,box-shadow .18s;}
+  .service-card:hover{transform:translateY(-4px);box-shadow:0 26px 50px -22px rgba(6,25,40,0.4);}
+  .service-card .ic{width:48px;height:48px;border-radius:14px;background:var(--accent-tint);display:flex;align-items:center;justify-content:center;font-size:1.4rem;margin-bottom:14px;}
   .service-card h3{font-size:1.05rem;margin:0 0 6px;}
-  .service-card p{margin:0;color:var(--text-secondary);font-size:.9rem;}
+  .service-card p{margin:0;color:var(--text-secondary);font-size:.87rem;}
+  .service-card .badge{display:inline-flex;align-items:center;gap:6px;margin-top:12px;font-size:.72rem;font-weight:700;padding:4px 10px;border-radius:100px;background:var(--accent-tint);color:var(--accent-strong);}
+  .service-card .badge.off{background:var(--gold-tint);color:#a3711a;}
+
   .trust{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));background:var(--surface-card);border:1px solid var(--border);border-radius:var(--radius);padding:26px;box-shadow:var(--shadow);}
   .trust-item{display:flex;gap:12px;align-items:flex-start;}
-  .trust-item .n{font-family:'Cairo';font-weight:800;font-size:1.15rem;color:var(--accent-strong);min-width:1.6em;}
+  .trust-item .n{font-family:'Cairo';font-weight:900;font-size:1.15rem;color:var(--accent-strong);min-width:1.6em;}
   .trust-item h4{margin:0 0 4px;font-size:.95rem;}
   .trust-item p{margin:0;font-size:.82rem;color:var(--text-secondary);}
+
   .order-panel{background:var(--surface-card);border:1px solid var(--border);border-radius:22px;box-shadow:var(--shadow);overflow:hidden;}
   .order-grid{display:grid;grid-template-columns:1fr;}
   @media(min-width:860px){.order-grid{grid-template-columns:0.85fr 1.15fr;}}
-  .order-aside{background:linear-gradient(165deg,var(--accent-strong),var(--accent));color:#04252b;padding:32px 28px;display:flex;flex-direction:column;gap:18px;}
-  .order-aside h3{margin:0;font-size:1.3rem;} .order-aside p{margin:0;opacity:.92;font-size:.9rem;}
+  .order-aside{background:linear-gradient(165deg,var(--navy-2),var(--navy));color:#EAF6F5;padding:34px 28px;display:flex;flex-direction:column;gap:18px;}
+  .order-aside h3{margin:0;font-size:1.3rem;color:#fff;} .order-aside p{margin:0;opacity:.9;font-size:.9rem;}
   .order-steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:14px;}
   .order-steps li{display:flex;gap:10px;font-size:.88rem;align-items:flex-start;}
-  .order-steps b{width:24px;height:24px;border-radius:50%;background:rgba(4,37,43,.16);display:flex;align-items:center;justify-content:center;font-size:.78rem;flex:none;}
+  .order-steps b{width:24px;height:24px;border-radius:50%;background:rgba(79,224,206,.22);color:#4FE0CE;display:flex;align-items:center;justify-content:center;font-size:.78rem;flex:none;}
   .order-form{padding:28px;}
   .field{margin-bottom:16px;}
   .field label{display:block;font-size:.85rem;font-weight:700;margin-bottom:7px;}
@@ -82,18 +102,34 @@
   .field textarea{min-height:96px;resize:vertical;}
   .row2{display:grid;gap:14px;grid-template-columns:1fr;}
   @media(min-width:520px){.row2{grid-template-columns:1fr 1fr;}}
+  .avail-note{display:none;align-items:center;gap:8px;font-size:.78rem;font-weight:700;padding:8px 12px;border-radius:10px;margin-top:8px;}
+  .avail-note.ok{display:flex;background:var(--accent-tint);color:var(--accent-strong);}
+  .avail-note.warn{display:flex;background:var(--gold-tint);color:#a3711a;}
   .file-drop{border:1.5px dashed var(--border);border-radius:12px;padding:16px;text-align:center;background:var(--surface-sunken);cursor:pointer;font-size:.85rem;color:var(--text-secondary);}
   .file-drop input{display:none;}
   .file-drop.has-file{border-color:var(--accent);color:var(--text-primary);}
   .pay-note{display:flex;flex-direction:column;gap:10px;background:var(--accent-tint);border-radius:12px;padding:12px 14px;font-size:.82rem;color:var(--text-primary);margin-bottom:18px;}
-  .err{color:#c94040;font-size:.78rem;margin-top:6px;display:none;}
-  .field.invalid input,.field.invalid select,.field.invalid textarea{border-color:#c94040;}
+  .err{color:var(--danger);font-size:.78rem;margin-top:6px;display:none;}
+  .field.invalid input,.field.invalid select,.field.invalid textarea{border-color:var(--danger);}
   .field.invalid .err{display:block;}
   .success{display:none;text-align:center;padding:40px 20px;}
   .success .ic{width:64px;height:64px;border-radius:50%;background:var(--accent-tint);color:var(--accent-strong);display:flex;align-items:center;justify-content:center;font-size:1.8rem;margin:0 auto 16px;}
-  .success h3{margin:0 0 8px;} .success p{color:var(--text-secondary);max-width:38ch;margin:0 auto 8px;}
-  .order-num{font-family:'Cairo';font-weight:800;color:var(--accent-strong);font-size:1.3rem;}
-  footer{border-top:1px solid var(--border);padding-block:34px 44px;margin-top:20px;}
+  .success.waiting .ic{background:var(--gold-tint);color:#a3711a;}
+  .success h3{margin:0 0 8px;} .success p{color:var(--text-secondary);max-width:40ch;margin:0 auto 8px;}
+  .track-code{display:inline-block;font-family:'Cairo';font-weight:900;color:var(--accent-strong);font-size:1.4rem;background:var(--accent-tint);padding:8px 18px;border-radius:12px;letter-spacing:2px;margin:10px 0;}
+  .success-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:14px;}
+
+  .reviews-summary{display:flex;align-items:center;gap:18px;flex-wrap:wrap;background:var(--surface-card);border:1px solid var(--border);border-radius:var(--radius);padding:22px 26px;box-shadow:var(--shadow);margin-bottom:22px;}
+  .reviews-summary .avg{font-family:'Cairo';font-weight:900;font-size:2.4rem;color:var(--gold);}
+  .stars{color:var(--gold);font-size:1.1rem;letter-spacing:2px;}
+  .review-card{display:flex;flex-direction:column;gap:8px;}
+  .review-card .rh{display:flex;justify-content:space-between;align-items:center;gap:10px;}
+  .review-card .who{font-weight:700;font-size:.92rem;}
+  .review-card .meta{font-size:.76rem;color:var(--text-muted);}
+  .review-card p{margin:0;color:var(--text-secondary);font-size:.9rem;}
+  .empty-note{color:var(--text-muted);font-size:.9rem;text-align:center;padding:20px;}
+
+  footer{border-top:1px solid var(--border);padding-block:36px 44px;margin-top:20px;background:var(--surface-card);}
   .foot-grid{display:grid;gap:24px;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));}
   .foot-col h4{font-size:.85rem;margin:0 0 12px;color:var(--text-muted);font-weight:700;}
   .foot-col p, .foot-col a{display:block;font-size:.9rem;margin-bottom:8px;text-decoration:none;}
@@ -106,25 +142,35 @@
   <div class="topbar">
     <div class="topbar-row">
       <div class="brand"><span class="mark">7G</span><span>SEVENGATES<small>للصيانة العامة والمقاولات</small></span></div>
-      <div style="display:flex;gap:8px;">
+      <nav class="nav-links">
+        <a href="#services">خدماتنا</a>
+        <a href="#reviews">آراء العملاء</a>
+        <a href="/track">تتبع الطلب</a>
+        <a href="#order">اطلب الصيانة</a>
+      </nav>
+      <div class="topbar-actions">
         <a class="btn btn-ghost" href="tel:+966553377985">☎ اتصل بنا</a>
         <a class="btn btn-primary" href="#order">🧰 اطلب الصيانة</a>
       </div>
     </div>
   </div>
 
-  <div class="wrap hero">
-    <span class="eyebrow">صيانة تكييفات وأجهزة كهربائية</span>
-    <h1>صيانة، تصليح، تجديد وإحلال <em>لكل أجهزتك الكهربائية</em> في مكانك</h1>
-    <p class="lead">سجّل طلبك أونلاين وهيوصل فورًا لفريقنا، وهنتواصل معاك لتأكيد الميعاد. الدفع كاش عند الزيارة بعد ما يوضحلك الفني السعر.</p>
-    <div class="hero-actions">
-      <a class="btn btn-primary btn-lg" href="#order">اطلب الصيانة الآن</a>
-      <a class="btn btn-ghost btn-lg" href="https://wa.me/966553377985" target="_blank" rel="noopener">تواصل واتساب</a>
-    </div>
-    <div class="hero-stats">
-      <div class="hero-stat"><b>+15</b><span>سنة خبرة فنية</span></div>
-      <div class="hero-stat"><b>كاش</b><span>الدفع عند الزيارة</span></div>
-      <div class="hero-stat"><b>ضمان</b><span>على كل صيانة بنعملها</span></div>
+  <div class="hero">
+    <div class="wrap hero-inner">
+      <span class="eyebrow">صيانة تكييفات وأجهزة كهربائية — منصة SEVENGATES</span>
+      <h1>صيانة، تصليح، تجديد وإحلال <em>لكل أجهزتك الكهربائية</em> في مكانك</h1>
+      <p class="lead">سجّل طلبك أونلاين وهيوصل فورًا لفريقنا، وهنعينلك فني متخصص ونبعتلك بياناته أول ما يتحدد. تقدر تتابع حالة طلبك لحظة بلحظة من رابط خاص بيك.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary btn-lg" href="#order">اطلب الصيانة الآن</a>
+        <a class="btn btn-ghost btn-lg" style="color:#fff;border-color:rgba(255,255,255,.28);" href="/track">تتبع طلب سابق</a>
+        <a class="btn btn-ghost btn-lg" style="color:#fff;border-color:rgba(255,255,255,.28);" href="https://wa.me/966553377985" target="_blank" rel="noopener">واتساب</a>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat"><b>+15</b><span>سنة خبرة فنية</span></div>
+        <div class="hero-stat"><b id="statRating">—</b><span>تقييم عملائنا</span></div>
+        <div class="hero-stat"><b>كاش</b><span>الدفع بعد الفاتورة</span></div>
+        <div class="hero-stat"><b>ضمان</b><span>على كل صيانة بنعملها</span></div>
+      </div>
     </div>
   </div>
 
@@ -134,20 +180,17 @@
       <h2>صيانة عامة لكل أنواع الأجهزة</h2>
       <p>من التكييفات لحد الأجهزة المنزلية، بنقدملك تصليح وصيانة دورية وتجديد وإحلال كامل لو الجهاز مش هيتصلح اقتصاديًا.</p>
     </div>
-    <div class="grid">
-      <div class="card service-card"><div class="ic">❄️</div><h3>تكييفات</h3><p>تركيب، صيانة دورية، تعبئة فريون، تنظيف، وإصلاح الأعطال بكل الأنواع.</p></div>
-      <div class="card service-card"><div class="ic">🧺</div><h3>غسالات وثلاجات</h3><p>تصليح الأعطال الكهربائية والميكانيكية لكل الماركات، وقطع غيار أصلية.</p></div>
-      <div class="card service-card"><div class="ic">🔥</div><h3>سخانات وأفران</h3><p>صيانة سخانات الغاز والكهرباء، والأفران والبوتاجازات بجميع أنواعها.</p></div>
-      <div class="card service-card"><div class="ic">🛠️</div><h3>صيانة عامة ومقاولات</h3><p>تصليح وتجديد وإحلال للأجهزة والتمديدات الكهربائية، وأعمال صيانة عامة بالمقاولة.</p></div>
+    <div class="grid" id="servicesGrid">
+      <div class="card service-card"><p style="color:var(--text-muted)">جارِ تحميل الخدمات…</p></div>
     </div>
   </section>
 
   <section class="wrap">
     <div class="trust">
-      <div class="trust-item"><span class="n">01</span><div><h4>الطلب يوصلنا فورًا</h4><p>فريقنا بيشوف طلبك في نفس اللحظة وبيتواصل معاك لتأكيد الميعاد.</p></div></div>
-      <div class="trust-item"><span class="n">02</span><div><h4>فني متخصص لكل جهاز</h4><p>فنيين مدربين على أحدث موديلات التكييفات والأجهزة الكهربائية.</p></div></div>
-      <div class="trust-item"><span class="n">03</span><div><h4>سجل عملاء دائم</h4><p>بنحتفظ بسجل صيانة لكل عميل، فمش هتكرر شرح المشكلة من الأول تاني.</p></div></div>
-      <div class="trust-item"><span class="n">04</span><div><h4>دفع كاش وقت الزيارة</h4><p>تدفع بعد ما الفني يشوف المشكلة ويوضحلك السعر قبل التنفيذ.</p></div></div>
+      <div class="trust-item"><span class="n">01</span><div><h4>الطلب يوصلنا فورًا</h4><p>فريقنا بيشوف طلبك في نفس اللحظة وبيوافق عليه ويعينلك فني متخصص.</p></div></div>
+      <div class="trust-item"><span class="n">02</span><div><h4>تعرف اسم ورقم الفني</h4><p>أول ما يتعين فني لطلبك، هتشوف اسمه ورقمه فورًا من صفحة تتبع الطلب.</p></div></div>
+      <div class="trust-item"><span class="n">03</span><div><h4>فاتورة موثقة لكل طلب</h4><p>بعد التنفيذ والدفع، الفني بيرفع صورة الفاتورة على المنصة وتظهر ليك.</p></div></div>
+      <div class="trust-item"><span class="n">04</span><div><h4>تقييم وشكاوى شفافة</h4><p>تقدر تقيّم الخدمة أو تقدّم شكوى لو الفني ماعملش المطلوب — وتقييمات عملائنا ظاهرة للجميع.</p></div></div>
     </div>
   </section>
 
@@ -165,8 +208,8 @@
           <ul class="order-steps">
             <li><b>1</b><span>عبّي بياناتك ونوع المشكلة تحت.</span></li>
             <li><b>2</b><span>حدد موقعك تلقائيًا (اختياري) وارفق صورة المشكلة.</span></li>
-            <li><b>3</b><span>دوس "إرسال الطلب" — هيوصل فورًا لفريقنا.</span></li>
-            <li><b>4</b><span>هنكلمك لتأكيد الميعاد، والدفع كاش وقت الزيارة.</span></li>
+            <li><b>3</b><span>دوس "إرسال الطلب" — هيوصل فورًا لفريقنا وهتاخد كود تتبع.</span></li>
+            <li><b>4</b><span>هنعينلك فني ونبعتلك بياناته، والدفع كاش بعد الفاتورة.</span></li>
           </ul>
         </div>
         <div>
@@ -176,11 +219,12 @@
             <div class="field" id="f-phone"><label for="phone">رقم الهاتف / واتساب</label><input type="tel" id="phone" placeholder="0553377985" inputmode="numeric"><div class="err">رقم الهاتف غير صحيح</div></div>
             <div class="row2">
               <div class="field" id="f-device"><label for="device">نوع الجهاز</label>
-                <select id="device"><option value="">اختر النوع</option><option>تكييف</option><option>ثلاجة</option><option>غسالة</option><option>سخان</option><option>فرن / بوتاجاز</option><option>تمديدات كهربائية</option><option>أخرى</option></select>
+                <select id="device"><option value="">اختر النوع</option></select>
                 <div class="err">اختر نوع الجهاز</div>
+                <div class="avail-note" id="availNote"></div>
               </div>
               <div class="field" id="f-service"><label for="service">نوع الخدمة</label>
-                <select id="service"><option value="">اختر الخدمة</option><option>تصليح عطل</option><option>صيانة دورية</option><option>تركيب</option><option>تجديد</option><option>إحلال (استبدال)</option></select>
+                <select id="service"><option value="">اختر الخدمة</option></select>
                 <div class="err">اختر نوع الخدمة</div>
               </div>
             </div>
@@ -193,22 +237,44 @@
             <div class="pay-note">
               <div style="display:flex;gap:10px;align-items:flex-start;"><span>📍</span><span><b>موقعك الحالي</b> — حدده تلقائيًا عشان يوصلنا مع الطلب فورًا.</span></div>
               <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
-                <button type="button" class="btn btn-ghost btn-sm" id="locBtn" style="padding:8px 14px;font-size:.8rem;">📍 استخدم موقعي الحالي</button>
+                <button type="button" class="btn btn-ghost btn-sm" id="locBtn">📍 استخدم موقعي الحالي</button>
                 <span id="locStatus" style="font-size:.78rem;color:var(--text-secondary);"></span>
               </div>
             </div>
-            <div class="pay-note"><span>💵</span><span>طريقة السداد المتاحة حاليًا: <b>كاش عند الزيارة</b> بعد ما الفني يوضحلك السعر.</span></div>
+            <div class="pay-note"><span>💵</span><span>طريقة السداد المتاحة حاليًا: <b>كاش</b> — بعد ما الفني يخلّص الشغل وترفعله توقيعك على الفاتورة.</span></div>
             <button type="submit" class="btn btn-primary btn-block btn-lg" id="submitBtn"><span>📨</span><span>إرسال الطلب</span></button>
           </form>
           <div class="success" id="successPanel">
-            <div class="ic">✓</div>
-            <h3>تم استلام طلبك</h3>
-            <p>رقم طلبك: <span class="order-num" id="orderNum">#0</span></p>
-            <p>وصل طلبك لفريقنا وهيتواصلوا معاك قريب لتأكيد الميعاد.</p>
-            <a class="btn btn-ghost" id="newRequestBtn" href="#order" style="margin-top:10px;">إرسال طلب تاني</a>
+            <div class="ic" id="successIc">✓</div>
+            <h3 id="successTitle">تم استلام طلبك</h3>
+            <p id="successMsg">وصل طلبك لفريقنا وهيتواصلوا معاك قريب لتأكيد الميعاد.</p>
+            <div class="track-code" id="trackCode">--------</div>
+            <p style="font-size:.78rem;">احتفظ بالكود ده لمتابعة حالة طلبك واسم الفني وفاتورتك من صفحة التتبع.</p>
+            <div class="success-actions">
+              <a class="btn btn-primary" id="trackLink" href="/track">تتبع طلبي</a>
+              <a class="btn btn-ghost" id="newRequestBtn" href="#order">إرسال طلب تاني</a>
+            </div>
           </div>
         </div>
       </div>
+    </div>
+  </section>
+
+  <section class="wrap" id="reviews">
+    <div class="section-head center">
+      <span class="tag">آراء العملاء</span>
+      <h2>عملاؤنا بيقولوا إيه عن خدمتنا</h2>
+      <p>تقييمات حقيقية من عملاء اتخدمت طلباتهم عن طريق المنصة.</p>
+    </div>
+    <div class="reviews-summary" id="reviewsSummary" style="display:none;">
+      <div class="avg" id="reviewsAvg">0.0</div>
+      <div>
+        <div class="stars" id="reviewsStars">★★★★★</div>
+        <div style="font-size:.82rem;color:var(--text-muted);" id="reviewsCount">0 تقييم</div>
+      </div>
+    </div>
+    <div class="grid" id="reviewsGrid">
+      <div class="empty-note">جارِ تحميل التقييمات…</div>
     </div>
   </section>
 
@@ -216,6 +282,7 @@
     <div class="foot-grid">
       <div class="foot-col"><h4>SEVENGATES</h4><p style="color:var(--text-secondary)">للصيانة العامة والمقاولات — تصليح، تجديد، إحلال لكل الأجهزة الكهربائية.</p></div>
       <div class="foot-col"><h4>تواصل معنا</h4><a href="tel:+966553377985">☎ 0553377985</a><a href="https://wa.me/966553377985" target="_blank" rel="noopener">💬 واتساب: 0553377985</a></div>
+      <div class="foot-col"><h4>روابط سريعة</h4><a href="#services">خدماتنا</a><a href="#reviews">آراء العملاء</a><a href="/track">تتبع طلب سابق</a></div>
       <div class="foot-col"><h4>مواعيد العمل</h4><p style="color:var(--text-secondary)">يوميًا من 9 صباحًا حتى 10 مساءً</p><p style="color:var(--text-secondary)">خدمة طوارئ متاحة حسب المنطقة</p></div>
     </div>
     <div class="copy">© SEVENGATES للصيانة العامة والمقاولات</div>
@@ -223,6 +290,90 @@
 
 <script>
 (function(){
+  var DEVICE_ICONS = [
+    [/تكييف/, '❄️'], [/ثلاج/, '🧊'], [/غسال/, '🧺'], [/سخان/, '🔥'], [/فرن|بوتاجاز/, '🍳'],
+    [/كهرب|تمديد/, '⚡'], [/مكيف/, '❄️']
+  ];
+  function iconFor(name){
+    for (var i=0;i<DEVICE_ICONS.length;i++){ if (DEVICE_ICONS[i][0].test(name)) return DEVICE_ICONS[i][1]; }
+    return '🛠️';
+  }
+
+  var deviceSelect = document.getElementById('device');
+  var serviceSelect = document.getElementById('service');
+  var servicesGrid = document.getElementById('servicesGrid');
+  var availNote = document.getElementById('availNote');
+  var catalogCache = { devices: [], serviceTypes: [] };
+
+  function loadCatalog(){
+    fetch('/api/catalog').then(function(r){ return r.json(); }).then(function(data){
+      catalogCache = data;
+      deviceSelect.innerHTML = '<option value="">اختر النوع</option>' + data.devices.map(function(d){ return '<option>'+d+'</option>'; }).join('');
+      serviceSelect.innerHTML = '<option value="">اختر الخدمة</option>' + data.serviceTypes.map(function(s){ return '<option>'+s+'</option>'; }).join('');
+      if (data.devices.length === 0){
+        servicesGrid.innerHTML = '<div class="empty-note">هنضيف الخدمات المتاحة قريبًا.</div>';
+        return;
+      }
+      servicesGrid.innerHTML = data.devices.map(function(d){
+        return '<div class="card service-card" data-device="'+d.replace(/"/g,'')+'"><div class="ic">'+iconFor(d)+'</div><h3>'+d+'</h3><p>تصليح، صيانة دورية، وتجديد أو إحلال حسب حالة الجهاز.</p></div>';
+      }).join('');
+      Array.prototype.forEach.call(servicesGrid.querySelectorAll('.service-card'), function(card){
+        card.addEventListener('click', function(){
+          deviceSelect.value = card.getAttribute('data-device');
+          deviceSelect.dispatchEvent(new Event('change'));
+          document.getElementById('order').scrollIntoView({behavior:'smooth'});
+        });
+      });
+    }).catch(function(){
+      servicesGrid.innerHTML = '<div class="empty-note">تعذّر تحميل الخدمات حاليًا.</div>';
+    });
+  }
+  loadCatalog();
+
+  deviceSelect.addEventListener('change', function(){
+    var device = deviceSelect.value;
+    availNote.className = 'avail-note';
+    if (!device){ return; }
+    fetch('/api/catalog/availability?device=' + encodeURIComponent(device)).then(function(r){ return r.json(); }).then(function(data){
+      if (data.available){
+        availNote.className = 'avail-note ok';
+        availNote.textContent = '✓ الخدمة متاحة الآن';
+      } else if (data.reason === 'disabled') {
+        availNote.className = 'avail-note warn';
+        availNote.textContent = 'الخدمة غير متاحة حاليًا — تقدر تسجل طلبك وهيتحط في قائمة الانتظار.';
+      } else {
+        availNote.className = 'avail-note warn';
+        availNote.textContent = 'لا يوجد فني متاح دلوقتي لهذا النوع — طلبك هيتسجل في قائمة الانتظار وهنتواصل معاك أول ما يتوفر فني.';
+      }
+    }).catch(function(){ availNote.className = 'avail-note'; });
+  });
+
+  function loadReviews(){
+    fetch('/api/reviews/public').then(function(r){ return r.json(); }).then(function(data){
+      var grid = document.getElementById('reviewsGrid');
+      if (data.average){
+        document.getElementById('reviewsSummary').style.display = 'flex';
+        document.getElementById('reviewsAvg').textContent = data.average.toFixed(1);
+        document.getElementById('reviewsStars').textContent = '★★★★★'.slice(0, Math.round(data.average)) + '☆☆☆☆☆'.slice(0, 5 - Math.round(data.average));
+        document.getElementById('reviewsCount').textContent = data.count + ' تقييم';
+        document.getElementById('statRating').textContent = data.average.toFixed(1) + ' / 5';
+      }
+      if (!data.reviews || data.reviews.length === 0){
+        grid.innerHTML = '<div class="empty-note">لسه مفيش تقييمات — كن أول من يقيّم خدمتنا بعد إتمام طلبك!</div>';
+        return;
+      }
+      grid.innerHTML = data.reviews.map(function(rv){
+        var stars = '★★★★★'.slice(0, rv.rating) + '☆☆☆☆☆'.slice(0, 5 - rv.rating);
+        var date = new Date(rv.createdAt).toLocaleDateString('ar-EG');
+        var text = rv.reviewText ? ('<p>"'+ rv.reviewText.replace(/</g,'') +'"</p>') : '';
+        return '<div class="card review-card"><div class="rh"><span class="who">'+rv.name+'</span><span class="stars">'+stars+'</span></div><div class="meta">'+rv.device+' · '+rv.service+' · '+date+'</div>'+text+'</div>';
+      }).join('');
+    }).catch(function(){
+      document.getElementById('reviewsGrid').innerHTML = '<div class="empty-note">تعذّر تحميل التقييمات حاليًا.</div>';
+    });
+  }
+  loadReviews();
+
   var form = document.getElementById('orderForm');
   var fileInput = document.getElementById('photo');
   var fileDrop = document.getElementById('fileDrop');
@@ -286,8 +437,8 @@
     submitErr.style.display = 'none';
     var name = document.getElementById('name').value.trim();
     var phone = document.getElementById('phone').value.trim();
-    var device = document.getElementById('device').value;
-    var service = document.getElementById('service').value;
+    var device = deviceSelect.value;
+    var service = serviceSelect.value;
     var desc = document.getElementById('desc').value.trim();
     var address = document.getElementById('address').value.trim();
     var phoneOk = /^0[0-9]{8,10}$/.test(phone.replace(/\s|-/g,''));
@@ -314,9 +465,22 @@
       if(!res.ok) throw new Error('bad_response');
       return res.json();
     }).then(function(data){
-      document.getElementById('orderNum').textContent = '#' + data.orderId;
+      var successPanel = document.getElementById('successPanel');
+      document.getElementById('trackCode').textContent = data.trackingToken;
+      document.getElementById('trackLink').href = '/track/' + data.trackingToken;
+      if (data.waitingList){
+        successPanel.classList.add('waiting');
+        document.getElementById('successIc').textContent = '⏳';
+        document.getElementById('successTitle').textContent = 'طلبك في قائمة الانتظار';
+        document.getElementById('successMsg').textContent = 'كل الفنيين مشغولين أو الخدمة دي مش متاحة دلوقتي — طلبك محفوظ وهنتواصل معاك أول ما يتوفر فني.';
+      } else {
+        successPanel.classList.remove('waiting');
+        document.getElementById('successIc').textContent = '✓';
+        document.getElementById('successTitle').textContent = 'تم استلام طلبك';
+        document.getElementById('successMsg').textContent = 'وصل طلبك لفريقنا وهيتواصلوا معاك قريب لتأكيد الميعاد.';
+      }
       form.style.display = 'none';
-      document.getElementById('successPanel').style.display = 'block';
+      successPanel.style.display = 'block';
     }).catch(function(){
       submitErr.style.display = 'block';
     }).finally(function(){
@@ -328,6 +492,7 @@
     form.reset();
     fileDrop.classList.remove('has-file');
     fileDropText.textContent = "اضغط لاختيار صورة توضح العطل";
+    availNote.className = 'avail-note';
     ['f-name','f-phone','f-device','f-service','f-desc'].forEach(function(id){ setInvalid(id,false); });
     document.getElementById('successPanel').style.display = 'none';
     form.style.display = 'block';
