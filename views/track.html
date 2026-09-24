@@ -1,0 +1,319 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>تتبع طلبك — SEVENGATES</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;800;900&family=Tajawal:wght@400;500;700&display=swap">
+<style>
+  :root{
+    --navy:#081C30; --surface:#F5F8FA; --surface-card:#ffffff; --surface-sunken:#EEF3F6;
+    --text-primary:#0B2027; --text-secondary:#4C6470; --text-muted:#8598A1;
+    --accent:#12B5A6; --accent-strong:#0A8F84; --accent-tint:#E3F7F4;
+    --gold:#F2A93C; --gold-tint:#FDF1DF; --danger:#C94040; --danger-tint:#FBEAEA;
+    --border:rgba(11,32,39,0.10); --shadow:0 20px 44px -24px rgba(6,25,40,0.35); --radius:16px;
+  }
+  *{box-sizing:border-box;} html,body{margin:0;}
+  body{background:var(--surface);color:var(--text-primary);font-family:'Tajawal',system-ui,sans-serif;line-height:1.65;}
+  h1,h2,h3{font-family:'Cairo',system-ui,sans-serif;}
+  .wrap{max-width:640px;margin:0 auto;padding:24px 18px 60px;}
+  a{color:inherit;}
+  .brand{display:flex;align-items:center;gap:10px;font-family:'Cairo';font-weight:800;font-size:1.1rem;margin-bottom:26px;text-decoration:none;color:var(--text-primary);}
+  .brand .mark{width:38px;height:38px;border-radius:11px;background:linear-gradient(155deg,var(--accent),var(--accent-strong));display:flex;align-items:center;justify-content:center;color:#04252b;font-weight:900;}
+  .card{background:var(--surface-card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;box-shadow:var(--shadow);margin-bottom:18px;}
+  h2{font-size:1.3rem;margin:0 0 14px;}
+  .field{margin-bottom:14px;}
+  .field label{display:block;font-size:.85rem;font-weight:700;margin-bottom:7px;}
+  input,textarea,select{width:100%;padding:12px 14px;border-radius:12px;border:1px solid var(--border);background:var(--surface-sunken);color:var(--text-primary);font-family:'Tajawal';font-size:.95rem;}
+  textarea{min-height:90px;resize:vertical;}
+  .btn{display:inline-flex;align-items:center;gap:8px;justify-content:center;padding:12px 20px;border-radius:100px;font-weight:700;font-size:.9rem;border:1px solid transparent;cursor:pointer;text-decoration:none;width:100%;}
+  .btn-primary{background:linear-gradient(155deg,var(--accent),var(--accent-strong));color:#04252b;}
+  .btn-ghost{background:transparent;border-color:var(--border);color:var(--text-primary);}
+  .btn[disabled]{opacity:.5;cursor:not-allowed;}
+  .msg{font-size:.85rem;margin-top:10px;color:var(--text-muted);}
+  .msg.err{color:var(--danger);}
+  .status-badge{display:inline-flex;align-items:center;gap:6px;font-weight:700;font-size:.85rem;padding:6px 14px;border-radius:100px;background:var(--accent-tint);color:var(--accent-strong);}
+  .status-badge.warn{background:var(--gold-tint);color:#a3711a;}
+  .status-badge.bad{background:var(--danger-tint);color:var(--danger);}
+  .steps{display:flex;justify-content:space-between;margin:22px 0 6px;position:relative;}
+  .steps::before{content:"";position:absolute;top:13px;right:5%;left:5%;height:2px;background:var(--border);z-index:0;}
+  .step{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:6px;flex:1;}
+  .step .dot{width:26px;height:26px;border-radius:50%;background:var(--surface-sunken);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:800;color:var(--text-muted);}
+  .step.done .dot{background:var(--accent);border-color:var(--accent);color:#04252b;}
+  .step span{font-size:.68rem;color:var(--text-muted);text-align:center;}
+  .step.done span{color:var(--text-primary);font-weight:700;}
+  .tech-box{display:flex;align-items:center;gap:14px;background:var(--accent-tint);border-radius:12px;padding:14px 16px;margin-top:14px;}
+  .tech-box .av{width:44px;height:44px;border-radius:50%;background:var(--accent-strong);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-family:'Cairo';flex:none;}
+  .tech-box b{display:block;font-size:.95rem;}
+  .tech-box a{color:var(--accent-strong);font-weight:700;font-size:.85rem;text-decoration:none;}
+  .invoice-img{width:100%;border-radius:12px;border:1px solid var(--border);margin-top:10px;cursor:zoom-in;}
+  .amount{font-family:'Cairo';font-weight:900;font-size:1.5rem;color:var(--accent-strong);}
+  .stars-input{display:flex;gap:6px;font-size:1.8rem;justify-content:center;margin:10px 0;direction:ltr;}
+  .stars-input span{cursor:pointer;color:#d8dfe2;}
+  .stars-input span.on{color:var(--gold);}
+  hr{border:none;border-top:1px solid var(--border);margin:18px 0;}
+  .order-list-item{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);font-size:.88rem;}
+  .order-list-item:last-child{border-bottom:none;}
+  .order-list-item a{color:var(--accent-strong);font-weight:700;text-decoration:none;}
+  .hidden{display:none !important;}
+  .note-ok{background:var(--accent-tint);color:var(--accent-strong);border-radius:10px;padding:10px 14px;font-size:.85rem;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="brand" href="/"><span class="mark">7G</span><span>SEVENGATES</span></a>
+
+  <div class="card" id="lookupCard">
+    <h2>تتبع طلبك</h2>
+    <div class="field"><label>كود التتبع</label><input type="text" id="tokenInput" placeholder="مثال: A1B2C3D4" style="text-transform:uppercase;"></div>
+    <button class="btn btn-primary" id="findBtn">عرض حالة الطلب</button>
+    <hr>
+    <div class="field"><label>أو ابحث برقم الهاتف اللي سجّلت بيه</label><input type="tel" id="phoneInput" placeholder="0553377985"></div>
+    <button class="btn btn-ghost" id="lookupPhoneBtn">بحث عن طلباتي</button>
+    <div id="lookupMsg" class="msg"></div>
+    <div id="phoneResults" style="margin-top:12px;"></div>
+  </div>
+
+  <div class="card hidden" id="orderCard">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap;">
+      <div>
+        <h2 style="margin-bottom:4px;">طلب <span id="oDevice"></span> — <span id="oService"></span></h2>
+        <div style="font-size:.8rem;color:var(--text-muted);">كود التتبع: <b id="oToken"></b></div>
+      </div>
+      <span class="status-badge" id="oStatusBadge"></span>
+    </div>
+
+    <div class="steps" id="steps"></div>
+    <p id="waitingNote" class="note-ok hidden" style="margin-top:6px;"></p>
+
+    <div id="techSection" class="hidden">
+      <div class="tech-box">
+        <div class="av" id="techAvatar">ف</div>
+        <div>
+          <b id="techName"></b>
+          <a id="techPhone" href="#">📞 اتصل بالفني</a>
+        </div>
+      </div>
+    </div>
+
+    <div id="invoiceSection" class="hidden">
+      <hr>
+      <h3 style="margin:0 0 8px;">الفاتورة</h3>
+      <div class="amount" id="invoiceAmount"></div>
+      <img class="invoice-img" id="invoiceImg" alt="صورة الفاتورة">
+    </div>
+
+    <div id="rateSection" class="hidden">
+      <hr>
+      <h3 style="margin:0 0 4px;">قيّم الخدمة</h3>
+      <div class="stars-input" id="starsInput">
+        <span data-v="1">★</span><span data-v="2">★</span><span data-v="3">★</span><span data-v="4">★</span><span data-v="5">★</span>
+      </div>
+      <div class="field"><textarea id="reviewText" placeholder="اكتب رأيك في الخدمة (اختياري)"></textarea></div>
+      <label style="display:flex;align-items:center;gap:8px;font-size:.82rem;margin-bottom:12px;"><input type="checkbox" id="reviewPublic" checked style="width:auto;"> اعرض تقييمي للعملاء الآخرين</label>
+      <button class="btn btn-primary" id="submitRateBtn">إرسال التقييم</button>
+      <div id="rateMsg" class="msg"></div>
+    </div>
+    <div id="ratedNote" class="note-ok hidden" style="margin-top:14px;">✓ شكرًا لتقييمك للخدمة</div>
+
+    <div id="complaintSection" class="hidden">
+      <hr>
+      <h3 style="margin:0 0 8px;">مش راضٍ عن الخدمة؟</h3>
+      <p style="font-size:.85rem;color:var(--text-secondary);margin:0 0 10px;">لو الفني ماعملش المطلوب أو في مشكلة، قدّم شكوى وهنتابعها فورًا.</p>
+      <div class="field"><textarea id="complaintText" placeholder="اكتب تفاصيل الشكوى..."></textarea></div>
+      <button class="btn btn-ghost" id="submitComplaintBtn">تقديم شكوى</button>
+      <div id="complaintMsg" class="msg"></div>
+    </div>
+    <div id="complaintStatusNote" class="note-ok hidden" style="margin-top:14px;"></div>
+
+    <button class="btn btn-ghost" id="backBtn" style="margin-top:18px;">🔍 تتبع طلب آخر</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  var STEP_ORDER = ['قيد المراجعة','تمت الموافقة','جاري التنفيذ','مكتمل'];
+  var lookupCard = document.getElementById('lookupCard');
+  var orderCard = document.getElementById('orderCard');
+  var tokenInput = document.getElementById('tokenInput');
+
+  var pathToken = (location.pathname.match(/^\/track\/([A-Za-z0-9]+)/) || [])[1];
+  if (pathToken){ tokenInput.value = pathToken.toUpperCase(); loadOrder(pathToken); }
+
+  document.getElementById('findBtn').addEventListener('click', function(){
+    var t = tokenInput.value.trim();
+    if (!t) return;
+    history.replaceState(null, '', '/track/' + t.toUpperCase());
+    loadOrder(t);
+  });
+
+  document.getElementById('lookupPhoneBtn').addEventListener('click', function(){
+    var phone = document.getElementById('phoneInput').value.trim();
+    var msg = document.getElementById('lookupMsg');
+    var results = document.getElementById('phoneResults');
+    msg.textContent = ''; msg.className = 'msg'; results.innerHTML = '';
+    if (!phone){ msg.textContent = 'اكتب رقم الهاتف اللي سجّلت بيه طلبك.'; msg.className = 'msg err'; return; }
+    fetch('/api/track/lookup', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({phone: phone}) })
+      .then(function(r){ return r.json(); }).then(function(data){
+        if (!data.orders || data.orders.length === 0){ msg.textContent = 'مفيش طلبات مسجلة بالرقم ده.'; msg.className = 'msg err'; return; }
+        results.innerHTML = data.orders.map(function(o){
+          var d = new Date(o.createdAt).toLocaleDateString('ar-EG');
+          return '<div class="order-list-item"><span>'+o.device+' · '+o.service+' · '+d+' — '+o.status+'</span><a href="/track/'+o.trackingToken+'">عرض</a></div>';
+        }).join('');
+      }).catch(function(){ msg.textContent = 'حصل خطأ، جرّب تاني.'; msg.className = 'msg err'; });
+  });
+
+  document.getElementById('backBtn').addEventListener('click', function(){
+    history.replaceState(null, '', '/track');
+    orderCard.classList.add('hidden');
+    lookupCard.classList.remove('hidden');
+  });
+
+  function statusBadgeClass(status){
+    if (status === 'مكتمل') return '';
+    if (status === 'مرفوض') return 'bad';
+    if (status === 'قائمة انتظار') return 'warn';
+    return '';
+  }
+
+  function renderSteps(order){
+    var stepsEl = document.getElementById('steps');
+    var waitingNote = document.getElementById('waitingNote');
+    if (order.status === 'قائمة انتظار'){
+      stepsEl.innerHTML = '';
+      waitingNote.className = 'note-ok';
+      waitingNote.style.background = 'var(--gold-tint)'; waitingNote.style.color = '#a3711a';
+      waitingNote.textContent = '⏳ طلبك في قائمة الانتظار حاليًا — هنتواصل معاك أول ما يتوفر فني مناسب.';
+      return;
+    }
+    if (order.status === 'مرفوض'){
+      stepsEl.innerHTML = '';
+      waitingNote.className = 'note-ok';
+      waitingNote.style.background = 'var(--danger-tint)'; waitingNote.style.color = 'var(--danger)';
+      waitingNote.textContent = '✕ تم رفض هذا الطلب — لأي استفسار تواصل معنا على واتساب.';
+      return;
+    }
+    waitingNote.className = 'hidden';
+    var currentIdx = STEP_ORDER.indexOf(order.status);
+    stepsEl.innerHTML = STEP_ORDER.map(function(s, i){
+      var done = i <= currentIdx;
+      return '<div class="step '+(done?'done':'')+'"><div class="dot">'+(done?'✓':(i+1))+'</div><span>'+s+'</span></div>';
+    }).join('');
+  }
+
+  function loadOrder(token){
+    orderCard.classList.remove('hidden');
+    lookupCard.classList.add('hidden');
+    fetch('/api/track/' + encodeURIComponent(token)).then(function(r){
+      if (!r.ok) throw new Error('not_found');
+      return r.json();
+    }).then(function(data){
+      renderOrder(data.order);
+    }).catch(function(){
+      orderCard.innerHTML = '<p>مفيش طلب بالكود ده. تأكد من الكود وجرّب تاني.</p><button class="btn btn-ghost" onclick="location.href=\'/track\'">رجوع</button>';
+    });
+  }
+
+  function renderOrder(order){
+    document.getElementById('oDevice').textContent = order.device;
+    document.getElementById('oService').textContent = order.service;
+    document.getElementById('oToken').textContent = order.trackingToken;
+    var badge = document.getElementById('oStatusBadge');
+    badge.textContent = order.status;
+    badge.className = 'status-badge ' + statusBadgeClass(order.status);
+
+    renderSteps(order);
+
+    var techSection = document.getElementById('techSection');
+    if (order.technicianName){
+      techSection.classList.remove('hidden');
+      document.getElementById('techAvatar').textContent = order.technicianName.trim()[0] || 'ف';
+      document.getElementById('techName').textContent = order.technicianName;
+      var phoneEl = document.getElementById('techPhone');
+      if (order.technicianPhone){
+        phoneEl.href = 'tel:' + order.technicianPhone;
+        phoneEl.textContent = '📞 ' + order.technicianPhone;
+      } else {
+        phoneEl.textContent = '';
+      }
+    } else {
+      techSection.classList.add('hidden');
+    }
+
+    var invoiceSection = document.getElementById('invoiceSection');
+    if (order.invoicePhoto){
+      invoiceSection.classList.remove('hidden');
+      document.getElementById('invoiceAmount').textContent = order.invoiceAmount ? (Number(order.invoiceAmount).toLocaleString('ar-EG') + ' جنيه') : '';
+      document.getElementById('invoiceImg').src = order.invoicePhoto;
+    } else {
+      invoiceSection.classList.add('hidden');
+    }
+
+    var rateSection = document.getElementById('rateSection');
+    var ratedNote = document.getElementById('ratedNote');
+    if (order.status === 'مكتمل' && order.rating === null){
+      rateSection.classList.remove('hidden');
+      ratedNote.classList.add('hidden');
+    } else if (order.rating !== null && order.rating !== undefined) {
+      rateSection.classList.add('hidden');
+      ratedNote.classList.remove('hidden');
+    } else {
+      rateSection.classList.add('hidden');
+      ratedNote.classList.add('hidden');
+    }
+
+    var complaintSection = document.getElementById('complaintSection');
+    var complaintStatusNote = document.getElementById('complaintStatusNote');
+    if (order.complaintText){
+      complaintSection.classList.add('hidden');
+      complaintStatusNote.classList.remove('hidden');
+      complaintStatusNote.textContent = 'شكواك متسجلة (الحالة: ' + (order.complaintStatus || 'جديدة') + ') — هنتابعها ونرد عليك.';
+    } else if (order.status !== 'قائمة انتظار') {
+      complaintSection.classList.remove('hidden');
+      complaintStatusNote.classList.add('hidden');
+    } else {
+      complaintSection.classList.add('hidden');
+      complaintStatusNote.classList.add('hidden');
+    }
+
+    var selectedStars = 0;
+    var starsInput = document.getElementById('starsInput');
+    Array.prototype.forEach.call(starsInput.children, function(star){
+      star.onclick = function(){
+        selectedStars = Number(star.getAttribute('data-v'));
+        Array.prototype.forEach.call(starsInput.children, function(s){
+          s.classList.toggle('on', Number(s.getAttribute('data-v')) <= selectedStars);
+        });
+      };
+    });
+
+    document.getElementById('submitRateBtn').onclick = function(){
+      var msg = document.getElementById('rateMsg');
+      if (!selectedStars){ msg.textContent = 'اختر عدد النجوم الأول.'; msg.className='msg err'; return; }
+      fetch('/api/track/' + order.trackingToken + '/rate', {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ rating: selectedStars, reviewText: document.getElementById('reviewText').value, reviewPublic: document.getElementById('reviewPublic').checked })
+      }).then(function(r){ if(!r.ok) throw new Error(); return r.json(); }).then(function(){
+        rateSection.classList.add('hidden');
+        ratedNote.classList.remove('hidden');
+      }).catch(function(){ msg.textContent = 'حصل خطأ، جرّب تاني.'; msg.className='msg err'; });
+    };
+
+    document.getElementById('submitComplaintBtn').onclick = function(){
+      var msg = document.getElementById('complaintMsg');
+      var text = document.getElementById('complaintText').value.trim();
+      if (!text){ msg.textContent = 'اكتب تفاصيل الشكوى.'; msg.className='msg err'; return; }
+      fetch('/api/track/' + order.trackingToken + '/complaint', {
+        method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ text: text })
+      }).then(function(r){ if(!r.ok) throw new Error(); return r.json(); }).then(function(){
+        complaintSection.classList.add('hidden');
+        complaintStatusNote.classList.remove('hidden');
+        complaintStatusNote.textContent = 'تم استلام شكواك وهنتابعها فورًا.';
+      }).catch(function(){ msg.textContent = 'حصل خطأ، جرّب تاني.'; msg.className='msg err'; });
+    };
+  }
+})();
+</script>
+</body>
+</html>
