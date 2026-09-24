@@ -1,8 +1,10 @@
 // SEVENGATES platform — Express + Postgres backend
-// Serves the public customer site, the staff dashboard, and the JSON API.
+// Serves the public customer site, the order-tracking page, the technician portal,
+// the staff/admin dashboard, and the JSON API behind all of them.
 
 const path = require('path');
 const fs = require('fs');
+const crypto = require('crypto');
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const jwt = require('jsonwebtoken');
@@ -11,7 +13,8 @@ const { Pool } = require('pg');
 const PORT = process.env.PORT || 3000;
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || '';
 const JWT_SECRET = process.env.JWT_SECRET || '';
-const COOKIE_NAME = 'sg_token';
+const STAFF_COOKIE = 'sg_token';
+const TECH_COOKIE = 'sg_tech_token';
 
 if (!process.env.DATABASE_URL) {
   console.error('DATABASE_URL is not set. Add the Postgres connection string as an environment variable.');
@@ -42,22 +45,7 @@ app.disable('x-powered-by');
 app.use(express.json({ limit: '10mb' }));
 app.use(cookieParser());
 
-// ---------- auth helpers ----------
-function signToken() {
-  return jwt.sign({ role: 'staff' }, JWT_SECRET || 'insecure-dev-secret', { expiresIn: '12h' });
-}
-function requireStaff(req, res, next) {
-  const token = req.cookies[COOKIE_NAME];
-  if (!token) return res.status(401).json({ error: 'unauthenticated' });
-  try {
-    jwt.verify(token, JWT_SECRET || 'insecure-dev-secret');
-    next();
-  } catch (e) {
-    res.status(401).json({ error: 'unauthenticated' });
-  }
-}
-
-// ---------- phone helper ----------
+// ---------- generic helpers ----------
 function normPhone(raw) {
   let d = String(raw || '').replace(/[^0-9]/g, '');
   if (d.startsWith('966') && d.length === 12) d = '0' + d.slice(3);
@@ -66,7 +54,132 @@ function normPhone(raw) {
   return d;
 }
 
-// ---------- public API ----------
+function hashPassword(password) {
+  const salt = crypto.randomBytes(16).toString('hex');
+  const hash = crypto.scryptSync(String(password), salt, 64).toString('hex');
+  return `${salt}:${hash}`;
+}
+function verifyPassword(password, stored) {
+  if (!stored || !stored.includes(':')) return false;
+  const [salt, hash] = stored.split(':');
+  try {
+    const hashBuffer = Buffer.from(hash, 'hex');
+    const suppliedBuffer = crypto.scryptSync(String(password), salt, 64);
+    if (hashBuffer.length !== suppliedBuffer.length) return false;
+    return crypto.timingSafeEqual(hashBuffer, suppliedBuffer);
+  } catch (e) {
+    return false;
+  }
+}
+function genTrackingToken() {
+  return crypto.randomBytes(4).toString('hex').toUpperCase();
+}
+
+function signToken(payload) {
+  return jwt.sign(payload, JWT_SECRET || 'insecure-dev-secret', { expiresIn: '12h' });
+}
+function verifyJwt(token) {
+  try {
+    return jwt.verify(token, JWT_SECRET || 'insecure-dev-secret');
+  } catch (e) {
+    return null;
+  }
+}
+function requireStaff(req, res, next) {
+  const payload = verifyJwt(req.cookies[STAFF_COOKIE]);
+  if (!payload || payload.role !== 'staff') return res.status(401).json({ error: 'unauthenticated' });
+  next();
+}
+async function requireTech(req, res, next) {
+  const payload = verifyJwt(req.cookies[TECH_COOKIE]);
+  if (!payload || payload.role !== 'tech') return res.status(401).json({ error: 'unauthenticated' });
+  try {
+    const { rows } = await pool.query('SELECT * FROM technicians WHERE id = $1 AND active = true', [payload.id]);
+    if (rows.length === 0) return res.status(401).json({ error: 'unauthenticated' });
+    req.technician = rows[0];
+    next();
+  } catch (e) {
+    res.status(500).json({ error: 'server_error' });
+  }
+}
+
+// Decide whether a device/service is currently offerable.
+// - if the admin explicitly disabled the catalog item -> unavailable (reason 'disabled')
+// - if technicians exist for that specialty but none are currently 'متاح' -> unavailable (reason 'no_technician')
+// - if no technician has ever been assigned that specialty (not configured yet) -> treat as available
+async function computeAvailability(device) {
+  const item = await pool.query(
+    "SELECT active FROM catalog_items WHERE category = 'device' AND name = $1",
+    [device]
+  );
+  if (item.rowCount > 0 && item.rows[0].active === false) {
+    return { available: false, reason: 'disabled' };
+  }
+  const total = await pool.query(
+    'SELECT COUNT(*)::int AS c FROM technicians WHERE active = true AND $1 = ANY(specialties)',
+    [device]
+  );
+  if (total.rows[0].c > 0) {
+    const free = await pool.query(
+    "SELECT COUNT(*)::int AS c FROM technicians WHERE active = true AND status = 'متاح' AND $1 = ANY(specialties)",
+      [device]
+    );
+    if (free.rows[0].c === 0) return { available: false, reason: 'no_technician' };
+  }
+  return { available: true, reason: '' };
+}
+
+function publicOrderView(o) {
+  return {
+    id: o.id,
+    trackingToken: o.tracking_token,
+    device: o.device,
+    service: o.service,
+    description: o.description,
+    status: o.status,
+    isWaitingList: o.is_waiting_list,
+    technicianName: o.assigned_to || '',
+    technicianPhone: o.technician_phone || '',
+    invoicePhoto: o.invoice_photo || null,
+    invoiceAmount: o.invoice_amount,
+    rating: o.rating,
+    reviewText: o.review_text,
+    complaintText: o.complaint_text,
+    complaintStatus: o.complaint_status,
+    createdAt: o.created_at,
+    completedAt: o.completed_at,
+  };
+}
+
+// ================= PUBLIC API =================
+
+app.get('/api/catalog', async (req, res) => {
+  try {
+    const { rows } = await pool.query(
+      "SELECT category, name, active FROM catalog_items ORDER BY category, sort_order, name"
+    );
+    res.json({
+      devices: rows.filter(r => r.category === 'device' && r.active).map(r => r.name),
+      serviceTypes: rows.filter(r => r.category === 'service_type' && r.active).map(r => r.name),
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'server_error' });
+  }
+});
+
+app.get('/api/catalog/availability', async (req, res) => {
+  try {
+    const device = String(req.query.device || '').trim();
+    if (!device) return res.status(400).json({ error: 'missing_device' });
+    const result = await computeAvailability(device);
+    res.json(result);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'server_error' });
+  }
+});
+
 app.post('/api/orders', async (req, res) => {
   try {
     const b = req.body || {};
@@ -86,6 +199,11 @@ app.post('/api/orders', async (req, res) => {
       return res.status(400).json({ error: 'photo_too_large' });
     }
 
+    const availability = await computeAvailability(device);
+    const isWaitingList = !availability.available;
+    const status = isWaitingList ? 'قائمة انتظار' : 'قيد المراجعة';
+    const trackingToken = genTrackingToken();
+
     const client = await pool.connect();
     try {
       await client.query('BEGIN');
@@ -102,13 +220,19 @@ app.post('/api/orders', async (req, res) => {
         );
       }
       const orderResult = await client.query(
-        `INSERT INTO orders (customer_phone, name, phone, device, service, description, address, location_url, photo_data, status, source)
-         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,'قيد المراجعة','website')
+        `INSERT INTO orders (customer_phone, name, phone, device, service, description, address, location_url, photo_data, status, is_waiting_list, waiting_reason, tracking_token, source)
+         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,'website')
          RETURNING id, created_at`,
-        [phone, name, phone, device, service, description, address, locationUrl, photoData]
+        [phone, name, phone, device, service, description, address, locationUrl, photoData, status, isWaitingList, availability.reason || '', trackingToken]
       );
       await client.query('COMMIT');
-      res.json({ ok: true, orderId: orderResult.rows[0].id });
+      res.json({
+        ok: true,
+        orderId: orderResult.rows[0].id,
+        trackingToken,
+        waitingList: isWaitingList,
+        reason: availability.reason || '',
+      });
     } catch (err) {
       await client.query('ROLLBACK');
       throw err;
@@ -121,14 +245,129 @@ app.post('/api/orders', async (req, res) => {
   }
 });
 
-// ---------- staff auth ----------
+app.get('/api/reviews/public', async (req, res) => {
+  try {
+    const { rows } = await pool.query(`
+      SELECT o.name, o.device, o.service, o.rating, o.review_text, o.created_at
+      FROM orders o
+      WHERE o.rating IS NOT NULL AND o.review_public = true
+      ORDER BY o.completed_at DESC NULLS LAST, o.created_at DESC
+      LIMIT 50
+    `);
+    const avgResult = await pool.query('SELECT AVG(rating)::numeric(10,2) AS avg, COUNT(*)::int AS c FROM orders WHERE rating IS NOT NULL');
+    const reviews = rows.map(r => {
+      const parts = String(r.name || '').trim().split(/\s+/);
+      const displayName = parts.length > 1 ? `${parts[0]} ${parts[1][0]}.` : (parts[0] || 'عميل');
+      return {
+        name: displayName,
+        device: r.device,
+        service: r.service,
+        rating: r.rating,
+        reviewText: r.review_text,
+        createdAt: r.created_at,
+      };
+    });
+    res.json({
+      reviews,
+      average: avgResult.rows[0].avg ? Number(avgResult.rows[0].avg) : null,
+      count: avgResult.rows[0].c,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'server_error' });
+  }
+});
+
+app.get('/api/track/:token', async (req, res) => {
+  try {
+    const token = String(req.params.token || '').trim().toUpperCase();
+    const { rows } = await pool.query(
+      `SELECT o.*, t.phone AS technician_phone
+       FROM orders o LEFT JOIN technicians t ON t.id = o.technician_id
+       WHERE o.tracking_token = $1`,
+      [token]
+    );
+    if (rows.length === 0) return res.status(404).json({ error: 'not_found' });
+    res.json({ order: publicOrderView(rows[0]) });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'server_error' });
+  }
+});
+
+app.post('/api/track/lookup', async (req, res) => {
+  try {
+    const phone = normPhone((req.body || {}).phone);
+    if (!phone) return res.status(400).json({ error: 'missing_phone' });
+    const { rows } = await pool.query(
+      `SELECT tracking_token, device, service, status, created_at FROM orders
+       WHERE customer_phone = $1 ORDER BY created_at DESC LIMIT 20`,
+      [phone]
+    );
+    res.json({
+      orders: rows.map(r => ({
+        trackingToken: r.tracking_token,
+        device: r.device,
+        service: r.service,
+        status: r.status,
+        createdAt: r.created_at,
+      })),
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'server_error' });
+  }
+});
+
+app.post('/api/track/:token/rate', async (req, res) => {
+  try {
+    const token = String(req.params.token || '').trim().toUpperCase();
+    const rating = Number((req.body || {}).rating);
+    const reviewText = String((req.body || {}).reviewText || '').trim().slice(0, 1000);
+    const reviewPublic = (req.body || {}).reviewPublic !== false;
+    if (!Number.isInteger(rating) || rating < 1 || rating > 5) {
+      return res.status(400).json({ error: 'invalid_rating' });
+    }
+    const { rows } = await pool.query('SELECT id, status, rating FROM orders WHERE tracking_token = $1', [token]);
+    if (rows.length === 0) return res.status(404).json({ error: 'not_found' });
+    if (rows[0].status !== 'مكتمل') return res.status(400).json({ error: 'not_completed' });
+    if (rows[0].rating !== null) return res.status(400).json({ error: 'already_rated' });
+    await pool.query(
+      'UPDATE orders SET rating = $1, review_text = $2, review_public = $3, updated_at = now() WHERE id = $4',
+      [rating, reviewText, reviewPublic, rows[0].id]
+    );
+    res.json({ ok: true });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'server_error' });
+  }
+});
+
+app.post('/api/track/:token/complaint', async (req, res) => {
+  try {
+    const token = String(req.params.token || '').trim().toUpperCase();
+    const text = String((req.body || {}).text || '').trim().slice(0, 2000);
+    if (!text) return res.status(400).json({ error: 'missing_text' });
+    const { rows } = await pool.query('SELECT id FROM orders WHERE tracking_token = $1', [token]);
+    if (rows.length === 0) return res.status(404).json({ error: 'not_found' });
+    await pool.query(
+      "UPDATE orders SET complaint_text = $1, complaint_status = 'جديدة', complaint_at = now(), updated_at = now() WHERE id = $2",
+      [text, rows[0].id]
+    );
+    res.json({ ok: true });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'server_error' });
+  }
+});
+
+// ================= STAFF AUTH =================
 app.post('/api/staff/login', (req, res) => {
   const { password } = req.body || {};
   if (!ADMIN_PASSWORD || password !== ADMIN_PASSWORD) {
     return res.status(401).json({ error: 'invalid_password' });
   }
-  const token = signToken();
-  res.cookie(COOKIE_NAME, token, {
+  res.cookie(STAFF_COOKIE, signToken({ role: 'staff' }), {
     httpOnly: true,
     sameSite: 'lax',
     secure: process.env.NODE_ENV === 'production',
@@ -137,24 +376,22 @@ app.post('/api/staff/login', (req, res) => {
   res.json({ ok: true });
 });
 app.post('/api/staff/logout', (req, res) => {
-  res.clearCookie(COOKIE_NAME);
+  res.clearCookie(STAFF_COOKIE);
   res.json({ ok: true });
 });
 app.get('/api/staff/me', (req, res) => {
-  const token = req.cookies[COOKIE_NAME];
-  if (!token) return res.json({ authenticated: false });
-  try {
-    jwt.verify(token, JWT_SECRET || 'insecure-dev-secret');
-    res.json({ authenticated: true });
-  } catch (e) {
-    res.json({ authenticated: false });
-  }
+  const payload = verifyJwt(req.cookies[STAFF_COOKIE]);
+  res.json({ authenticated: !!(payload && payload.role === 'staff') });
 });
 
-// ---------- staff API (protected) ----------
+// ================= STAFF API (protected) =================
 app.get('/api/staff/orders', requireStaff, async (req, res) => {
   try {
-    const { rows } = await pool.query('SELECT * FROM orders ORDER BY created_at DESC LIMIT 1000');
+    const { rows } = await pool.query(`
+      SELECT o.*, t.phone AS technician_phone
+      FROM orders o LEFT JOIN technicians t ON t.id = o.technician_id
+      ORDER BY o.created_at DESC LIMIT 1000
+    `);
     res.json({ orders: rows });
   } catch (err) {
     console.error(err);
@@ -166,21 +403,42 @@ app.patch('/api/staff/orders/:id', requireStaff, async (req, res) => {
   try {
     const id = Number(req.params.id);
     if (!Number.isInteger(id)) return res.status(400).json({ error: 'invalid_id' });
-    const allowed = ['status', 'assignedTo', 'notes'];
-    const fieldMap = { status: 'status', assignedTo: 'assigned_to', notes: 'notes' };
+    const body = req.body || {};
     const sets = [];
     const values = [];
     let i = 1;
-    for (const key of allowed) {
-      if (Object.prototype.hasOwnProperty.call(req.body, key)) {
-        sets.push(`${fieldMap[key]} = $${i}`);
-        values.push(req.body[key]);
-        i++;
+
+    if (Object.prototype.hasOwnProperty.call(body, 'status')) {
+      sets.push(`status = $${i++}`); values.push(body.status);
+    }
+    if (Object.prototype.hasOwnProperty.call(body, 'notes')) {
+      sets.push(`notes = $${i++}`); values.push(body.notes);
+    }
+    if (Object.prototype.hasOwnProperty.call(body, 'reviewPublic')) {
+      sets.push(`review_public = $${i++}`); values.push(!!body.reviewPublic);
+    }
+    if (Object.prototype.hasOwnProperty.call(body, 'complaintStatus')) {
+      sets.push(`complaint_status = $${i++}`); values.push(body.complaintStatus);
+    }
+
+    if (Object.prototype.hasOwnProperty.call(body, 'technicianId')) {
+      if (body.technicianId === null) {
+        sets.push(`technician_id = NULL`, `assigned_to = ''`, `assigned_at = NULL`);
+      } else {
+        const techId = Number(body.technicianId);
+        const tech = await pool.query('SELECT id, name FROM technicians WHERE id = $1', [techId]);
+        if (tech.rowCount === 0) return res.status(400).json({ error: 'technician_not_found' });
+        sets.push(`technician_id = $${i++}`); values.push(techId);
+        sets.push(`assigned_to = $${i++}`); values.push(tech.rows[0].name);
+        sets.push(`assigned_at = now()`);
+        // moving out of the review/waiting stage once a technician is assigned
+        if (!Object.prototype.hasOwnProperty.call(body, 'status')) {
+          sets.push(`status = 'تمت الموافقة'`);
+          sets.push(`is_waiting_list = false`);
+        }
       }
     }
-    if (Object.prototype.hasOwnProperty.call(req.body, 'assignedTo') && req.body.assignedTo) {
-      sets.push(`assigned_at = now()`);
-    }
+
     if (sets.length === 0) return res.status(400).json({ error: 'no_fields' });
     sets.push('updated_at = now()');
     values.push(id);
@@ -212,20 +470,228 @@ app.get('/api/staff/customers', requireStaff, async (req, res) => {
   }
 });
 
-// ---------- static pages ----------
+app.get('/api/staff/technicians', requireStaff, async (req, res) => {
+  try {
+    const { rows } = await pool.query(`
+      SELECT tc.id, tc.name, tc.phone, tc.specialties, tc.status, tc.active, tc.created_at,
+        COALESCE(oc.active_orders, 0)::int AS active_orders
+      FROM technicians tc
+      LEFT JOIN (
+        SELECT technician_id, COUNT(*) AS active_orders FROM orders
+        WHERE technician_id IS NOT NULL AND status IN ('تمت الموافقة', 'جاري التنفيذ')
+        GROUP BY technician_id
+      ) oc ON oc.technician_id = tc.id
+      ORDER BY tc.created_at DESC
+    `);
+    res.json({ technicians: rows });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'server_error' });
+  }
+});
+
+app.post('/api/staff/technicians', requireStaff, async (req, res) => {
+  try {
+    const b = req.body || {};
+    const name = String(b.name || '').trim();
+    const phone = normPhone(b.phone);
+    const password = String(b.password || '').trim();
+    const specialties = Array.isArray(b.specialties) ? b.specialties.map(s => String(s).trim()).filter(Boolean) : [];
+    if (!name || !phone || !password) return res.status(400).json({ error: 'missing_fields' });
+    const { rows } = await pool.query(
+      `INSERT INTO technicians (name, phone, password_hash, specialties, status, active)
+       VALUES ($1,$2,$3,$4,'متاح',true) RETURNING id, name, phone, specialties, status, active, created_at`,
+      [name, phone, hashPassword(password), specialties]
+    );
+    res.json({ technician: rows[0] });
+  } catch (err) {
+    if (err.code === '23505') return res.status(409).json({ error: 'phone_exists' });
+    console.error(err);
+    res.status(500).json({ error: 'server_error' });
+  }
+});
+
+app.patch('/api/staff/technicians/:id', requireStaff, async (req, res) => {
+  try {
+    const id = Number(req.params.id);
+    if (!Number.isInteger(id)) return res.status(400).json({ error: 'invalid_id' });
+    const b = req.body || {};
+    const sets = []; const values = []; let i = 1;
+    if (b.name !== undefined) { sets.push(`name = $${i++}`); values.push(String(b.name).trim()); }
+    if (b.specialties !== undefined) { sets.push(`specialties = $${i++}`); values.push(Array.isArray(b.specialties) ? b.specialties : []); }
+    if (b.status !== undefined) { sets.push(`status = $${i++}`); values.push(String(b.status)); }
+    if (b.active !== undefined) { sets.push(`active = $${i++}`); values.push(!!b.active); }
+    if (b.password) { sets.push(`password_hash = $${i++}`); values.push(hashPassword(b.password)); }
+    if (sets.length === 0) return res.status(400).json({ error: 'no_fields' });
+    values.push(id);
+    const { rows } = await pool.query(
+      `UPDATE technicians SET ${sets.join(', ')} WHERE id = $${i} RETURNING id, name, phone, specialties, status, active, created_at`,
+      values
+    );
+    if (rows.length === 0) return res.status(404).json({ error: 'not_found' });
+    res.json({ technician: rows[0] });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'server_error' });
+  }
+});
+
+app.get('/api/staff/catalog', requireStaff, async (req, res) => {
+  try {
+    const { rows } = await pool.query('SELECT * FROM catalog_items ORDER BY category, sort_order, name');
+    res.json({ items: rows });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'server_error' });
+  }
+});
+
+app.post('/api/staff/catalog', requireStaff, async (req, res) => {
+  try {
+    const b = req.body || {};
+    const category = String(b.category || '').trim();
+    const name = String(b.name || '').trim();
+    if (!['device', 'service_type'].includes(category) || !name) return res.status(400).json({ error: 'invalid_fields' });
+    const { rows } = await pool.query(
+      'INSERT INTO catalog_items (category, name, sort_order) VALUES ($1,$2,999) RETURNING *',
+      [category, name]
+    );
+    res.json({ item: rows[0] });
+  } catch (err) {
+    if (err.code === '23505') return res.status(409).json({ error: 'already_exists' });
+    console.error(err);
+    res.status(500).json({ error: 'server_error' });
+  }
+});
+
+app.patch('/api/staff/catalog/:id', requireStaff, async (req, res) => {
+  try {
+    const id = Number(req.params.id);
+    if (!Number.isInteger(id)) return res.status(400).json({ error: 'invalid_id' });
+    const b = req.body || {};
+    const sets = []; const values = []; let i = 1;
+    if (b.name !== undefined) { sets.push(`name = $${i++}`); values.push(String(b.name).trim()); }
+    if (b.active !== undefined) { sets.push(`active = $${i++}`); values.push(!!b.active); }
+    if (sets.length === 0) return res.status(400).json({ error: 'no_fields' });
+    values.push(id);
+    const { rows } = await pool.query(`UPDATE catalog_items SET ${sets.join(', ')} WHERE id = $${i} RETURNING *`, values);
+    if (rows.length === 0) return res.status(404).json({ error: 'not_found' });
+    res.json({ item: rows[0] });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'server_error' });
+  }
+});
+
+// ================= TECHNICIAN AUTH + API =================
+app.post('/api/tech/login', async (req, res) => {
+  try {
+    const phone = normPhone((req.body || {}).phone);
+    const password = String((req.body || {}).password || '');
+    const { rows } = await pool.query('SELECT * FROM technicians WHERE phone = $1 AND active = true', [phone]);
+    if (rows.length === 0 || !verifyPassword(password, rows[0].password_hash)) {
+      return res.status(401).json({ error: 'invalid_credentials' });
+    }
+    res.cookie(TECH_COOKIE, signToken({ role: 'tech', id: rows[0].id }), {
+      httpOnly: true,
+      sameSite: 'lax',
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 12 * 60 * 60 * 1000,
+    });
+    res.json({ ok: true });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'server_error' });
+  }
+});
+app.post('/api/tech/logout', (req, res) => {
+  res.clearCookie(TECH_COOKIE);
+  res.json({ ok: true });
+});
+app.get('/api/tech/me', async (req, res) => {
+  const payload = verifyJwt(req.cookies[TECH_COOKIE]);
+  if (!payload || payload.role !== 'tech') return res.json({ authenticated: false });
+  const { rows } = await pool.query('SELECT id, name, phone, specialties, status FROM technicians WHERE id = $1 AND active = true', [payload.id]);
+  if (rows.length === 0) return res.json({ authenticated: false });
+  res.json({ authenticated: true, technician: rows[0] });
+});
+
+app.get('/api/tech/orders', requireTech, async (req, res) => {
+  try {
+    const { rows } = await pool.query(
+      `SELECT * FROM orders WHERE technician_id = $1 ORDER BY
+        (status = 'مكتمل'), assigned_at DESC NULLS LAST, created_at DESC LIMIT 200`,
+      [req.technician.id]
+    );
+    res.json({ orders: rows });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'server_error' });
+  }
+});
+
+app.patch('/api/tech/orders/:id/start', requireTech, async (req, res) => {
+  try {
+    const id = Number(req.params.id);
+    const { rows } = await pool.query(
+      "UPDATE orders SET status = 'جاري التنفيذ', updated_at = now() WHERE id = $1 AND technician_id = $2 RETURNING *",
+      [id, req.technician.id]
+    );
+    if (rows.length === 0) return res.status(404).json({ error: 'not_found' });
+    res.json({ order: rows[0] });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'server_error' });
+  }
+});
+
+app.post('/api/tech/orders/:id/complete', requireTech, async (req, res) => {
+  try {
+    const id = Number(req.params.id);
+    const invoicePhoto = typeof (req.body || {}).invoicePhoto === 'string' ? req.body.invoicePhoto : null;
+    const invoiceAmount = Number((req.body || {}).invoiceAmount);
+    if (!invoicePhoto) return res.status(400).json({ error: 'missing_invoice_photo' });
+    if (!Number.isFinite(invoiceAmount) || invoiceAmount < 0) return res.status(400).json({ error: 'invalid_amount' });
+    if (invoicePhoto.length > 6_000_000) return res.status(400).json({ error: 'photo_too_large' });
+    const { rows } = await pool.query(
+      `UPDATE orders SET status = 'مكتمل', invoice_photo = $1, invoice_amount = $2, completed_at = now(), updated_at = now()
+       WHERE id = $3 AND technician_id = $4 RETURNING *`,
+      [invoicePhoto, invoiceAmount, id, req.technician.id]
+    );
+    if (rows.length === 0) return res.status(404).json({ error: 'not_found' });
+    res.json({ order: rows[0] });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'server_error' });
+  }
+});
+
+// ================= STATIC PAGES =================
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/staff', (req, res) => {
-  const token = req.cookies[COOKIE_NAME];
-  let authed = false;
-  if (token) {
-    try { jwt.verify(token, JWT_SECRET || 'insecure-dev-secret'); authed = true; } catch (e) {}
-  }
-  if (!authed) return res.redirect('/staff/login');
+  const payload = verifyJwt(req.cookies[STAFF_COOKIE]);
+  if (!payload || payload.role !== 'staff') return res.redirect('/staff/login');
   res.sendFile(path.join(__dirname, 'views', 'dashboard.html'));
 });
 app.get('/staff/login', (req, res) => {
   res.sendFile(path.join(__dirname, 'views', 'login.html'));
+});
+
+app.get('/tech', (req, res) => {
+  const payload = verifyJwt(req.cookies[TECH_COOKIE]);
+  if (!payload || payload.role !== 'tech') return res.redirect('/tech/login');
+  res.sendFile(path.join(__dirname, 'views', 'tech.html'));
+});
+app.get('/tech/login', (req, res) => {
+  res.sendFile(path.join(__dirname, 'views', 'tech-login.html'));
+});
+
+app.get('/track', (req, res) => {
+  res.sendFile(path.join(__dirname, 'views', 'track.html'));
+});
+app.get('/track/:token', (req, res) => {
+  res.sendFile(path.join(__dirname, 'views', 'track.html'));
 });
 
 app.get('*', (req, res) => {
