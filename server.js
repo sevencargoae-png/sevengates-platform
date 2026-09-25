@@ -8,6 +8,8 @@ const crypto = require('crypto');
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const jwt = require('jsonwebtoken');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
 const { Pool } = require('pg');
 
 const PORT = process.env.PORT || 3000;
@@ -74,8 +76,36 @@ async function ensureSchema() {
 
 const app = express();
 app.disable('x-powered-by');
+// Render sits in front of this service as a reverse proxy (TLS-terminating) — trust exactly
+// one hop so req.secure / req.ip reflect the real client instead of the proxy.
+app.set('trust proxy', 1);
+app.use(helmet({
+  // The site's pages use inline <script>/<style> throughout with no nonce system,
+  // so a strict default CSP would break every page. Other helmet protections
+  // (HSTS, X-Content-Type-Options, X-Frame-Options, etc.) stay on.
+  contentSecurityPolicy: false,
+  crossOriginEmbedderPolicy: false,
+}));
 app.use(express.json({ limit: '10mb' }));
 app.use(cookieParser());
+
+// ---------- rate limiting ----------
+// Stricter limiter for login endpoints (brute-force protection).
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'too_many_attempts' },
+});
+// Looser limiter for public-facing write endpoints (order submission, tracking, ratings, complaints).
+const publicLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 200,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'too_many_requests' },
+});
 
 // ---------- generic helpers ----------
 function normPhone(raw) {
@@ -105,6 +135,54 @@ function verifyPassword(password, stored) {
 }
 function genTrackingToken() {
   return crypto.randomBytes(4).toString('hex').toUpperCase();
+}
+
+// ---------- order status: allowed values, audit log, SLA ----------
+const ORDER_STATUSES = ['قيد المراجعة', 'تمت الموافقة', 'جاري التنفيذ', 'مكتمل', 'قائمة انتظار', 'مرفوض'];
+
+// Append a row to the immutable status-history audit log. Never update or delete from this table.
+async function logHistory(orderId, oldStatus, newStatus, changedBy, req, opts) {
+  opts = opts || {};
+  try {
+    await pool.query(
+      `INSERT INTO order_status_history (order_id, old_status, new_status, changed_by, reason, flagged, flag_reason, ip_address)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8)`,
+      [orderId, oldStatus || null, newStatus, changedBy, opts.reason || '', !!opts.flagged, opts.flagReason || '', (req && req.ip) || '']
+    );
+  } catch (err) {
+    console.error('Failed to write order_status_history:', err.message);
+  }
+}
+
+// A public-safe label for who made a change — never leaks staff/technician identity to a customer.
+function publicActorLabel(changedBy) {
+  if (!changedBy) return 'النظام';
+  if (changedBy.startsWith('tech:')) return 'الفني';
+  if (changedBy === 'staff' || changedBy === 'staff-override') return 'فريق SEVENGATES';
+  if (changedBy === 'customer') return 'أنت';
+  return 'النظام';
+}
+
+// Compute a human-readable delay flag for staff, based purely on timestamps already on the order.
+const SLA_MS = {
+  review: 2 * 60 * 60 * 1000,       // قيد المراجعة / قائمة انتظار: should be triaged within 2h
+  techStart: 3 * 60 * 60 * 1000,    // تمت الموافقة: technician should start within 3h of assignment
+  inProgress: 24 * 60 * 60 * 1000,  // جاري التنفيذ: should wrap up within 24h of assignment
+  confirm: 48 * 60 * 60 * 1000,     // مكتمل: customer should confirm/rate within 48h
+};
+function computeSlaFlag(o, now) {
+  now = now || Date.now();
+  const status = o.status;
+  if ((status === 'قيد المراجعة' || status === 'قائمة انتظار') && o.created_at) {
+    if (now - new Date(o.created_at).getTime() > SLA_MS.review) return 'متأخر: بانتظار المراجعة/تعيين فني';
+  } else if (status === 'تمت الموافقة' && o.assigned_at) {
+    if (now - new Date(o.assigned_at).getTime() > SLA_MS.techStart) return 'متأخر: الفني لسه مبدأش التنفيذ';
+  } else if (status === 'جاري التنفيذ' && o.assigned_at) {
+    if (now - new Date(o.assigned_at).getTime() > SLA_MS.inProgress) return 'متأخر: التنفيذ طال عن المتوقع';
+  } else if (status === 'مكتمل' && o.completed_at && !o.customer_confirmed_at && o.rating == null) {
+    if (now - new Date(o.completed_at).getTime() > SLA_MS.confirm) return 'يحتاج تأكيد/متابعة مع العميل';
+  }
+  return null;
 }
 
 function signToken(payload) {
@@ -174,6 +252,7 @@ function publicOrderView(o) {
     technicianPhone: o.technician_phone || '',
     invoicePhoto: o.invoice_photo || null,
     invoiceAmount: o.invoice_amount,
+    customerConfirmedAt: o.customer_confirmed_at || null,
     rating: o.rating,
     reviewText: o.review_text,
     complaintText: o.complaint_text,
@@ -212,16 +291,16 @@ app.get('/api/catalog/availability', async (req, res) => {
   }
 });
 
-app.post('/api/orders', async (req, res) => {
+app.post('/api/orders', publicLimiter, async (req, res) => {
   try {
     const b = req.body || {};
-    const name = String(b.name || '').trim();
+    const name = String(b.name || '').trim().slice(0, 200);
     const phone = normPhone(b.phone);
-    const device = String(b.device || '').trim();
-    const service = String(b.service || '').trim();
-    const description = String(b.description || '').trim();
-    const address = String(b.address || '').trim();
-    const locationUrl = String(b.locationUrl || '').trim();
+    const device = String(b.device || '').trim().slice(0, 100);
+    const service = String(b.service || '').trim().slice(0, 100);
+    const description = String(b.description || '').trim().slice(0, 3000);
+    const address = String(b.address || '').trim().slice(0, 500);
+    const locationUrl = String(b.locationUrl || '').trim().slice(0, 500);
     const photoData = typeof b.photoData === 'string' ? b.photoData : null;
 
     if (!name || !phone || !device || !service || !description) {
@@ -258,6 +337,7 @@ app.post('/api/orders', async (req, res) => {
         [phone, name, phone, device, service, description, address, locationUrl, photoData, status, isWaitingList, availability.reason || '', trackingToken]
       );
       await client.query('COMMIT');
+      logHistory(orderResult.rows[0].id, null, status, 'system', req);
       res.json({
         ok: true,
         orderId: orderResult.rows[0].id,
@@ -320,14 +400,25 @@ app.get('/api/track/:token', async (req, res) => {
       [token]
     );
     if (rows.length === 0) return res.status(404).json({ error: 'not_found' });
-    res.json({ order: publicOrderView(rows[0]) });
+    const hist = await pool.query(
+      'SELECT old_status, new_status, changed_by, changed_at FROM order_status_history WHERE order_id = $1 ORDER BY changed_at ASC',
+      [rows[0].id]
+    );
+    const order = publicOrderView(rows[0]);
+    order.history = hist.rows.map(h => ({
+      oldStatus: h.old_status,
+      newStatus: h.new_status,
+      by: publicActorLabel(h.changed_by),
+      changedAt: h.changed_at,
+    }));
+    res.json({ order });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'server_error' });
   }
 });
 
-app.post('/api/track/lookup', async (req, res) => {
+app.post('/api/track/lookup', publicLimiter, async (req, res) => {
   try {
     const phone = normPhone((req.body || {}).phone);
     if (!phone) return res.status(400).json({ error: 'missing_phone' });
@@ -351,7 +442,7 @@ app.post('/api/track/lookup', async (req, res) => {
   }
 });
 
-app.post('/api/track/:token/rate', async (req, res) => {
+app.post('/api/track/:token/rate', publicLimiter, async (req, res) => {
   try {
     const token = String(req.params.token || '').trim().toUpperCase();
     const rating = Number((req.body || {}).rating);
@@ -375,7 +466,7 @@ app.post('/api/track/:token/rate', async (req, res) => {
   }
 });
 
-app.post('/api/track/:token/complaint', async (req, res) => {
+app.post('/api/track/:token/complaint', publicLimiter, async (req, res) => {
   try {
     const token = String(req.params.token || '').trim().toUpperCase();
     const text = String((req.body || {}).text || '').trim().slice(0, 2000);
@@ -393,8 +484,26 @@ app.post('/api/track/:token/complaint', async (req, res) => {
   }
 });
 
+// Customer confirms they actually received the service — an independent anti-tampering signal
+// alongside the technician's invoice upload. Does not change the order's status.
+app.post('/api/track/:token/confirm-completion', publicLimiter, async (req, res) => {
+  try {
+    const token = String(req.params.token || '').trim().toUpperCase();
+    const { rows } = await pool.query('SELECT id, status, customer_confirmed_at FROM orders WHERE tracking_token = $1', [token]);
+    if (rows.length === 0) return res.status(404).json({ error: 'not_found' });
+    if (rows[0].status !== 'مكتمل') return res.status(400).json({ error: 'not_completed' });
+    if (rows[0].customer_confirmed_at) return res.status(400).json({ error: 'already_confirmed' });
+    await pool.query('UPDATE orders SET customer_confirmed_at = now(), updated_at = now() WHERE id = $1', [rows[0].id]);
+    logHistory(rows[0].id, 'مكتمل', 'مكتمل', 'customer', req, { reason: 'تأكيد العميل باستلام الخدمة' });
+    res.json({ ok: true });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'server_error' });
+  }
+});
+
 // ================= STAFF AUTH =================
-app.post('/api/staff/login', (req, res) => {
+app.post('/api/staff/login', loginLimiter, (req, res) => {
   const { password } = req.body || {};
   if (!ADMIN_PASSWORD || password !== ADMIN_PASSWORD) {
     return res.status(401).json({ error: 'invalid_password' });
@@ -402,7 +511,7 @@ app.post('/api/staff/login', (req, res) => {
   res.cookie(STAFF_COOKIE, signToken({ role: 'staff' }), {
     httpOnly: true,
     sameSite: 'lax',
-    secure: process.env.NODE_ENV === 'production',
+    secure: req.secure,
     maxAge: 12 * 60 * 60 * 1000,
   });
   res.json({ ok: true });
@@ -424,7 +533,26 @@ app.get('/api/staff/orders', requireStaff, async (req, res) => {
       FROM orders o LEFT JOIN technicians t ON t.id = o.technician_id
       ORDER BY o.created_at DESC LIMIT 1000
     `);
-    res.json({ orders: rows });
+    const now = Date.now();
+    const orders = rows.map(o => Object.assign({}, o, { sla_flag: computeSlaFlag(o, now) }));
+    res.json({ orders });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'server_error' });
+  }
+});
+
+// Append-only audit trail for one order — who changed its status, when, and any flags raised.
+app.get('/api/staff/orders/:id/history', requireStaff, async (req, res) => {
+  try {
+    const id = Number(req.params.id);
+    if (!Number.isInteger(id)) return res.status(400).json({ error: 'invalid_id' });
+    const { rows } = await pool.query(
+      `SELECT old_status, new_status, changed_by, reason, flagged, flag_reason, ip_address, changed_at
+       FROM order_status_history WHERE order_id = $1 ORDER BY changed_at ASC`,
+      [id]
+    );
+    res.json({ history: rows });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'server_error' });
@@ -440,11 +568,29 @@ app.patch('/api/staff/orders/:id', requireStaff, async (req, res) => {
     const values = [];
     let i = 1;
 
+    let oldStatus = null;
+    let willChangeStatus = false;
     if (Object.prototype.hasOwnProperty.call(body, 'status')) {
-      sets.push(`status = $${i++}`); values.push(body.status);
+      const newStatus = String(body.status);
+      if (!ORDER_STATUSES.includes(newStatus)) return res.status(400).json({ error: 'invalid_status' });
+      // Marking an order complete is meant to happen only through the technician's invoice-upload
+      // flow (which requires photo proof). A staff member can still do it directly for a genuine
+      // edge case (e.g. a cash job handled outside the system), but must give a logged reason —
+      // this closes the "quietly close the order with no proof of work" loophole.
+      if (newStatus === 'مكتمل') {
+        const reason = String(body.overrideReason || '').trim();
+        if (!body.forceComplete || reason.length < 5) {
+          return res.status(400).json({ error: 'complete_requires_override_reason' });
+        }
+      }
+      const existing = await pool.query('SELECT status FROM orders WHERE id = $1', [id]);
+      if (existing.rowCount === 0) return res.status(404).json({ error: 'not_found' });
+      oldStatus = existing.rows[0].status;
+      willChangeStatus = oldStatus !== newStatus;
+      sets.push(`status = $${i++}`); values.push(newStatus);
     }
     if (Object.prototype.hasOwnProperty.call(body, 'notes')) {
-      sets.push(`notes = $${i++}`); values.push(body.notes);
+      sets.push(`notes = $${i++}`); values.push(String(body.notes || '').slice(0, 5000));
     }
     if (Object.prototype.hasOwnProperty.call(body, 'reviewPublic')) {
       sets.push(`review_public = $${i++}`); values.push(!!body.reviewPublic);
@@ -469,6 +615,12 @@ app.patch('/api/staff/orders/:id', requireStaff, async (req, res) => {
         if (!Object.prototype.hasOwnProperty.call(body, 'status')) {
           sets.push(`status = 'تمت الموافقة'`);
           sets.push(`is_waiting_list = false`);
+          if (!willChangeStatus) {
+            const existing = await pool.query('SELECT status FROM orders WHERE id = $1', [id]);
+            if (existing.rowCount === 0) return res.status(404).json({ error: 'not_found' });
+            oldStatus = existing.rows[0].status;
+            willChangeStatus = oldStatus !== 'تمت الموافقة';
+          }
         }
       }
     }
@@ -479,6 +631,12 @@ app.patch('/api/staff/orders/:id', requireStaff, async (req, res) => {
     const sql = `UPDATE orders SET ${sets.join(', ')} WHERE id = $${i} RETURNING *`;
     const { rows } = await pool.query(sql, values);
     if (rows.length === 0) return res.status(404).json({ error: 'not_found' });
+    if (willChangeStatus) {
+      const isOverride = rows[0].status === 'مكتمل' && !!body.forceComplete;
+      logHistory(id, oldStatus, rows[0].status, isOverride ? 'staff-override' : 'staff', req, {
+        reason: isOverride ? String(body.overrideReason || '').trim() : '',
+      });
+    }
     if (assignedTechForNotify) {
       const order = rows[0];
       const baseUrl = `${req.protocol}://${req.get('host')}`;
@@ -626,7 +784,7 @@ app.patch('/api/staff/catalog/:id', requireStaff, async (req, res) => {
 });
 
 // ================= TECHNICIAN AUTH + API =================
-app.post('/api/tech/login', async (req, res) => {
+app.post('/api/tech/login', loginLimiter, async (req, res) => {
   try {
     const phone = normPhone((req.body || {}).phone);
     const password = String((req.body || {}).password || '');
@@ -637,7 +795,7 @@ app.post('/api/tech/login', async (req, res) => {
     res.cookie(TECH_COOKIE, signToken({ role: 'tech', id: rows[0].id }), {
       httpOnly: true,
       sameSite: 'lax',
-      secure: process.env.NODE_ENV === 'production',
+      secure: req.secure,
       maxAge: 12 * 60 * 60 * 1000,
     });
     res.json({ ok: true });
@@ -675,11 +833,14 @@ app.get('/api/tech/orders', requireTech, async (req, res) => {
 app.patch('/api/tech/orders/:id/start', requireTech, async (req, res) => {
   try {
     const id = Number(req.params.id);
+    const before = await pool.query('SELECT status FROM orders WHERE id = $1 AND technician_id = $2', [id, req.technician.id]);
+    if (before.rowCount === 0) return res.status(404).json({ error: 'not_found' });
     const { rows } = await pool.query(
       "UPDATE orders SET status = 'جاري التنفيذ', updated_at = now() WHERE id = $1 AND technician_id = $2 RETURNING *",
       [id, req.technician.id]
     );
     if (rows.length === 0) return res.status(404).json({ error: 'not_found' });
+    logHistory(id, before.rows[0].status, 'جاري التنفيذ', `tech:${req.technician.id}:${req.technician.name}`, req);
     res.json({ order: rows[0] });
   } catch (err) {
     console.error(err);
@@ -695,6 +856,8 @@ app.post('/api/tech/orders/:id/complete', requireTech, async (req, res) => {
     if (!invoicePhoto) return res.status(400).json({ error: 'missing_invoice_photo' });
     if (!Number.isFinite(invoiceAmount) || invoiceAmount < 0) return res.status(400).json({ error: 'invalid_amount' });
     if (invoicePhoto.length > 6_000_000) return res.status(400).json({ error: 'photo_too_large' });
+    const before = await pool.query('SELECT status, assigned_at FROM orders WHERE id = $1 AND technician_id = $2', [id, req.technician.id]);
+    if (before.rowCount === 0) return res.status(404).json({ error: 'not_found' });
     const { rows } = await pool.query(
       `UPDATE orders SET status = 'مكتمل', invoice_photo = $1, invoice_amount = $2, completed_at = now(), updated_at = now()
        WHERE id = $3 AND technician_id = $4 RETURNING *`,
@@ -702,6 +865,15 @@ app.post('/api/tech/orders/:id/complete', requireTech, async (req, res) => {
     );
     if (rows.length === 0) return res.status(404).json({ error: 'not_found' });
     const order = rows[0];
+    // Flag suspiciously fast completions (e.g. under 3 minutes from assignment) for staff review —
+    // not blocked, since a genuinely quick job is possible, but surfaced as a signal.
+    const assignedAt = before.rows[0].assigned_at ? new Date(before.rows[0].assigned_at).getTime() : null;
+    const quickMs = assignedAt ? Date.now() - assignedAt : null;
+    const flagged = quickMs !== null && quickMs < 3 * 60 * 1000;
+    logHistory(id, before.rows[0].status, 'مكتمل', `tech:${req.technician.id}:${req.technician.name}`, req, {
+      flagged,
+      flagReason: flagged ? 'اكتمال سريع جدًا (أقل من 3 دقايق من التعيين)' : '',
+    });
     const baseUrl = `${req.protocol}://${req.get('host')}`;
     sendWhatsApp(
       order.phone,
