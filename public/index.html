@@ -57,7 +57,7 @@
   .portal-menu{position:relative;}
   .portal-menu-btn .chev{font-size:.65rem;margin-inline-start:2px;display:inline-block;transition:transform .2s;}
   .portal-menu.open .portal-menu-btn .chev{transform:rotate(180deg);}
-  .portal-menu-panel{position:absolute;inset-inline-end:0;top:calc(100% + 10px);width:270px;background:var(--surface-card);border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow);padding:8px;display:none;flex-direction:column;gap:2px;z-index:60;}
+  .portal-menu-panel{position:absolute;inset-inline-start:0;top:calc(100% + 10px);width:270px;max-width:calc(100vw - 24px);background:var(--surface-card);border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow);padding:8px;display:none;flex-direction:column;gap:2px;z-index:60;}
   .portal-menu.open .portal-menu-panel{display:flex;}
   .portal-item{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:12px;text-decoration:none;color:var(--text-primary);transition:background .15s;}
   .portal-item:hover{background:var(--surface-sunken);}
