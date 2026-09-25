@@ -77,6 +77,10 @@
   .order-list-item a{color:var(--accent-strong);font-weight:700;text-decoration:none;}
   .hidden{display:none !important;}
   .note-ok{background:var(--accent-tint);color:var(--accent-strong);border-radius:10px;padding:10px 14px;font-size:.85rem;}
+  .tl-item{display:flex;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);font-size:.84rem;}
+  .tl-item:last-child{border-bottom:none;}
+  .tl-item .tl-dot{width:9px;height:9px;border-radius:50%;background:var(--accent);flex:none;margin-top:6px;}
+  .tl-item .tl-meta{color:var(--text-muted);font-size:.76rem;margin-top:2px;}
 </style>
 </head>
 <body>
@@ -142,6 +146,21 @@
     </div>
     <div id="ratedNote" class="note-ok hidden" style="margin-top:14px;" data-i18n="ratedNote">✓ شكرًا لتقييمك للخدمة</div>
 
+    <div id="confirmSection" class="hidden">
+      <hr>
+      <h3 style="margin:0 0 8px;" data-i18n="confirmTitle">هل استلمت الخدمة فعلاً؟</h3>
+      <p style="font-size:.85rem;color:var(--text-secondary);margin:0 0 10px;" data-i18n="confirmSub">تأكيدك بيساعدنا نتابع جودة الخدمة ونمنع أي تلاعب.</p>
+      <button class="btn btn-primary" id="confirmBtn" data-i18n="confirmBtn">✅ أؤكد إني استلمت الخدمة</button>
+      <div id="confirmMsg" class="msg"></div>
+    </div>
+    <div id="confirmedNote" class="note-ok hidden" style="margin-top:14px;" data-i18n="confirmedNote">✓ تم تأكيد استلام الخدمة</div>
+
+    <div id="timelineSection" class="hidden">
+      <hr>
+      <h3 style="margin:0 0 10px;" data-i18n="timelineTitle">السجل الزمني للطلب</h3>
+      <div id="timelineList"></div>
+    </div>
+
     <div id="complaintSection" class="hidden">
       <hr>
       <h3 style="margin:0 0 8px;" data-i18n="complaintTitle">مش راضٍ عن الخدمة؟</h3>
@@ -179,7 +198,10 @@
       rejectedMsg:'✕ تم رفض هذا الطلب — لأي استفسار تواصل معنا على واتساب.',
       egp:' جنيه', needStars:'اختر عدد النجوم الأول.', needComplaintText:'اكتب تفاصيل الشكوى.',
       complaintRegistered:'شكواك متسجلة (الحالة: ', complaintFollow:') — هنتابعها ونرد عليك.', complaintNew:'جديدة',
-      complaintReceived:'تم استلام شكواك وهنتابعها فورًا.', callTech:'📞 '
+      complaintReceived:'تم استلام شكواك وهنتابعها فورًا.', callTech:'📞 ',
+      confirmTitle:'هل استلمت الخدمة فعلاً؟', confirmSub:'تأكيدك بيساعدنا نتابع جودة الخدمة ونمنع أي تلاعب.',
+      confirmBtn:'✅ أؤكد إني استلمت الخدمة', confirmedNote:'✓ تم تأكيد استلام الخدمة', confirmErr:'حصل خطأ، جرّب تاني.',
+      timelineTitle:'السجل الزمني للطلب'
     },
     en: {
       pageTitle:'Track Your Order — SEVENGATES', lookupTitle:'Track Your Order', tokenLabel:'Tracking Code', tokenPh:'e.g. A1B2C3D4',
@@ -195,7 +217,10 @@
       rejectedMsg:'✕ This order was rejected — for any inquiries, contact us on WhatsApp.',
       egp:' EGP', needStars:'Choose a star rating first.', needComplaintText:'Write your complaint details.',
       complaintRegistered:'Your complaint is registered (status: ', complaintFollow:") — we'll follow up and respond.", complaintNew:'New',
-      complaintReceived:"Your complaint has been received and we'll follow up right away.", callTech:'📞 '
+      complaintReceived:"Your complaint has been received and we'll follow up right away.", callTech:'📞 ',
+      confirmTitle:'Did you actually receive the service?', confirmSub:'Confirming helps us monitor service quality and prevent any tampering.',
+      confirmBtn:'✅ I confirm I received the service', confirmedNote:'✓ Receipt of service confirmed', confirmErr:'An error occurred, try again.',
+      timelineTitle:'Order Timeline'
     }
   };
   var STATUS_LABEL_EN = { "قيد المراجعة":"Pending Review", "تمت الموافقة":"Approved", "جاري التنفيذ":"In Progress", "مكتمل":"Completed", "مرفوض":"Rejected", "قائمة انتظار":"Waiting List" };
@@ -354,6 +379,40 @@
     } else {
       rateSection.classList.add('hidden');
       ratedNote.classList.add('hidden');
+    }
+
+    var confirmSection = document.getElementById('confirmSection');
+    var confirmedNote = document.getElementById('confirmedNote');
+    if (order.status === 'مكتمل' && !order.customerConfirmedAt){
+      confirmSection.classList.remove('hidden');
+      confirmedNote.classList.add('hidden');
+    } else if (order.status === 'مكتمل' && order.customerConfirmedAt){
+      confirmSection.classList.add('hidden');
+      confirmedNote.classList.remove('hidden');
+    } else {
+      confirmSection.classList.add('hidden');
+      confirmedNote.classList.add('hidden');
+    }
+    document.getElementById('confirmBtn').onclick = function(){
+      var msg = document.getElementById('confirmMsg');
+      fetch('/api/track/' + order.trackingToken + '/confirm-completion', { method:'POST' })
+        .then(function(r){ if(!r.ok) throw new Error(); return r.json(); }).then(function(){
+          confirmSection.classList.add('hidden');
+          confirmedNote.classList.remove('hidden');
+        }).catch(function(){ msg.textContent = i18n('confirmErr'); msg.className='msg err'; });
+    };
+
+    var timelineSection = document.getElementById('timelineSection');
+    var timelineList = document.getElementById('timelineList');
+    if (order.history && order.history.length){
+      timelineSection.classList.remove('hidden');
+      timelineList.innerHTML = order.history.map(function(h){
+        var d = new Date(h.changedAt);
+        var dateStr = d.toLocaleDateString(currentLang==='en'?'en-GB':'ar-EG') + ' ' + d.toLocaleTimeString(currentLang==='en'?'en-GB':'ar-EG',{hour:'2-digit',minute:'2-digit'});
+        return '<div class="tl-item"><span class="tl-dot"></span><div><div>'+stLabel(h.newStatus)+'</div><div class="tl-meta">'+h.by+' · '+dateStr+'</div></div></div>';
+      }).join('');
+    } else {
+      timelineSection.classList.add('hidden');
     }
 
     var complaintSection = document.getElementById('complaintSection');
