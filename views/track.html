@@ -3,34 +3,53 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>تتبع طلبك — SEVENGATES</title>
+<title data-i18n="pageTitle">تتبع طلبك — SEVENGATES</title>
 <meta name="robots" content="noindex, nofollow">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;800;900&family=Tajawal:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;700;800;900&family=Tajawal:wght@400;500;700&display=swap">
 <style>
   :root{
-    --navy:#081C30; --surface:#F5F8FA; --surface-card:#ffffff; --surface-sunken:#EEF3F6;
+    --navy:#081C30; --indigo:#5B5FE8; --surface:#F5F8FA; --surface-card:#ffffff; --surface-sunken:#EEF3F6;
     --text-primary:#0B2027; --text-secondary:#4C6470; --text-muted:#8598A1;
     --accent:#12B5A6; --accent-strong:#0A8F84; --accent-tint:#E3F7F4;
     --gold:#F2A93C; --gold-tint:#FDF1DF; --danger:#C94040; --danger-tint:#FBEAEA;
     --border:rgba(11,32,39,0.10); --shadow:0 20px 44px -24px rgba(6,25,40,0.35); --radius:16px;
   }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --surface:#0a1417; --surface-card:#101e22; --surface-sunken:#0d1a1e;
+      --text-primary:#f2fafb; --text-secondary:#a9c3c8; --text-muted:#6f8c91;
+      --accent:#29c7da; --accent-strong:#63e0ee; --accent-tint:#12333a;
+      --border:rgba(255,255,255,0.12); color-scheme:dark;
+    }
+  }
   *{box-sizing:border-box;} html,body{margin:0;}
   body{background:var(--surface);color:var(--text-primary);font-family:'Tajawal',system-ui,sans-serif;line-height:1.65;}
+  body.lang-en{font-family:'Inter',system-ui,sans-serif;}
   h1,h2,h3{font-family:'Cairo',system-ui,sans-serif;}
+  body.lang-en h1,body.lang-en h2,body.lang-en h3{font-family:'Inter',system-ui,sans-serif;}
+  @media(prefers-reduced-motion:reduce){ *{animation:none !important;transition:none !important;} }
+  @keyframes fadeUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+  .card{animation:fadeUp .4s ease;}
   .wrap{max-width:640px;margin:0 auto;padding:24px 18px 60px;}
   a{color:inherit;}
-  .brand{display:flex;align-items:center;gap:10px;font-family:'Cairo';font-weight:800;font-size:1.1rem;margin-bottom:26px;text-decoration:none;color:var(--text-primary);}
+  .topline{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:26px;flex-wrap:wrap;}
+  .brand{display:flex;align-items:center;gap:10px;font-family:'Cairo';font-weight:800;font-size:1.1rem;text-decoration:none;color:var(--text-primary);}
+  body.lang-en .brand{font-family:'Inter';}
   .brand .mark{width:38px;height:38px;border-radius:11px;background:linear-gradient(155deg,var(--accent),var(--accent-strong));display:flex;align-items:center;justify-content:center;color:#04252b;font-weight:900;}
+  .lang-toggle{display:inline-flex;align-items:center;gap:4px;border:1px solid var(--border);border-radius:100px;padding:4px;background:var(--surface-card);box-shadow:var(--shadow);}
+  .lang-toggle button{border:none;background:transparent;padding:6px 11px;border-radius:100px;font-weight:700;font-size:.74rem;cursor:pointer;color:var(--text-secondary);font-family:inherit;}
+  .lang-toggle button.active{background:var(--accent);color:#04252b;}
   .card{background:var(--surface-card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;box-shadow:var(--shadow);margin-bottom:18px;}
   h2{font-size:1.3rem;margin:0 0 14px;}
   .field{margin-bottom:14px;}
   .field label{display:block;font-size:.85rem;font-weight:700;margin-bottom:7px;}
-  input,textarea,select{width:100%;padding:12px 14px;border-radius:12px;border:1px solid var(--border);background:var(--surface-sunken);color:var(--text-primary);font-family:'Tajawal';font-size:.95rem;}
+  input,textarea,select{width:100%;padding:12px 14px;border-radius:12px;border:1px solid var(--border);background:var(--surface-sunken);color:var(--text-primary);font-family:inherit;font-size:.95rem;}
   textarea{min-height:90px;resize:vertical;}
-  .btn{display:inline-flex;align-items:center;gap:8px;justify-content:center;padding:12px 20px;border-radius:100px;font-weight:700;font-size:.9rem;border:1px solid transparent;cursor:pointer;text-decoration:none;width:100%;}
+  .btn{display:inline-flex;align-items:center;gap:8px;justify-content:center;padding:12px 20px;border-radius:100px;font-weight:700;font-size:.9rem;border:1px solid transparent;cursor:pointer;text-decoration:none;width:100%;font-family:inherit;transition:transform .15s;}
+  .btn:hover{transform:translateY(-1px);}
   .btn-primary{background:linear-gradient(155deg,var(--accent),var(--accent-strong));color:#04252b;}
   .btn-ghost{background:transparent;border-color:var(--border);color:var(--text-primary);}
-  .btn[disabled]{opacity:.5;cursor:not-allowed;}
+  .btn[disabled]{opacity:.5;cursor:not-allowed;transform:none;}
   .msg{font-size:.85rem;margin-top:10px;color:var(--text-muted);}
   .msg.err{color:var(--danger);}
   .status-badge{display:inline-flex;align-items:center;gap:6px;font-weight:700;font-size:.85rem;padding:6px 14px;border-radius:100px;background:var(--accent-tint);color:var(--accent-strong);}
@@ -39,7 +58,7 @@
   .steps{display:flex;justify-content:space-between;margin:22px 0 6px;position:relative;}
   .steps::before{content:"";position:absolute;top:13px;right:5%;left:5%;height:2px;background:var(--border);z-index:0;}
   .step{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:6px;flex:1;}
-  .step .dot{width:26px;height:26px;border-radius:50%;background:var(--surface-sunken);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:800;color:var(--text-muted);}
+  .step .dot{width:26px;height:26px;border-radius:50%;background:var(--surface-sunken);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:800;color:var(--text-muted);transition:background .2s,border-color .2s;}
   .step.done .dot{background:var(--accent);border-color:var(--accent);color:#04252b;}
   .step span{font-size:.68rem;color:var(--text-muted);text-align:center;}
   .step.done span{color:var(--text-primary);font-weight:700;}
@@ -50,7 +69,7 @@
   .invoice-img{width:100%;border-radius:12px;border:1px solid var(--border);margin-top:10px;cursor:zoom-in;}
   .amount{font-family:'Cairo';font-weight:900;font-size:1.5rem;color:var(--accent-strong);}
   .stars-input{display:flex;gap:6px;font-size:1.8rem;justify-content:center;margin:10px 0;direction:ltr;}
-  .stars-input span{cursor:pointer;color:#d8dfe2;}
+  .stars-input span{cursor:pointer;color:#d8dfe2;transition:color .15s;}
   .stars-input span.on{color:var(--gold);}
   hr{border:none;border-top:1px solid var(--border);margin:18px 0;}
   .order-list-item{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);font-size:.88rem;}
@@ -62,15 +81,21 @@
 </head>
 <body>
 <div class="wrap">
-  <a class="brand" href="/"><span class="mark">7G</span><span>SEVENGATES</span></a>
+  <div class="topline">
+    <a class="brand" href="/"><span class="mark">7G</span><span>SEVENGATES</span></a>
+    <div class="lang-toggle" role="group" aria-label="Language">
+      <button type="button" data-lang="ar">عربي</button>
+      <button type="button" data-lang="en">EN</button>
+    </div>
+  </div>
 
   <div class="card" id="lookupCard">
-    <h2>تتبع طلبك</h2>
-    <div class="field"><label>كود التتبع</label><input type="text" id="tokenInput" placeholder="مثال: A1B2C3D4" style="text-transform:uppercase;"></div>
-    <button class="btn btn-primary" id="findBtn">عرض حالة الطلب</button>
+    <h2 data-i18n="lookupTitle">تتبع طلبك</h2>
+    <div class="field"><label data-i18n="tokenLabel">كود التتبع</label><input type="text" id="tokenInput" data-i18n-ph="tokenPh" placeholder="مثال: A1B2C3D4" style="text-transform:uppercase;"></div>
+    <button class="btn btn-primary" id="findBtn" data-i18n="findBtn">عرض حالة الطلب</button>
     <hr>
-    <div class="field"><label>أو ابحث برقم الهاتف اللي سجّلت بيه</label><input type="tel" id="phoneInput" placeholder="0553377985"></div>
-    <button class="btn btn-ghost" id="lookupPhoneBtn">بحث عن طلباتي</button>
+    <div class="field"><label data-i18n="phoneLookupLabel">أو ابحث برقم الهاتف اللي سجّلت بيه</label><input type="tel" id="phoneInput" placeholder="0553377985"></div>
+    <button class="btn btn-ghost" id="lookupPhoneBtn" data-i18n="lookupPhoneBtn">بحث عن طلباتي</button>
     <div id="lookupMsg" class="msg"></div>
     <div id="phoneResults" style="margin-top:12px;"></div>
   </div>
@@ -78,8 +103,8 @@
   <div class="card hidden" id="orderCard">
     <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap;">
       <div>
-        <h2 style="margin-bottom:4px;">طلب <span id="oDevice"></span> — <span id="oService"></span></h2>
-        <div style="font-size:.8rem;color:var(--text-muted);">كود التتبع: <b id="oToken"></b></div>
+        <h2 style="margin-bottom:4px;"><span data-i18n="orderWord">طلب</span> <span id="oDevice"></span> — <span id="oService"></span></h2>
+        <div style="font-size:.8rem;color:var(--text-muted);"><span data-i18n="trackCodeLabel">كود التتبع:</span> <b id="oToken"></b></div>
       </div>
       <span class="status-badge" id="oStatusBadge"></span>
     </div>
@@ -92,42 +117,42 @@
         <div class="av" id="techAvatar">ف</div>
         <div>
           <b id="techName"></b>
-          <a id="techPhone" href="#">📞 اتصل بالفني</a>
+          <a id="techPhone" href="#"></a>
         </div>
       </div>
     </div>
 
     <div id="invoiceSection" class="hidden">
       <hr>
-      <h3 style="margin:0 0 8px;">الفاتورة</h3>
+      <h3 style="margin:0 0 8px;" data-i18n="invoiceTitle">الفاتورة</h3>
       <div class="amount" id="invoiceAmount"></div>
-      <img class="invoice-img" id="invoiceImg" alt="صورة الفاتورة">
+      <img class="invoice-img" id="invoiceImg" alt="">
     </div>
 
     <div id="rateSection" class="hidden">
       <hr>
-      <h3 style="margin:0 0 4px;">قيّم الخدمة</h3>
+      <h3 style="margin:0 0 4px;" data-i18n="rateTitle">قيّم الخدمة</h3>
       <div class="stars-input" id="starsInput">
         <span data-v="1">★</span><span data-v="2">★</span><span data-v="3">★</span><span data-v="4">★</span><span data-v="5">★</span>
       </div>
-      <div class="field"><textarea id="reviewText" placeholder="اكتب رأيك في الخدمة (اختياري)"></textarea></div>
-      <label style="display:flex;align-items:center;gap:8px;font-size:.82rem;margin-bottom:12px;"><input type="checkbox" id="reviewPublic" checked style="width:auto;"> اعرض تقييمي للعملاء الآخرين</label>
-      <button class="btn btn-primary" id="submitRateBtn">إرسال التقييم</button>
+      <div class="field"><textarea id="reviewText" data-i18n-ph="reviewPh" placeholder="اكتب رأيك في الخدمة (اختياري)"></textarea></div>
+      <label style="display:flex;align-items:center;gap:8px;font-size:.82rem;margin-bottom:12px;"><input type="checkbox" id="reviewPublic" checked style="width:auto;"> <span data-i18n="showReviewLabel">اعرض تقييمي للعملاء الآخرين</span></label>
+      <button class="btn btn-primary" id="submitRateBtn" data-i18n="submitRateBtn">إرسال التقييم</button>
       <div id="rateMsg" class="msg"></div>
     </div>
-    <div id="ratedNote" class="note-ok hidden" style="margin-top:14px;">✓ شكرًا لتقييمك للخدمة</div>
+    <div id="ratedNote" class="note-ok hidden" style="margin-top:14px;" data-i18n="ratedNote">✓ شكرًا لتقييمك للخدمة</div>
 
     <div id="complaintSection" class="hidden">
       <hr>
-      <h3 style="margin:0 0 8px;">مش راضٍ عن الخدمة؟</h3>
-      <p style="font-size:.85rem;color:var(--text-secondary);margin:0 0 10px;">لو الفني ماعملش المطلوب أو في مشكلة، قدّم شكوى وهنتابعها فورًا.</p>
-      <div class="field"><textarea id="complaintText" placeholder="اكتب تفاصيل الشكوى..."></textarea></div>
-      <button class="btn btn-ghost" id="submitComplaintBtn">تقديم شكوى</button>
+      <h3 style="margin:0 0 8px;" data-i18n="complaintTitle">مش راضٍ عن الخدمة؟</h3>
+      <p style="font-size:.85rem;color:var(--text-secondary);margin:0 0 10px;" data-i18n="complaintSub">لو الفني ماعملش المطلوب أو في مشكلة، قدّم شكوى وهنتابعها فورًا.</p>
+      <div class="field"><textarea id="complaintText" data-i18n-ph="complaintPh" placeholder="اكتب تفاصيل الشكوى..."></textarea></div>
+      <button class="btn btn-ghost" id="submitComplaintBtn" data-i18n="submitComplaintBtn">تقديم شكوى</button>
       <div id="complaintMsg" class="msg"></div>
     </div>
     <div id="complaintStatusNote" class="note-ok hidden" style="margin-top:14px;"></div>
 
-    <button class="btn btn-ghost" id="backBtn" style="margin-top:18px;">🔍 تتبع طلب آخر</button>
+    <button class="btn btn-ghost" id="backBtn" style="margin-top:18px;" data-i18n="backBtn">🔍 تتبع طلب آخر</button>
   </div>
 </div>
 
@@ -137,6 +162,73 @@
   var lookupCard = document.getElementById('lookupCard');
   var orderCard = document.getElementById('orderCard');
   var tokenInput = document.getElementById('tokenInput');
+  var currentOrder = null;
+
+  var I18N = {
+    ar: {
+      pageTitle:'تتبع طلبك — SEVENGATES', lookupTitle:'تتبع طلبك', tokenLabel:'كود التتبع', tokenPh:'مثال: A1B2C3D4',
+      findBtn:'عرض حالة الطلب', phoneLookupLabel:'أو ابحث برقم الهاتف اللي سجّلت بيه', lookupPhoneBtn:'بحث عن طلباتي',
+      orderWord:'طلب', trackCodeLabel:'كود التتبع:', invoiceTitle:'الفاتورة', rateTitle:'قيّم الخدمة',
+      reviewPh:'اكتب رأيك في الخدمة (اختياري)', showReviewLabel:'اعرض تقييمي للعملاء الآخرين', submitRateBtn:'إرسال التقييم',
+      ratedNote:'✓ شكرًا لتقييمك للخدمة', complaintTitle:'مش راضٍ عن الخدمة؟',
+      complaintSub:'لو الفني ماعملش المطلوب أو في مشكلة، قدّم شكوى وهنتابعها فورًا.', complaintPh:'اكتب تفاصيل الشكوى...',
+      submitComplaintBtn:'تقديم شكوى', backBtn:'🔍 تتبع طلب آخر',
+      needPhone:'اكتب رقم الهاتف اللي سجّلت بيه طلبك.', noOrdersPhone:'مفيش طلبات مسجلة بالرقم ده.', genericErr:'حصل خطأ، جرّب تاني.',
+      viewLink:'عرض', notFound:'مفيش طلب بالكود ده. تأكد من الكود وجرّب تاني.', backLink:'رجوع',
+      waitingMsg:'⏳ طلبك في قائمة الانتظار حاليًا — هنتواصل معاك أول ما يتوفر فني مناسب.',
+      rejectedMsg:'✕ تم رفض هذا الطلب — لأي استفسار تواصل معنا على واتساب.',
+      egp:' جنيه', needStars:'اختر عدد النجوم الأول.', needComplaintText:'اكتب تفاصيل الشكوى.',
+      complaintRegistered:'شكواك متسجلة (الحالة: ', complaintFollow:') — هنتابعها ونرد عليك.', complaintNew:'جديدة',
+      complaintReceived:'تم استلام شكواك وهنتابعها فورًا.', callTech:'📞 '
+    },
+    en: {
+      pageTitle:'Track Your Order — SEVENGATES', lookupTitle:'Track Your Order', tokenLabel:'Tracking Code', tokenPh:'e.g. A1B2C3D4',
+      findBtn:'Show Order Status', phoneLookupLabel:'Or search by the phone number you registered with', lookupPhoneBtn:'Find My Orders',
+      orderWord:'Order', trackCodeLabel:'Tracking code:', invoiceTitle:'Invoice', rateTitle:'Rate the Service',
+      reviewPh:'Write your feedback about the service (optional)', showReviewLabel:'Show my review to other customers', submitRateBtn:'Submit Review',
+      ratedNote:'✓ Thank you for rating the service', complaintTitle:'Not satisfied with the service?',
+      complaintSub:"If the technician didn't do what was needed or there's a problem, file a complaint and we'll follow up right away.", complaintPh:'Write your complaint details...',
+      submitComplaintBtn:'File Complaint', backBtn:'🔍 Track Another Order',
+      needPhone:'Enter the phone number you registered your order with.', noOrdersPhone:'No orders registered with this number.', genericErr:'An error occurred, try again.',
+      viewLink:'View', notFound:'No order with this code. Check the code and try again.', backLink:'Back',
+      waitingMsg:"⏳ Your order is currently on the waiting list — we'll contact you as soon as a suitable technician is available.",
+      rejectedMsg:'✕ This order was rejected — for any inquiries, contact us on WhatsApp.',
+      egp:' EGP', needStars:'Choose a star rating first.', needComplaintText:'Write your complaint details.',
+      complaintRegistered:'Your complaint is registered (status: ', complaintFollow:") — we'll follow up and respond.", complaintNew:'New',
+      complaintReceived:"Your complaint has been received and we'll follow up right away.", callTech:'📞 '
+    }
+  };
+  var STATUS_LABEL_EN = { "قيد المراجعة":"Pending Review", "تمت الموافقة":"Approved", "جاري التنفيذ":"In Progress", "مكتمل":"Completed", "مرفوض":"Rejected", "قائمة انتظار":"Waiting List" };
+  var COMPLAINT_LABEL_EN = { "جديدة":"New", "قيد المراجعة":"In Review", "تم الحل":"Resolved" };
+  var currentLang = 'ar';
+  try { currentLang = localStorage.getItem('sg_lang') || 'ar'; } catch(e){}
+  function i18n(k){ return (I18N[currentLang] && I18N[currentLang][k]) || I18N.ar[k] || ''; }
+  function stLabel(s){ return currentLang==='en' ? (STATUS_LABEL_EN[s]||s) : s; }
+  function cLabel(s){ return currentLang==='en' ? (COMPLAINT_LABEL_EN[s]||s) : s; }
+  function applyLang(l){
+    currentLang = l;
+    try { localStorage.setItem('sg_lang', l); } catch(e){}
+    document.documentElement.lang = l;
+    document.documentElement.dir = l === 'ar' ? 'rtl' : 'ltr';
+    document.body.classList.toggle('lang-en', l === 'en');
+    document.querySelectorAll('[data-i18n]').forEach(function(el){
+      var k = el.getAttribute('data-i18n');
+      if (I18N[l][k] !== undefined) el.textContent = I18N[l][k];
+    });
+    document.querySelectorAll('[data-i18n-ph]').forEach(function(el){
+      var k = el.getAttribute('data-i18n-ph');
+      if (I18N[l][k] !== undefined) el.placeholder = I18N[l][k];
+    });
+    document.querySelectorAll('.lang-toggle button').forEach(function(b){
+      b.classList.toggle('active', b.getAttribute('data-lang') === l);
+    });
+    document.title = i18n('pageTitle');
+    if (currentOrder) renderOrder(currentOrder);
+  }
+  document.querySelectorAll('.lang-toggle button').forEach(function(b){
+    b.addEventListener('click', function(){ applyLang(b.getAttribute('data-lang')); });
+  });
+  applyLang(currentLang);
 
   var pathToken = (location.pathname.match(/^\/track\/([A-Za-z0-9]+)/) || [])[1];
   if (pathToken){ tokenInput.value = pathToken.toUpperCase(); loadOrder(pathToken); }
@@ -153,15 +245,15 @@
     var msg = document.getElementById('lookupMsg');
     var results = document.getElementById('phoneResults');
     msg.textContent = ''; msg.className = 'msg'; results.innerHTML = '';
-    if (!phone){ msg.textContent = 'اكتب رقم الهاتف اللي سجّلت بيه طلبك.'; msg.className = 'msg err'; return; }
+    if (!phone){ msg.textContent = i18n('needPhone'); msg.className = 'msg err'; return; }
     fetch('/api/track/lookup', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({phone: phone}) })
       .then(function(r){ return r.json(); }).then(function(data){
-        if (!data.orders || data.orders.length === 0){ msg.textContent = 'مفيش طلبات مسجلة بالرقم ده.'; msg.className = 'msg err'; return; }
+        if (!data.orders || data.orders.length === 0){ msg.textContent = i18n('noOrdersPhone'); msg.className = 'msg err'; return; }
         results.innerHTML = data.orders.map(function(o){
-          var d = new Date(o.createdAt).toLocaleDateString('ar-EG');
-          return '<div class="order-list-item"><span>'+o.device+' · '+o.service+' · '+d+' — '+o.status+'</span><a href="/track/'+o.trackingToken+'">عرض</a></div>';
+          var d = new Date(o.createdAt).toLocaleDateString(currentLang==='en'?'en-GB':'ar-EG');
+          return '<div class="order-list-item"><span>'+o.device+' · '+o.service+' · '+d+' — '+stLabel(o.status)+'</span><a href="/track/'+o.trackingToken+'">'+i18n('viewLink')+'</a></div>';
         }).join('');
-      }).catch(function(){ msg.textContent = 'حصل خطأ، جرّب تاني.'; msg.className = 'msg err'; });
+      }).catch(function(){ msg.textContent = i18n('genericErr'); msg.className = 'msg err'; });
   });
 
   document.getElementById('backBtn').addEventListener('click', function(){
@@ -184,21 +276,21 @@
       stepsEl.innerHTML = '';
       waitingNote.className = 'note-ok';
       waitingNote.style.background = 'var(--gold-tint)'; waitingNote.style.color = '#a3711a';
-      waitingNote.textContent = '⏳ طلبك في قائمة الانتظار حاليًا — هنتواصل معاك أول ما يتوفر فني مناسب.';
+      waitingNote.textContent = i18n('waitingMsg');
       return;
     }
     if (order.status === 'مرفوض'){
       stepsEl.innerHTML = '';
       waitingNote.className = 'note-ok';
       waitingNote.style.background = 'var(--danger-tint)'; waitingNote.style.color = 'var(--danger)';
-      waitingNote.textContent = '✕ تم رفض هذا الطلب — لأي استفسار تواصل معنا على واتساب.';
+      waitingNote.textContent = i18n('rejectedMsg');
       return;
     }
     waitingNote.className = 'hidden';
     var currentIdx = STEP_ORDER.indexOf(order.status);
     stepsEl.innerHTML = STEP_ORDER.map(function(s, i){
       var done = i <= currentIdx;
-      return '<div class="step '+(done?'done':'')+'"><div class="dot">'+(done?'✓':(i+1))+'</div><span>'+s+'</span></div>';
+      return '<div class="step '+(done?'done':'')+'"><div class="dot">'+(done?'✓':(i+1))+'</div><span>'+stLabel(s)+'</span></div>';
     }).join('');
   }
 
@@ -209,9 +301,10 @@
       if (!r.ok) throw new Error('not_found');
       return r.json();
     }).then(function(data){
+      currentOrder = data.order;
       renderOrder(data.order);
     }).catch(function(){
-      orderCard.innerHTML = '<p>مفيش طلب بالكود ده. تأكد من الكود وجرّب تاني.</p><button class="btn btn-ghost" onclick="location.href=\'/track\'">رجوع</button>';
+      orderCard.innerHTML = '<p>'+i18n('notFound')+'</p><button class="btn btn-ghost" onclick="location.href=\'/track\'">'+i18n('backLink')+'</button>';
     });
   }
 
@@ -220,7 +313,7 @@
     document.getElementById('oService').textContent = order.service;
     document.getElementById('oToken').textContent = order.trackingToken;
     var badge = document.getElementById('oStatusBadge');
-    badge.textContent = order.status;
+    badge.textContent = stLabel(order.status);
     badge.className = 'status-badge ' + statusBadgeClass(order.status);
 
     renderSteps(order);
@@ -233,7 +326,7 @@
       var phoneEl = document.getElementById('techPhone');
       if (order.technicianPhone){
         phoneEl.href = 'tel:' + order.technicianPhone;
-        phoneEl.textContent = '📞 ' + order.technicianPhone;
+        phoneEl.textContent = i18n('callTech') + order.technicianPhone;
       } else {
         phoneEl.textContent = '';
       }
@@ -244,7 +337,7 @@
     var invoiceSection = document.getElementById('invoiceSection');
     if (order.invoicePhoto){
       invoiceSection.classList.remove('hidden');
-      document.getElementById('invoiceAmount').textContent = order.invoiceAmount ? (Number(order.invoiceAmount).toLocaleString('ar-EG') + ' جنيه') : '';
+      document.getElementById('invoiceAmount').textContent = order.invoiceAmount ? (Number(order.invoiceAmount).toLocaleString(currentLang==='en'?'en-GB':'ar-EG') + i18n('egp')) : '';
       document.getElementById('invoiceImg').src = order.invoicePhoto;
     } else {
       invoiceSection.classList.add('hidden');
@@ -268,7 +361,7 @@
     if (order.complaintText){
       complaintSection.classList.add('hidden');
       complaintStatusNote.classList.remove('hidden');
-      complaintStatusNote.textContent = 'شكواك متسجلة (الحالة: ' + (order.complaintStatus || 'جديدة') + ') — هنتابعها ونرد عليك.';
+      complaintStatusNote.textContent = i18n('complaintRegistered') + cLabel(order.complaintStatus || 'جديدة') + i18n('complaintFollow');
     } else if (order.status !== 'قائمة انتظار') {
       complaintSection.classList.remove('hidden');
       complaintStatusNote.classList.add('hidden');
@@ -290,27 +383,27 @@
 
     document.getElementById('submitRateBtn').onclick = function(){
       var msg = document.getElementById('rateMsg');
-      if (!selectedStars){ msg.textContent = 'اختر عدد النجوم الأول.'; msg.className='msg err'; return; }
+      if (!selectedStars){ msg.textContent = i18n('needStars'); msg.className='msg err'; return; }
       fetch('/api/track/' + order.trackingToken + '/rate', {
         method:'POST', headers:{'Content-Type':'application/json'},
         body: JSON.stringify({ rating: selectedStars, reviewText: document.getElementById('reviewText').value, reviewPublic: document.getElementById('reviewPublic').checked })
       }).then(function(r){ if(!r.ok) throw new Error(); return r.json(); }).then(function(){
         rateSection.classList.add('hidden');
         ratedNote.classList.remove('hidden');
-      }).catch(function(){ msg.textContent = 'حصل خطأ، جرّب تاني.'; msg.className='msg err'; });
+      }).catch(function(){ msg.textContent = i18n('genericErr'); msg.className='msg err'; });
     };
 
     document.getElementById('submitComplaintBtn').onclick = function(){
       var msg = document.getElementById('complaintMsg');
       var text = document.getElementById('complaintText').value.trim();
-      if (!text){ msg.textContent = 'اكتب تفاصيل الشكوى.'; msg.className='msg err'; return; }
+      if (!text){ msg.textContent = i18n('needComplaintText'); msg.className='msg err'; return; }
       fetch('/api/track/' + order.trackingToken + '/complaint', {
         method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ text: text })
       }).then(function(r){ if(!r.ok) throw new Error(); return r.json(); }).then(function(){
         complaintSection.classList.add('hidden');
         complaintStatusNote.classList.remove('hidden');
-        complaintStatusNote.textContent = 'تم استلام شكواك وهنتابعها فورًا.';
-      }).catch(function(){ msg.textContent = 'حصل خطأ، جرّب تاني.'; msg.className='msg err'; });
+        complaintStatusNote.textContent = i18n('complaintReceived');
+      }).catch(function(){ msg.textContent = i18n('genericErr'); msg.className='msg err'; });
     };
   }
 })();
