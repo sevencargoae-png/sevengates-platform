@@ -3,44 +3,107 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>دخول الفريق — SEVENGATES</title>
+<title data-i18n="pageTitle">دخول الفريق — SEVENGATES</title>
 <meta name="robots" content="noindex">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;800&family=Tajawal:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;700;800&family=Tajawal:wght@400;500;700&display=swap">
 <style>
-  :root{ --surface:#f7fbfb; --surface-card:#ffffff; --surface-sunken:#eef6f7; --text-primary:#0b2027; --text-secondary:#48626a;
-    --accent:#0ea5b7; --accent-strong:#077a88; --border:rgba(11,32,39,0.10); --shadow:0 18px 40px -22px rgba(6,40,48,0.35); color-scheme:light; }
-  @media (prefers-color-scheme: dark){ :root{ --surface:#0a1417; --surface-card:#101e22; --surface-sunken:#0d1a1e; --text-primary:#f2fafb; --text-secondary:#a9c3c8; --accent:#29c7da; --accent-strong:#63e0ee; --border:rgba(255,255,255,0.12); color-scheme:dark; } }
+  :root{
+    --navy:#071626; --indigo:#5B5FE8;
+    --surface:#f5f8fa; --surface-card:#ffffff; --surface-sunken:#eef3f6;
+    --text-primary:#0b2027; --text-secondary:#48626a; --text-muted:#83999e;
+    --accent:#12B5A6; --accent-strong:#0A8F84; --accent-tint:#E3F7F4;
+    --border:rgba(11,32,39,0.10); --shadow:0 18px 40px -22px rgba(6,40,48,0.35); color-scheme:light;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --surface:#0a1417; --surface-card:#101e22; --surface-sunken:#0d1a1e;
+      --text-primary:#f2fafb; --text-secondary:#a9c3c8; --text-muted:#6f8c91;
+      --accent:#29c7da; --accent-strong:#63e0ee; --accent-tint:#12333a;
+      --border:rgba(255,255,255,0.12); color-scheme:dark;
+    }
+  }
   *{box-sizing:border-box;} html,body{margin:0;height:100%;}
-  body{background:var(--surface);color:var(--text-primary);font-family:'Tajawal',system-ui,sans-serif;display:flex;align-items:center;justify-content:center;padding:20px;}
-  .card{background:var(--surface-card);border:1px solid var(--border);border-radius:20px;box-shadow:var(--shadow);padding:32px;width:100%;max-width:380px;}
-  .mark{width:46px;height:46px;border-radius:13px;background:linear-gradient(155deg,var(--accent),var(--accent-strong));display:flex;align-items:center;justify-content:center;color:#04252b;font-weight:800;font-family:'Cairo';margin-bottom:16px;}
-  h1{font-family:'Cairo';font-size:1.2rem;margin:0 0 6px;}
+  body{background:var(--surface);color:var(--text-primary);font-family:'Tajawal',system-ui,sans-serif;display:flex;align-items:center;justify-content:center;padding:20px;position:relative;overflow:hidden;}
+  body.lang-en{font-family:'Inter',system-ui,sans-serif;}
+  h1,.mark{font-family:'Cairo',system-ui,sans-serif;}
+  body.lang-en h1{font-family:'Inter',system-ui,sans-serif;}
+  @media(prefers-reduced-motion:reduce){ *{animation:none !important;transition:none !important;} }
+  .blob{position:absolute;border-radius:50%;filter:blur(60px);opacity:.35;z-index:0;animation:float 9s ease-in-out infinite;}
+  .blob.b1{width:280px;height:280px;background:var(--accent);top:-80px;right:-60px;}
+  .blob.b2{width:220px;height:220px;background:var(--indigo);bottom:-70px;left:-50px;animation-delay:-4s;}
+  @keyframes float{0%,100%{transform:translateY(0) scale(1);}50%{transform:translateY(-18px) scale(1.05);}}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+  .topbar{position:absolute;top:0;left:0;right:0;display:flex;align-items:center;justify-content:space-between;padding:16px 20px;z-index:2;}
+  .home-link{display:inline-flex;align-items:center;gap:6px;text-decoration:none;color:var(--text-secondary);font-size:.84rem;font-weight:700;background:var(--surface-card);border:1px solid var(--border);border-radius:100px;padding:8px 14px;box-shadow:var(--shadow);}
+  .lang-toggle{display:inline-flex;align-items:center;gap:4px;border:1px solid var(--border);border-radius:100px;padding:4px;background:var(--surface-card);box-shadow:var(--shadow);}
+  .lang-toggle button{border:none;background:transparent;padding:6px 11px;border-radius:100px;font-weight:700;font-size:.74rem;cursor:pointer;color:var(--text-secondary);font-family:inherit;}
+  .lang-toggle button.active{background:var(--accent);color:#04252b;}
+  .card{position:relative;z-index:1;background:var(--surface-card);border:1px solid var(--border);border-radius:20px;box-shadow:var(--shadow);padding:32px;width:100%;max-width:380px;animation:fadeUp .5s ease;}
+  .mark{width:46px;height:46px;border-radius:13px;background:linear-gradient(155deg,var(--accent),var(--accent-strong));display:flex;align-items:center;justify-content:center;color:#04252b;font-weight:800;margin-bottom:16px;}
+  h1{font-size:1.2rem;margin:0 0 6px;}
   p{color:var(--text-secondary);font-size:.86rem;margin:0 0 22px;}
   label{display:block;font-size:.84rem;font-weight:700;margin-bottom:8px;}
-  input{width:100%;padding:12px 14px;border-radius:12px;border:1px solid var(--border);background:var(--surface-sunken);color:var(--text-primary);font-family:'Tajawal';font-size:.95rem;margin-bottom:14px;}
+  input{width:100%;padding:12px 14px;border-radius:12px;border:1px solid var(--border);background:var(--surface-sunken);color:var(--text-primary);font-family:inherit;font-size:.95rem;margin-bottom:14px;}
   input:focus{outline:2px solid var(--accent);outline-offset:1px;}
-  button{width:100%;padding:13px;border-radius:100px;border:none;font-weight:700;font-size:.92rem;cursor:pointer;background:linear-gradient(155deg,var(--accent),var(--accent-strong));color:#04252b;}
+  button[type="submit"]{width:100%;padding:13px;border-radius:100px;border:none;font-weight:700;font-size:.92rem;cursor:pointer;background:linear-gradient(155deg,var(--accent),var(--accent-strong));color:#04252b;transition:transform .15s;}
+  button[type="submit"]:hover{transform:translateY(-1px);}
   button[disabled]{opacity:.6;cursor:not-allowed;}
   .err{color:#c94040;font-size:.82rem;margin-top:-6px;margin-bottom:12px;display:none;}
 </style>
 </head>
 <body>
+  <div class="blob b1"></div>
+  <div class="blob b2"></div>
+  <div class="topbar">
+    <a class="home-link" href="/"><span>🏠</span><span data-i18n="backHome">الصفحة الرئيسية</span></a>
+    <div class="lang-toggle" role="group" aria-label="Language">
+      <button type="button" data-lang="ar">عربي</button>
+      <button type="button" data-lang="en">EN</button>
+    </div>
+  </div>
   <form class="card" id="loginForm">
     <div class="mark">7G</div>
-    <h1>دخول لوحة SEVENGATES</h1>
-    <p>الصفحة دي لفريق الشركة فقط.</p>
-    <label for="password">كلمة المرور</label>
+    <h1 data-i18n="heading">دخول لوحة SEVENGATES</h1>
+    <p data-i18n="sub">الصفحة دي لفريق الشركة فقط.</p>
+    <label for="password" data-i18n="passLabel">كلمة المرور</label>
     <input type="password" id="password" autofocus>
-    <div class="err" id="loginErr">كلمة المرور غير صحيحة</div>
-    <button type="submit" id="loginBtn">دخول</button>
+    <div class="err" id="loginErr" data-i18n="errMsg">كلمة المرور غير صحيحة</div>
+    <button type="submit" id="loginBtn" data-i18n="submitBtn">دخول</button>
   </form>
 <script>
+  var I18N = {
+    ar: { pageTitle:'دخول الفريق — SEVENGATES', backHome:'الصفحة الرئيسية', heading:'دخول لوحة SEVENGATES', sub:'الصفحة دي لفريق الشركة فقط.', passLabel:'كلمة المرور', errMsg:'كلمة المرور غير صحيحة', submitBtn:'دخول', loadingBtn:'جارِ الدخول…' },
+    en: { pageTitle:'Team Login — SEVENGATES', backHome:'Home Page', heading:'SEVENGATES Dashboard Login', sub:'This page is for company staff only.', passLabel:'Password', errMsg:'Incorrect password', submitBtn:'Log in', loadingBtn:'Logging in…' }
+  };
+  var currentLang = 'ar';
+  try { currentLang = localStorage.getItem('sg_lang') || 'ar'; } catch(e){}
+  function i18n(k){ return (I18N[currentLang] && I18N[currentLang][k]) || I18N.ar[k] || ''; }
+  function applyLang(l){
+    currentLang = l;
+    try { localStorage.setItem('sg_lang', l); } catch(e){}
+    document.documentElement.lang = l;
+    document.documentElement.dir = l === 'ar' ? 'rtl' : 'ltr';
+    document.body.classList.toggle('lang-en', l === 'en');
+    document.querySelectorAll('[data-i18n]').forEach(function(el){
+      var k = el.getAttribute('data-i18n');
+      if (I18N[l][k] !== undefined) el.textContent = I18N[l][k];
+    });
+    document.querySelectorAll('.lang-toggle button').forEach(function(b){
+      b.classList.toggle('active', b.getAttribute('data-lang') === l);
+    });
+    document.title = i18n('pageTitle');
+  }
+  document.querySelectorAll('.lang-toggle button').forEach(function(b){
+    b.addEventListener('click', function(){ applyLang(b.getAttribute('data-lang')); });
+  });
+  applyLang(currentLang);
+
   document.getElementById('loginForm').addEventListener('submit', function(e){
     e.preventDefault();
     var btn = document.getElementById('loginBtn');
     var err = document.getElementById('loginErr');
     err.style.display = 'none';
-    btn.disabled = true; btn.textContent = 'جارِ الدخول…';
+    btn.disabled = true; btn.textContent = i18n('loadingBtn');
     fetch('/api/staff/login', {
       method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({ password: document.getElementById('password').value })
@@ -49,7 +112,7 @@
       window.location.href = '/staff';
     }).catch(function(){
       err.style.display = 'block';
-      btn.disabled = false; btn.textContent = 'دخول';
+      btn.disabled = false; btn.textContent = i18n('submitBtn');
     });
   });
 </script>
