@@ -36,7 +36,8 @@
   body.lang-en .brand{font-family:'Inter';}
   .mark{width:36px;height:36px;border-radius:10px;background:linear-gradient(155deg,var(--accent),var(--accent-strong));display:flex;align-items:center;justify-content:center;color:#04252b;font-weight:900;}
   .top-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
-  .home-link{display:inline-flex;align-items:center;gap:6px;text-decoration:none;color:var(--text-primary);font-size:.84rem;font-weight:700;}
+  .home-link{display:inline-flex;align-items:center;gap:6px;text-decoration:none;color:var(--text-primary);font-size:.84rem;font-weight:700;padding:8px 14px;border-radius:100px;border:1px solid var(--border);background:var(--surface-sunken);}
+  .home-link:hover{background:var(--accent-tint);color:var(--accent-strong);}
   .lang-toggle{display:inline-flex;align-items:center;gap:4px;border:1px solid var(--border);border-radius:100px;padding:4px;background:var(--surface-sunken);}
   .lang-toggle button{border:none;background:transparent;padding:6px 11px;border-radius:100px;font-weight:700;font-size:.74rem;cursor:pointer;color:var(--text-secondary);font-family:inherit;}
   .lang-toggle button.active{background:var(--accent);color:#04252b;}
@@ -75,7 +76,7 @@
   <div class="topbar">
     <div class="brand"><span class="mark">7G</span><span id="techNameTop" data-i18n="portalTitle">بوابة الفنيين</span></div>
     <div class="top-right">
-      <a class="home-link" href="/"><span>🏠</span></a>
+      <a class="home-link" href="/"><span>🏠</span><span data-i18n="backHome">الصفحة الرئيسية</span></a>
       <div class="lang-toggle" role="group" aria-label="Language">
         <button type="button" data-lang="ar">عربي</button>
         <button type="button" data-lang="en">EN</button>
@@ -117,7 +118,7 @@
 
   var I18N = {
     ar: {
-      pageTitle:'بوابة الفنيين — SEVENGATES', portalTitle:'بوابة الفنيين', logoutBtn:'خروج',
+      pageTitle:'بوابة الفنيين — SEVENGATES', portalTitle:'بوابة الفنيين', logoutBtn:'خروج', backHome:'الصفحة الرئيسية',
       tabActive:'الحالية', tabDone:'المكتملة', tabAll:'الكل', loading:'جارِ التحميل…',
       noOrdersHere:'مفيش طلبات هنا دلوقتي.', loadErr:'تعذّر تحميل الطلبات.',
       startBtn:'▶ بدء التنفيذ', completeBtn:'✔ إنهاء الطلب ورفع الفاتورة', updating:'جارِ التحديث…',
@@ -129,7 +130,7 @@
       needAmount:'اكتب مبلغ صحيح.', uploadErr:'حصل خطأ أثناء الرفع، جرّب تاني.'
     },
     en: {
-      pageTitle:'Technician Portal — SEVENGATES', portalTitle:'Technician Portal', logoutBtn:'Logout',
+      pageTitle:'Technician Portal — SEVENGATES', portalTitle:'Technician Portal', logoutBtn:'Logout', backHome:'Home Page',
       tabActive:'Active', tabDone:'Completed', tabAll:'All', loading:'Loading…',
       noOrdersHere:'No orders here right now.', loadErr:'Could not load orders.',
       startBtn:'▶ Start Work', completeBtn:'✔ Finish & Upload Invoice', updating:'Updating…',
