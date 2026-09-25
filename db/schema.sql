@@ -88,6 +88,25 @@ CREATE INDEX IF NOT EXISTS idx_orders_customer_phone ON orders (customer_phone);
 CREATE INDEX IF NOT EXISTS idx_orders_status ON orders (status);
 CREATE INDEX IF NOT EXISTS idx_orders_technician_id ON orders (technician_id);
 
+-- customer confirmation of completion (anti-tampering signal, independent of status)
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS customer_confirmed_at TIMESTAMPTZ;
+
+-- append-only audit trail of every status change on an order — never updated or deleted by the app
+CREATE TABLE IF NOT EXISTS order_status_history (
+  id SERIAL PRIMARY KEY,
+  order_id INT NOT NULL REFERENCES orders(id),
+  old_status TEXT,
+  new_status TEXT NOT NULL,
+  changed_by TEXT NOT NULL DEFAULT 'system', -- 'system' / 'staff' / 'staff-override' / 'tech:<id>:<name>' / 'customer'
+  reason TEXT NOT NULL DEFAULT '',
+  flagged BOOLEAN NOT NULL DEFAULT false,
+  flag_reason TEXT NOT NULL DEFAULT '',
+  ip_address TEXT NOT NULL DEFAULT '',
+  changed_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS idx_osh_order_id ON order_status_history (order_id);
+CREATE INDEX IF NOT EXISTS idx_osh_changed_at ON order_status_history (changed_at DESC);
+
 -- seed default catalog (only if empty)
 INSERT INTO catalog_items (category, name, sort_order)
 SELECT * FROM (VALUES
