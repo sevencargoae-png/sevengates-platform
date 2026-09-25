@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>SEVENGATES للصيانة العامة والمقاولات — صيانة تكييفات وأجهزة كهربائية</title>
-<meta name="description" content="SEVENGATES لصيانة التكييفات والأجهزة الكهربائية: تصليح، صيانة دورية، تجديد وإحلال. اطلب الصيانة أونلاين وفريقنا يتواصل معاك فورًا.">
+<title>SEVENGATES — للصيانة العامة والمقاولات في دولة الإمارات</title>
+<meta name="description" content="SEVENGATES منصة صيانة عامة ومقاولات احترافية تخدم جميع إمارات الدولة: صيانة، تصليح، تجديد وإحلال لكل أجهزتك، مع متابعة فورية لطلبك من الأرسال حتى انتهاء الخدمة.">
 <meta name="robots" content="index, follow">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;700;800;900&family=Tajawal:wght@400;500;700&family=Inter:wght@500;600;700;800&display=swap">
 <style>
@@ -39,7 +39,8 @@
   .topbar{position:sticky;top:0;z-index:40;background:color-mix(in srgb, var(--surface) 86%, transparent);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);}
   .topbar-row{display:flex;align-items:center;justify-content:space-between;padding-block:14px;gap:12px;max-width:1120px;margin:0 auto;padding-inline:20px;flex-wrap:wrap;}
   .brand{display:flex;align-items:center;gap:10px;font-family:'Cairo';font-weight:800;font-size:1.15rem;}
-  .brand .mark{width:40px;height:40px;border-radius:12px;background:linear-gradient(155deg,var(--accent),var(--accent-strong));display:flex;align-items:center;justify-content:center;color:#04252b;font-weight:900;box-shadow:0 8px 18px -8px rgba(18,181,166,.65);}
+  .brand .mark{width:46px;height:46px;border-radius:12px;background:linear-gradient(155deg,var(--accent),var(--accent-strong));display:flex;align-items:center;justify-content:center;padding:6px;box-shadow:0 8px 18px -8px rgba(18,181,166,.65);flex:none;}
+  .brand .mark img{width:100%;height:100%;object-fit:contain;display:block;}
   .brand .name-col{display:flex;flex-direction:column;line-height:1.25;}
   .brand small.tagline{display:block;font-family:'Tajawal';font-weight:500;font-size:.66rem;color:var(--text-secondary);margin-top:1px;}
   body.lang-en .brand small.tagline{font-family:'Inter';}
@@ -79,7 +80,16 @@
   .hero .blob{position:absolute;border-radius:50%;filter:blur(60px);opacity:.35;pointer-events:none;animation:float 14s ease-in-out infinite;}
   .hero .blob1{width:360px;height:360px;background:var(--indigo);top:-120px;inset-inline-end:-80px;}
   .hero .blob2{width:260px;height:260px;background:var(--accent);bottom:-100px;inset-inline-start:8%;animation-delay:-6s;}
+  .hero .blob3{width:190px;height:190px;background:var(--gold);top:38%;inset-inline-start:-70px;animation-delay:-3s;opacity:.2;}
   @keyframes float{0%,100%{transform:translateY(0) scale(1);}50%{transform:translateY(-26px) scale(1.06);}}
+  .hero .grid-fx{position:absolute;inset:0;pointer-events:none;opacity:.15;background-image:linear-gradient(rgba(255,255,255,.5) 1px, transparent 1px),linear-gradient(90deg, rgba(255,255,255,.5) 1px, transparent 1px);background-size:46px 46px;-webkit-mask-image:radial-gradient(560px 320px at 78% 10%, #000, transparent 75%);mask-image:radial-gradient(560px 320px at 78% 10%, #000, transparent 75%);}
+  .hero .tools-float{position:absolute;inset:0;pointer-events:none;overflow:hidden;}
+  .hero .tools-float span{position:absolute;font-size:1.6rem;opacity:.18;animation:toolFloat 10s ease-in-out infinite;filter:drop-shadow(0 6px 10px rgba(0,0,0,.35));}
+  .hero .tools-float span:nth-child(1){top:14%;inset-inline-end:16%;animation-duration:9s;}
+  .hero .tools-float span:nth-child(2){top:62%;inset-inline-end:6%;animation-duration:12s;animation-delay:-3s;}
+  .hero .tools-float span:nth-child(3){top:30%;inset-inline-start:4%;animation-duration:11s;animation-delay:-5s;}
+  .hero .tools-float span:nth-child(4){top:78%;inset-inline-start:22%;animation-duration:13s;animation-delay:-1.5s;}
+  @keyframes toolFloat{0%,100%{transform:translateY(0) rotate(0deg);}50%{transform:translateY(-18px) rotate(14deg);}}
   .hero-inner{position:relative;}
   .eyebrow{display:inline-flex;align-items:center;gap:8px;background:rgba(18,181,166,.16);color:#7CE7DB;border:1px solid rgba(124,231,219,.25);padding:6px 14px;border-radius:100px;font-weight:700;font-size:.78rem;margin-bottom:20px;}
   .eyebrow::before{content:"";width:7px;height:7px;border-radius:50%;background:#7CE7DB;animation:pulseDot 1.8s ease-in-out infinite;}
@@ -107,8 +117,10 @@
   .card{background:var(--surface-card);border:1px solid var(--border);border-radius:var(--radius);padding:22px;box-shadow:var(--shadow);}
   .service-card{cursor:pointer;transition:transform .18s,box-shadow .18s,border-color .18s;}
   .service-card:hover{transform:translateY(-5px);box-shadow:0 26px 50px -22px rgba(6,25,40,0.4);border-color:color-mix(in srgb, var(--accent) 45%, var(--border));}
-  .service-card .ic{width:48px;height:48px;border-radius:14px;background:var(--accent-tint);display:flex;align-items:center;justify-content:center;font-size:1.4rem;margin-bottom:14px;transition:transform .18s;}
+  .service-card .ic{width:64px;height:64px;border-radius:16px;background:var(--accent-tint);display:flex;align-items:center;justify-content:center;margin-bottom:14px;transition:transform .18s;}
+  .service-card .ic svg{width:34px;height:34px;stroke:var(--accent-strong);}
   .service-card:hover .ic{transform:scale(1.1) rotate(-4deg);}
+  .service-card .tap-hint{display:inline-flex;align-items:center;gap:4px;margin-top:10px;font-size:.72rem;font-weight:700;color:var(--accent-strong);}
   .service-card h3{font-size:1.05rem;margin:0 0 6px;}
   .service-card p{margin:0;color:var(--text-secondary);font-size:.87rem;}
   .service-card .badge{display:inline-flex;align-items:center;gap:6px;margin-top:12px;font-size:.72rem;font-weight:700;padding:4px 10px;border-radius:100px;background:var(--accent-tint);color:var(--accent-strong);}
@@ -119,6 +131,28 @@
   .trust-item .n{font-family:'Cairo';font-weight:900;font-size:1.15rem;color:var(--accent-strong);min-width:1.6em;}
   .trust-item h4{margin:0 0 4px;font-size:.95rem;}
   .trust-item p{margin:0;font-size:.82rem;color:var(--text-secondary);}
+
+  .emirates-grid{grid-template-columns:repeat(auto-fit,minmax(140px,1fr));}
+  .emirate-chip{display:flex;align-items:center;gap:10px;background:var(--surface-card);border:1px solid var(--border);border-radius:100px;padding:12px 18px;font-weight:700;font-size:.9rem;box-shadow:var(--shadow);transition:transform .18s,border-color .18s;}
+  .emirate-chip:hover{transform:translateY(-3px);border-color:color-mix(in srgb, var(--accent) 45%, var(--border));}
+  .emirate-chip .ic{font-size:1.2rem;}
+
+  .faq-list{display:flex;flex-direction:column;gap:12px;max-width:820px;margin-inline:auto;}
+  .faq-item{background:var(--surface-card);border:1px solid var(--border);border-radius:16px;padding:6px 22px;box-shadow:var(--shadow);}
+  .faq-item summary{cursor:pointer;list-style:none;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 0;font-weight:700;font-size:.97rem;}
+  .faq-item summary::-webkit-details-marker{display:none;}
+  .faq-item .chev{color:var(--accent-strong);transition:transform .22s;flex:none;}
+  .faq-item[open] .chev{transform:rotate(180deg);}
+  .faq-item p{margin:0 0 18px;color:var(--text-secondary);font-size:.9rem;line-height:1.85;}
+
+  .location-card{display:grid;gap:0;grid-template-columns:1fr;background:var(--surface-card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);}
+  @media(min-width:860px){.location-card{grid-template-columns:1fr 1.15fr;}}
+  .location-info{padding:30px 28px;display:flex;flex-direction:column;gap:12px;}
+  .location-info h3{margin:0 0 6px;font-size:1.2rem;}
+  .location-info p{margin:0;color:var(--text-secondary);font-size:.92rem;display:flex;gap:8px;align-items:flex-start;}
+  .location-info .btn{align-self:flex-start;margin-top:10px;}
+  .location-map{min-height:260px;background:var(--surface-sunken);}
+  .location-map iframe{width:100%;height:100%;min-height:260px;border:0;display:block;}
 
   .order-panel{background:var(--surface-card);border:1px solid var(--border);border-radius:22px;box-shadow:var(--shadow);overflow:hidden;}
   .order-grid{display:grid;grid-template-columns:1fr;}
@@ -178,11 +212,13 @@
   <div class="topbar">
     <div class="topbar-row">
       <div class="brand">
-        <span class="mark">7G</span>
-        <span class="name-col">SEVENGATES<small class="tagline" data-i18n="tagline">صيانة سريعة وموثوقة لجهازك — اطلب فنيك في أقل من دقيقة</small></span>
+        <span class="mark"><img src="/assets/logo-mark.png" alt="SEVENGATES"></span>
+        <span class="name-col">SEVENGATES<small class="tagline" data-i18n="tagline">صيانة سريعة وموثوقة — اطلب الخدمة الآن</small></span>
       </div>
       <nav class="nav-links">
         <a href="#services" data-i18n="navServices">خدماتنا</a>
+        <a href="#coverage" data-i18n="navCoverage">مناطق التغطية</a>
+        <a href="#faq" data-i18n="navFaq">الأسئلة الشائعة</a>
         <a href="#reviews" data-i18n="navReviews">آراء العملاء</a>
         <a href="/track" data-i18n="navTrack">تتبع الطلب</a>
         <a href="#order" data-i18n="navOrder">اطلب الصيانة</a>
@@ -209,10 +245,13 @@
   </div>
 
   <div class="hero">
+    <div class="grid-fx" aria-hidden="true"></div>
     <div class="blob blob1"></div>
     <div class="blob blob2"></div>
+    <div class="blob blob3"></div>
+    <div class="tools-float" aria-hidden="true"><span>🔧</span><span>❄️</span><span>⚡</span><span>🛠️</span></div>
     <div class="wrap hero-inner">
-      <span class="eyebrow" data-i18n="eyebrow">صيانة تكييفات وأجهزة كهربائية — منصة SEVENGATES</span>
+      <span class="eyebrow" data-i18n="eyebrow">خدمات صيانة ومقاولات موثوقة في جميع أنحاء الإمارات</span>
       <h1 data-i18n-html="heroTitle">صيانة، تصليح، تجديد وإحلال <em>لكل أجهزتك الكهربائية</em> في مكانك</h1>
       <p class="lead" data-i18n="heroLead">سجّل طلبك أونلاين وهيوصل فورًا لفريقنا، وهنعينلك فني متخصص ونبعتلك بياناته أول ما يتحدد. تقدر تتابع حالة طلبك لحظة بلحظة من رابط خاص بيك.</p>
       <div class="hero-actions">
@@ -249,10 +288,27 @@
     </div>
   </section>
 
+  <section class="wrap" id="coverage">
+    <div class="section-head center reveal">
+      <span class="tag" data-i18n="coverageTag">مناطق التغطية</span>
+      <h2 data-i18n="coverageTitle">نخدم جميع إمارات الدولة</h2>
+      <p data-i18n="coverageDesc">فريقنا الفني منتشر في جميع أنحاء دولة الإمارات العربية المتحدة، ويصل إليك أينما كنت في أي من الإمارات السبع.</p>
+    </div>
+    <div class="grid reveal emirates-grid">
+      <div class="emirate-chip"><span class="ic">🏙️</span><span data-i18n="emirate1">أبوظبي</span></div>
+      <div class="emirate-chip"><span class="ic">🌆</span><span data-i18n="emirate2">دبي</span></div>
+      <div class="emirate-chip"><span class="ic">🕌</span><span data-i18n="emirate3">الشارقة</span></div>
+      <div class="emirate-chip"><span class="ic">🏢</span><span data-i18n="emirate4">عجمان</span></div>
+      <div class="emirate-chip"><span class="ic">🌊</span><span data-i18n="emirate5">أم القيوين</span></div>
+      <div class="emirate-chip"><span class="ic">⛰️</span><span data-i18n="emirate6">رأس الخيمة</span></div>
+      <div class="emirate-chip"><span class="ic">🏝️</span><span data-i18n="emirate7">الفجيرة</span></div>
+    </div>
+  </section>
+
   <section class="wrap" id="order">
     <div class="section-head reveal">
       <span class="tag" data-i18n="orderTag">اطلب الصيانة</span>
-      <h2 data-i18n="orderTitle">عبّي بياناتك وطلبك يوصلنا فورًا</h2>
+      <h2 data-i18n="orderTitle">اطلب الخدمة من هنا</h2>
       <p data-i18n="orderDesc">الطلب بيتسجل مباشرة عندنا وبيبان لفريقنا لحظة ما تبعته — من غير ما تحتاج واتساب أو أي تطبيق تاني.</p>
     </div>
     <div class="order-panel reveal">
@@ -261,7 +317,7 @@
           <h3 data-i18n="orderStepsTitle">خطوات الطلب</h3>
           <p data-i18n="orderStepsDesc">عملية بسيطة من غير تسجيل أو حساب — بياناتك بتوصلنا مباشرة وبتتسجل في سجل الشركة.</p>
           <ul class="order-steps">
-            <li><b>1</b><span data-i18n="step1">عبّي بياناتك ونوع المشكلة تحت.</span></li>
+            <li><b>1</b><span data-i18n="step1">املأ استمارة الخدمة ونوع المشكلة تحت.</span></li>
             <li><b>2</b><span data-i18n="step2">حدد موقعك تلقائيًا (اختياري) وارفق صورة المشكلة.</span></li>
             <li><b>3</b><span data-i18n="step3">دوس "إرسال الطلب" — هيوصل فورًا لفريقنا وهتاخد كود تتبع.</span></li>
             <li><b>4</b><span data-i18n="step4">هنعينلك فني ونبعتلك بياناته، والدفع كاش بعد الفاتورة.</span></li>
@@ -315,6 +371,60 @@
     </div>
   </section>
 
+  <section class="wrap" id="faq">
+    <div class="section-head center reveal">
+      <span class="tag" data-i18n="faqTag">الأسئلة الشائعة</span>
+      <h2 data-i18n="faqTitle">كل ما تحتاج معرفته قبل الطلب</h2>
+      <p data-i18n="faqDesc">إجابات على أكثر الأسئلة التي يطرحها عملاؤنا.</p>
+    </div>
+    <div class="faq-list reveal">
+      <details class="faq-item" open>
+        <summary><span data-i18n="faqQ1">كم يستغرق وصول الفني بعد إرسال الطلب؟</span><span class="chev">▾</span></summary>
+        <p data-i18n="faqA1">فور إرسال الطلب يصل إشعار فوري إلى فريقنا، ويتم تعيين فني متخصص خلال دقائق. مدة الوصول الفعلية تختلف حسب موقعك وازدحام الطلبات، وستظهر لك بيانات الفني واسمه ورقمه فور تعيينه على صفحة تتبع الطلب.</p>
+      </details>
+      <details class="faq-item">
+        <summary><span data-i18n="faqQ2">ما هي طرق الدفع المتاحة؟</span><span class="chev">▾</span></summary>
+        <p data-i18n="faqA2">الدفع حاليًا كاش فقط، ويتم بعد إتمام الفني للخدمة وتسليمك فاتورة موثقة بالتكلفة النهائية.</p>
+      </details>
+      <details class="faq-item">
+        <summary><span data-i18n="faqQ3">هل هناك ضمان على الصيانة؟</span><span class="chev">▾</span></summary>
+        <p data-i18n="faqA3">نعم، كل خدمة صيانة أو تصليح نقوم بها مشمولة بضمان، وفي حال وجود أي ملاحظة بعد الزيارة يمكنك التواصل معنا مباشرة لمتابعة الأمر.</p>
+      </details>
+      <details class="faq-item">
+        <summary><span data-i18n="faqQ4">ماذا لو كان الجهاز يحتاج إحلالًا بدلًا من التصليح؟</span><span class="chev">▾</span></summary>
+        <p data-i18n="faqA4">يقوم الفني بفحص الجهاز أولًا، وإذا تبيّن أن التصليح غير مجدٍ اقتصاديًا، سيوضح لك ذلك بشفافية قبل أي تنفيذ، ويمكنك حينها اختيار خدمة التجديد أو الإحلال الكامل.</p>
+      </details>
+      <details class="faq-item">
+        <summary><span data-i18n="faqQ5">هل يمكنني تتبع حالة طلبي؟</span><span class="chev">▾</span></summary>
+        <p data-i18n="faqA5">نعم، بمجرد إرسال الطلب تحصل على كود تتبع خاص بك يمكنك من خلاله متابعة حالة الطلب، بيانات الفني المعيّن، وصورة الفاتورة بعد انتهاء الخدمة.</p>
+      </details>
+      <details class="faq-item">
+        <summary><span data-i18n="faqQ6">في أي مناطق تقدمون الخدمة؟</span><span class="chev">▾</span></summary>
+        <p data-i18n="faqA6">نقدّم خدماتنا في جميع إمارات الدولة السبع: أبوظبي، دبي، الشارقة، عجمان، أم القيوين، رأس الخيمة، والفجيرة.</p>
+      </details>
+    </div>
+  </section>
+
+  <section class="wrap" id="location">
+    <div class="section-head reveal">
+      <span class="tag" data-i18n="locSectionTag">مقرّنا</span>
+      <h2 data-i18n="locSectionTitle">مقر الشركة الرئيسي</h2>
+      <p data-i18n="locSectionDesc">يسعدنا استقبال عملائنا أو التواصل معنا مباشرة من مقرّنا التالي.</p>
+    </div>
+    <div class="location-card reveal">
+      <div class="location-info">
+        <h3 data-i18n="locCompanyName">SEVENGATES للصيانة العامة والمقاولات</h3>
+        <p><span>📍</span> <span data-i18n="locAddress">دبي، الإمارات العربية المتحدة — ورسان الأولى (Warsan First)، England Cluster</span></p>
+        <p><span>☎</span> <a href="tel:+966553377985">0553377985</a></p>
+        <p><span>🕐</span> <span data-i18n="footHours1">يوميًا من 9 صباحًا حتى 10 مساءً</span></p>
+        <a class="btn btn-primary" href="https://www.google.com/maps/search/?api=1&query=25.1717511,55.401486" target="_blank" rel="noopener" data-i18n="locOpenMap">📍 فتح الموقع على خرائط جوجل</a>
+      </div>
+      <div class="location-map">
+        <iframe src="https://maps.google.com/maps?q=25.1717511,55.401486&z=14&output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="SEVENGATES location"></iframe>
+      </div>
+    </div>
+  </section>
+
   <section class="wrap" id="reviews">
     <div class="section-head center reveal">
       <span class="tag" data-i18n="reviewsTag">آراء العملاء</span>
@@ -337,38 +447,39 @@
     <div class="foot-grid">
       <div class="foot-col"><h4>SEVENGATES</h4><p style="color:var(--text-secondary)" data-i18n="footAbout">للصيانة العامة والمقاولات — تصليح، تجديد، إحلال لكل الأجهزة الكهربائية.</p></div>
       <div class="foot-col"><h4 data-i18n="footContact">تواصل معنا</h4><a href="tel:+966553377985">☎ 0553377985</a><a href="https://wa.me/966553377985" target="_blank" rel="noopener" data-i18n="footWhatsapp">💬 واتساب: 0553377985</a></div>
-      <div class="foot-col"><h4 data-i18n="footLinks">روابط سريعة</h4><a href="#services" data-i18n="navServices">خدماتنا</a><a href="#reviews" data-i18n="navReviews">آراء العملاء</a><a href="/track" data-i18n="footTrackPrev">تتبع طلب سابق</a></div>
+      <div class="foot-col"><h4 data-i18n="footLinks">روابط سريعة</h4><a href="#services" data-i18n="navServices">خدماتنا</a><a href="#coverage" data-i18n="navCoverage">مناطق التغطية</a><a href="#faq" data-i18n="navFaq">الأسئلة الشائعة</a><a href="#reviews" data-i18n="navReviews">آراء العملاء</a><a href="/track" data-i18n="footTrackPrev">تتبع طلب سابق</a></div>
       <div class="foot-col"><h4 data-i18n="footPortals">الدخول للمنصة</h4><a href="#order" data-i18n="portalCustomer">عميل — اطلب الخدمة</a><a href="/staff" data-i18n="portalStaff">دخول الموظفين</a><a href="/tech" data-i18n="portalTech">دخول الفنيين</a></div>
       <div class="foot-col"><h4 data-i18n="footHours">مواعيد العمل</h4><p style="color:var(--text-secondary)" data-i18n="footHours1">يوميًا من 9 صباحًا حتى 10 مساءً</p><p style="color:var(--text-secondary)" data-i18n="footHours2">خدمة طوارئ متاحة حسب المنطقة</p></div>
+      <div class="foot-col"><h4 data-i18n="footLegal">سياسات وشروط</h4><a href="/privacy" data-i18n="footPrivacy">سياسة الخصوصية</a><a href="/terms" data-i18n="footTerms">شروط الخدمة</a><a href="/cookies" data-i18n="footCookies">سياسة ملفات تعريف الارتباط</a></div>
     </div>
-    <div class="copy" data-i18n="footCopy">© SEVENGATES للصيانة العامة والمقاولات</div>
+    <div class="copy" data-i18n="footCopy">© SEVENGATES للصيانة العامة والمقاولات — جميع إمارات الدولة</div>
   </footer>
 
 <script>
 (function(){
   var I18N = {
     ar: {
-      tagline: 'صيانة سريعة وموثوقة لجهازك — اطلب فنيك في أقل من دقيقة',
-      navServices:'خدماتنا', navReviews:'آراء العملاء', navTrack:'تتبع الطلب', navOrder:'اطلب الصيانة',
+      tagline: 'صيانة سريعة وموثوقة — اطلب الخدمة الآن',
+      navServices:'خدماتنا', navCoverage:'مناطق التغطية', navFaq:'الأسئلة الشائعة', navReviews:'آراء العملاء', navTrack:'تتبع الطلب', navOrder:'اطلب الصيانة',
       callUs:'اتصل بنا', orderNowShort:'اطلب الصيانة',
       portalMenuBtn:'الدخول', portalCustomer:'عميل — اطلب الخدمة', portalCustomerDesc:'سجّل طلب صيانة جديد',
       portalStaff:'دخول الموظفين', portalStaffDesc:'لوحة تحكم الشركة', portalTech:'دخول الفنيين', portalTechDesc:'بوابة الفني الخاصة بك',
-      eyebrow:'صيانة تكييفات وأجهزة كهربائية — منصة SEVENGATES',
+      eyebrow:'خدمات صيانة ومقاولات موثوقة في جميع أنحاء الإمارات',
       heroTitle:'صيانة، تصليح، تجديد وإحلال <em>لكل أجهزتك الكهربائية</em> في مكانك',
       heroLead:'سجّل طلبك أونلاين وهيوصل فورًا لفريقنا، وهنعينلك فني متخصص ونبعتلك بياناته أول ما يتحدد. تقدر تتابع حالة طلبك لحظة بلحظة من رابط خاص بيك.',
       heroOrderNow:'اطلب الصيانة الآن', heroTrackPrev:'تتبع طلب سابق', whatsapp:'واتساب',
       statYears:'سنة خبرة فنية', statRating:'تقييم عملائنا', statCash:'كاش', statCashLabel:'الدفع بعد الفاتورة', statWarranty:'ضمان', statWarrantyLabel:'على كل صيانة بنعملها',
       servicesTag:'خدماتنا', servicesTitle:'صيانة عامة لكل أنواع الأجهزة',
       servicesDesc:'من التكييفات لحد الأجهزة المنزلية، بنقدملك تصليح وصيانة دورية وتجديد وإحلال كامل لو الجهاز مش هيتصلح اقتصاديًا.',
-      loadingServices:'جارِ تحميل الخدمات…',
+      loadingServices:'جارِ تحميل الخدمات…', tapToOrder:'اضغط لطلب الخدمة',
       trust1h:'الطلب يوصلنا فورًا', trust1p:'فريقنا بيشوف طلبك في نفس اللحظة وبيوافق عليه ويعينلك فني متخصص.',
       trust2h:'تعرف اسم ورقم الفني', trust2p:'أول ما يتعين فني لطلبك، هتشوف اسمه ورقمه فورًا من صفحة تتبع الطلب.',
       trust3h:'فاتورة موثقة لكل طلب', trust3p:'بعد التنفيذ والدفع، الفني بيرفع صورة الفاتورة على المنصة وتظهر ليك.',
       trust4h:'تقييم وشكاوى شفافة', trust4p:'تقدر تقيّم الخدمة أو تقدّم شكوى لو الفني ماعملش المطلوب — وتقييمات عملائنا ظاهرة للجميع.',
-      orderTag:'اطلب الصيانة', orderTitle:'عبّي بياناتك وطلبك يوصلنا فورًا',
+      orderTag:'اطلب الصيانة', orderTitle:'اطلب الخدمة من هنا',
       orderDesc:'الطلب بيتسجل مباشرة عندنا وبيبان لفريقنا لحظة ما تبعته — من غير ما تحتاج واتساب أو أي تطبيق تاني.',
       orderStepsTitle:'خطوات الطلب', orderStepsDesc:'عملية بسيطة من غير تسجيل أو حساب — بياناتك بتوصلنا مباشرة وبتتسجل في سجل الشركة.',
-      step1:'عبّي بياناتك ونوع المشكلة تحت.', step2:'حدد موقعك تلقائيًا (اختياري) وارفق صورة المشكلة.',
+      step1:'املأ استمارة الخدمة ونوع المشكلة تحت.', step2:'حدد موقعك تلقائيًا (اختياري) وارفق صورة المشكلة.',
       step3:'دوس "إرسال الطلب" — هيوصل فورًا لفريقنا وهتاخد كود تتبع.', step4:'هنعينلك فني ونبعتلك بياناته، والدفع كاش بعد الفاتورة.',
       submitErr:'حصل خطأ أثناء إرسال الطلب. جرّب تاني أو كلمنا على واتساب.',
       labelName:'الاسم بالكامل', phName:'مثال: محمد أحمد', errName:'من فضلك اكتب اسمك',
@@ -384,13 +495,30 @@
       successTitle:'تم استلام طلبك', successMsg:'وصل طلبك لفريقنا وهيتواصلوا معاك قريب لتأكيد الميعاد.',
       keepCode:'احتفظ بالكود ده لمتابعة حالة طلبك واسم الفني وفاتورتك من صفحة التتبع.',
       trackMine:'تتبع طلبي', newRequest:'إرسال طلب تاني',
+      coverageTag:'مناطق التغطية', coverageTitle:'نخدم جميع إمارات الدولة',
+      coverageDesc:'فريقنا الفني منتشر في جميع أنحاء دولة الإمارات العربية المتحدة، ويصل إليك أينما كنت في أي من الإمارات السبع.',
+      emirate1:'أبوظبي', emirate2:'دبي', emirate3:'الشارقة', emirate4:'عجمان', emirate5:'أم القيوين', emirate6:'رأس الخيمة', emirate7:'الفجيرة',
+      faqTag:'الأسئلة الشائعة', faqTitle:'كل ما تحتاج معرفته قبل الطلب', faqDesc:'إجابات على أكثر الأسئلة التي يطرحها عملاؤنا.',
+      faqQ1:'كم يستغرق وصول الفني بعد إرسال الطلب؟',
+      faqA1:'فور إرسال الطلب يصل إشعار فوري إلى فريقنا، ويتم تعيين فني متخصص خلال دقائق. مدة الوصول الفعلية تختلف حسب موقعك وازدحام الطلبات، وستظهر لك بيانات الفني واسمه ورقمه فور تعيينه على صفحة تتبع الطلب.',
+      faqQ2:'ما هي طرق الدفع المتاحة؟', faqA2:'الدفع حاليًا كاش فقط، ويتم بعد إتمام الفني للخدمة وتسليمك فاتورة موثقة بالتكلفة النهائية.',
+      faqQ3:'هل هناك ضمان على الصيانة؟', faqA3:'نعم، كل خدمة صيانة أو تصليح نقوم بها مشمولة بضمان، وفي حال وجود أي ملاحظة بعد الزيارة يمكنك التواصل معنا مباشرة لمتابعة الأمر.',
+      faqQ4:'ماذا لو كان الجهاز يحتاج إحلالًا بدلًا من التصليح؟',
+      faqA4:'يقوم الفني بفحص الجهاز أولًا، وإذا تبيّن أن التصليح غير مجدٍ اقتصاديًا، سيوضح لك ذلك بشفافية قبل أي تنفيذ، ويمكنك حينها اختيار خدمة التجديد أو الإحلال الكامل.',
+      faqQ5:'هل يمكنني تتبع حالة طلبي؟', faqA5:'نعم، بمجرد إرسال الطلب تحصل على كود تتبع خاص بك يمكنك من خلاله متابعة حالة الطلب، بيانات الفني المعيّن، وصورة الفاتورة بعد انتهاء الخدمة.',
+      faqQ6:'في أي مناطق تقدمون الخدمة؟', faqA6:'نقدّم خدماتنا في جميع إمارات الدولة السبع: أبوظبي، دبي، الشارقة، عجمان، أم القيوين، رأس الخيمة، والفجيرة.',
+      locSectionTag:'مقرّنا', locSectionTitle:'مقر الشركة الرئيسي', locSectionDesc:'يسعدنا استقبال عملائنا أو التواصل معنا مباشرة من مقرّنا التالي.',
+      locCompanyName:'SEVENGATES للصيانة العامة والمقاولات',
+      locAddress:'دبي، الإمارات العربية المتحدة — ورسان الأولى (Warsan First)، England Cluster',
+      locOpenMap:'📍 فتح الموقع على خرائط جوجل',
       reviewsTag:'آراء العملاء', reviewsTitle:'عملاؤنا بيقولوا إيه عن خدمتنا', reviewsDesc:'تقييمات حقيقية من عملاء اتخدمت طلباتهم عن طريق المنصة.',
       loadingReviews:'جارِ تحميل التقييمات…',
-      footAbout:'للصيانة العامة والمقاولات — تصليح، تجديد، إحلال لكل الأجهزة الكهربائية.',
+      footAbout:'صيانة عامة ومقاولات لجميع الأجهزة الكهربائية والتكييفات — بخدمة تغطي كل إمارات الدولة.',
       footContact:'تواصل معنا', footWhatsapp:'💬 واتساب: 0553377985',
       footLinks:'روابط سريعة', footTrackPrev:'تتبع طلب سابق', footPortals:'الدخول للمنصة',
       footHours:'مواعيد العمل', footHours1:'يوميًا من 9 صباحًا حتى 10 مساءً', footHours2:'خدمة طوارئ متاحة حسب المنطقة',
-      footCopy:'© SEVENGATES للصيانة العامة والمقاولات',
+      footLegal:'سياسات وشروط', footPrivacy:'سياسة الخصوصية', footTerms:'شروط الخدمة', footCookies:'سياسة ملفات تعريف الارتباط',
+      footCopy:'© SEVENGATES للصيانة العامة والمقاولات — جميع إمارات الدولة',
       waitingTitle:'طلبك في قائمة الانتظار', waitingMsg:'كل الفنيين مشغولين أو الخدمة دي مش متاحة دلوقتي — طلبك محفوظ وهنتواصل معاك أول ما يتوفر فني.',
       availOk:'✓ الخدمة متاحة الآن', availDisabled:'الخدمة غير متاحة حاليًا — تقدر تسجل طلبك وهيتحط في قائمة الانتظار.', availNoTech:'لا يوجد فني متاح دلوقتي لهذا النوع — طلبك هيتسجل في قائمة الانتظار وهنتواصل معاك أول ما يتوفر فني.',
       ratingCount:' تقييم', noReviewsYet:'لسه مفيش تقييمات — كن أول من يقيّم خدمتنا بعد إتمام طلبك!', reviewsErr:'تعذّر تحميل التقييمات حاليًا.',
@@ -401,27 +529,27 @@
       sending:'جارِ الإرسال…'
     },
     en: {
-      tagline: 'Fast, reliable appliance repair — book a technician in under a minute',
-      navServices:'Services', navReviews:'Reviews', navTrack:'Track Order', navOrder:'Book Service',
+      tagline: 'Fast, reliable maintenance — book your service now',
+      navServices:'Services', navCoverage:'Coverage Areas', navFaq:'FAQ', navReviews:'Reviews', navTrack:'Track Order', navOrder:'Book Service',
       callUs:'Call us', orderNowShort:'Book Service',
       portalMenuBtn:'Login', portalCustomer:'Customer — Book Service', portalCustomerDesc:'Submit a new maintenance request',
       portalStaff:'Staff Login', portalStaffDesc:'Company dashboard', portalTech:'Technician Login', portalTechDesc:'Your technician portal',
-      eyebrow:'AC & appliance maintenance — SEVENGATES platform',
+      eyebrow:'Trusted maintenance & contracting services across the UAE',
       heroTitle:'Repair, maintenance, renewal & replacement <em>for all your appliances</em>, at your place',
       heroLead:'Submit your request online and it reaches our team instantly — we\'ll assign a specialist technician and send you their details as soon as they\'re set. Track your request live from your own link.',
       heroOrderNow:'Book Service Now', heroTrackPrev:'Track a Previous Order', whatsapp:'WhatsApp',
       statYears:'years of experience', statRating:'customer rating', statCash:'Cash', statCashLabel:'Paid after invoice', statWarranty:'Warranty', statWarrantyLabel:'On every service we do',
       servicesTag:'Our Services', servicesTitle:'General maintenance for every appliance',
       servicesDesc:'From air conditioners to home appliances, we offer repair, periodic maintenance, and full renewal or replacement if a unit isn\'t worth fixing.',
-      loadingServices:'Loading services…',
+      loadingServices:'Loading services…', tapToOrder:'Tap to book this service',
       trust1h:'Your request reaches us instantly', trust1p:'Our team sees your request the moment you send it, approves it, and assigns a specialist.',
       trust2h:'See the technician\'s name & number', trust2p:'As soon as a technician is assigned, you\'ll see their name and number on your tracking page.',
       trust3h:'A documented invoice every time', trust3p:'After the work is done and paid for, the technician uploads a photo of the invoice to the platform.',
       trust4h:'Transparent ratings & complaints', trust4p:'You can rate the service or file a complaint if the technician didn\'t deliver — and our reviews are public.',
-      orderTag:'Book Service', orderTitle:'Fill in your details and your request reaches us instantly',
+      orderTag:'Book Service', orderTitle:'Book your service here',
       orderDesc:'Your request is registered directly with us and appears to our team the moment you send it — no WhatsApp or other app needed.',
       orderStepsTitle:'How it works', orderStepsDesc:'A simple process with no signup or account — your details reach us directly and are logged with the company.',
-      step1:'Fill in your details and the issue below.', step2:'Auto-detect your location (optional) and attach a photo of the issue.',
+      step1:'Fill in the service form and the issue below.', step2:'Auto-detect your location (optional) and attach a photo of the issue.',
       step3:'Tap "Send Request" — it reaches our team instantly and you get a tracking code.', step4:'We\'ll assign a technician and send their details — pay cash after the invoice.',
       submitErr:'Something went wrong sending your request. Try again or message us on WhatsApp.',
       labelName:'Full name', phName:'e.g. John Smith', errName:'Please enter your name',
@@ -437,13 +565,30 @@
       successTitle:'Your request has been received', successMsg:'Your request has reached our team and they\'ll be in touch shortly to confirm the appointment.',
       keepCode:'Keep this code to track your request status, technician details, and invoice from the tracking page.',
       trackMine:'Track my order', newRequest:'Send another request',
+      coverageTag:'Coverage Areas', coverageTitle:'We serve every emirate in the country',
+      coverageDesc:'Our technicians are spread across the United Arab Emirates and reach you wherever you are in any of the seven emirates.',
+      emirate1:'Abu Dhabi', emirate2:'Dubai', emirate3:'Sharjah', emirate4:'Ajman', emirate5:'Umm Al Quwain', emirate6:'Ras Al Khaimah', emirate7:'Fujairah',
+      faqTag:'FAQ', faqTitle:'Everything you need to know before you book', faqDesc:'Answers to the questions our customers ask most.',
+      faqQ1:'How long does it take for a technician to arrive after I submit a request?',
+      faqA1:'As soon as you submit a request, our team is notified instantly and a specialist technician is assigned within minutes. Actual arrival time depends on your location and current demand — you\'ll see the technician\'s name and number as soon as they\'re assigned, on your tracking page.',
+      faqQ2:'What payment methods are available?', faqA2:'Currently cash only, paid after the technician completes the service and hands you a documented invoice with the final cost.',
+      faqQ3:'Is there a warranty on maintenance work?', faqA3:'Yes, every repair or maintenance service we perform is covered by a warranty. If you notice anything afterward, you can contact us directly and we\'ll follow up.',
+      faqQ4:'What if my appliance needs replacement instead of repair?',
+      faqA4:'The technician inspects the appliance first, and if repair isn\'t economically worthwhile, they\'ll explain that transparently before doing any work — you can then choose a renewal or full replacement service.',
+      faqQ5:'Can I track the status of my request?', faqA5:'Yes — as soon as you submit your request you get a personal tracking code you can use to follow its status, see the assigned technician\'s details, and view the invoice photo once the service is done.',
+      faqQ6:'Which areas do you cover?', faqA6:'We provide our services across all seven emirates: Abu Dhabi, Dubai, Sharjah, Ajman, Umm Al Quwain, Ras Al Khaimah, and Fujairah.',
+      locSectionTag:'Our Location', locSectionTitle:'Our Head Office', locSectionDesc:'We\'re happy to welcome our customers or hear from you directly at our office below.',
+      locCompanyName:'SEVENGATES General Maintenance & Contracting',
+      locAddress:'Dubai, United Arab Emirates — Warsan First, England Cluster',
+      locOpenMap:'📍 Open location on Google Maps',
       reviewsTag:'Customer Reviews', reviewsTitle:'What our customers say about our service', reviewsDesc:'Real reviews from customers whose requests were handled through the platform.',
       loadingReviews:'Loading reviews…',
-      footAbout:'General maintenance & contracting — repair, renewal, and replacement for all electrical appliances.',
+      footAbout:'General maintenance & contracting for all appliances and AC units — serving every emirate in the country.',
       footContact:'Contact us', footWhatsapp:'💬 WhatsApp: 0553377985',
       footLinks:'Quick links', footTrackPrev:'Track a previous order', footPortals:'Platform Login',
       footHours:'Working hours', footHours1:'Daily from 9 AM to 10 PM', footHours2:'Emergency service available depending on area',
-      footCopy:'© SEVENGATES General Maintenance & Contracting',
+      footLegal:'Policies', footPrivacy:'Privacy Policy', footTerms:'Terms of Service', footCookies:'Cookie Policy',
+      footCopy:'© SEVENGATES General Maintenance & Contracting — serving all emirates',
       waitingTitle:'Your request is on the waiting list', waitingMsg:'All technicians are busy or this service isn\'t available right now — your request is saved and we\'ll reach out as soon as a technician is free.',
       availOk:'✓ Service available now', availDisabled:'This service isn\'t available right now — you can still submit your request and it\'ll join the waiting list.', availNoTech:'No technician is available for this right now — your request will join the waiting list and we\'ll reach out once one is free.',
       ratingCount:' reviews', noReviewsYet:'No reviews yet — be the first to rate our service after your request is done!', reviewsErr:'Couldn\'t load reviews right now.',
@@ -529,13 +674,22 @@
     requestAnimationFrame(step);
   }
 
+  var SVG_ICONS = {
+    ac: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M2 12h20M4.5 4.5l15 15M19.5 4.5l-15 15"/></svg>',
+    fridge: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="5" y1="9" x2="19" y2="9"/><line x1="8" y1="5.5" x2="8" y2="7"/><line x1="8" y1="12.5" x2="8" y2="16"/></svg>',
+    wash: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="13" r="5"/><path d="M9 13a3 3 0 0 0 5.5 1.6"/><line x1="7" y1="6.2" x2="7" y2="6.2"/><line x1="10" y1="6.2" x2="10" y2="6.2"/></svg>',
+    heater: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2c2 3-1 4-1 6.5a2.5 2.5 0 0 0 5 0C16 5 14 4 12 2Z"/><path d="M7 22c-1.2-3 .5-4.5 1.5-6.5C10 13 8.5 11 7 9c-2 3 1 4 1 6.5A2.5 2.5 0 0 1 3 15" opacity=".55"/><path d="M12 22a5 5 0 0 0 5-5c0-2.5-1.7-4-3-6-1 2-2.5 2.5-2.5 5a2 2 0 0 0 2 2" /></svg>',
+    oven: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><circle cx="7" cy="6" r="1"/><circle cx="11" cy="6" r="1"/><rect x="6" y="12" width="12" height="6" rx="1"/></svg>',
+    electric: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 4 14 11 14 10 22 20 9 13 9 13 2"/></svg>',
+    tools: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 1 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.5 2.5-2-2 2.5-2.5Z"/></svg>'
+  };
   var DEVICE_ICONS = [
-    [/تكييف|ac|air/i, '❄️'], [/ثلاج|fridge/i, '🧊'], [/غسال|wash/i, '🧺'], [/سخان|heater/i, '🔥'], [/فرن|بوتاجاز|oven/i, '🍳'],
-    [/كهرب|تمديد|electric/i, '⚡']
+    [/تكييف|ac|air/i, 'ac'], [/ثلاج|fridge/i, 'fridge'], [/غسال|wash/i, 'wash'], [/سخان|heater/i, 'heater'], [/فرن|بوتاجاز|oven/i, 'oven'],
+    [/كهرب|تمديد|electric/i, 'electric']
   ];
   function iconFor(name){
-    for (var i=0;i<DEVICE_ICONS.length;i++){ if (DEVICE_ICONS[i][0].test(name)) return DEVICE_ICONS[i][1]; }
-    return '🛠️';
+    for (var i=0;i<DEVICE_ICONS.length;i++){ if (DEVICE_ICONS[i][0].test(name)) return SVG_ICONS[DEVICE_ICONS[i][1]]; }
+    return SVG_ICONS.tools;
   }
 
   var deviceSelect = document.getElementById('device');
@@ -554,14 +708,16 @@
       return;
     }
     servicesGrid.innerHTML = catalogCache.devices.map(function(d){
-      return '<div class="card service-card" data-device="'+d.replace(/"/g,'')+'"><div class="ic">'+iconFor(d)+'</div><h3>'+d+'</h3><p>'+t('serviceCardDesc')+'</p></div>';
+      return '<div class="card service-card" role="button" tabindex="0" data-device="'+d.replace(/"/g,'')+'" aria-label="'+d+'"><div class="ic">'+iconFor(d)+'</div><h3>'+d+'</h3><p>'+t('serviceCardDesc')+'</p><span class="tap-hint">👆 '+t('tapToOrder')+'</span></div>';
     }).join('');
+    function selectCard(card){
+      deviceSelect.value = card.getAttribute('data-device');
+      deviceSelect.dispatchEvent(new Event('change'));
+      document.getElementById('order').scrollIntoView({behavior:'smooth'});
+    }
     Array.prototype.forEach.call(servicesGrid.querySelectorAll('.service-card'), function(card){
-      card.addEventListener('click', function(){
-        deviceSelect.value = card.getAttribute('data-device');
-        deviceSelect.dispatchEvent(new Event('change'));
-        document.getElementById('order').scrollIntoView({behavior:'smooth'});
-      });
+      card.addEventListener('click', function(){ selectCard(card); });
+      card.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); selectCard(card); } });
     });
   }
 
