@@ -742,6 +742,16 @@ app.get('/track/:token', (req, res) => {
   res.sendFile(path.join(__dirname, 'views', 'track.html'));
 });
 
+app.get('/privacy', (req, res) => {
+  res.sendFile(path.join(__dirname, 'views', 'privacy.html'));
+});
+app.get('/terms', (req, res) => {
+  res.sendFile(path.join(__dirname, 'views', 'terms.html'));
+});
+app.get('/cookies', (req, res) => {
+  res.sendFile(path.join(__dirname, 'views', 'cookies.html'));
+});
+
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
