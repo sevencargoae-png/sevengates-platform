@@ -226,6 +226,7 @@
       <div class="tile reveal"><div class="lbl" data-i18n="tilePending">طلبات محتاجة موافقة</div><div class="val tabular" id="statPending">0</div><div class="sub" data-i18n="tilePendingSub">لسه ما اتراجعتش</div></div>
       <div class="tile reveal"><div class="lbl" data-i18n="tileWaiting">قائمة الانتظار</div><div class="val tabular" id="statWaiting">0</div><div class="sub" data-i18n="tileWaitingSub">محتاجة فني متاح</div></div>
       <div class="tile reveal"><div class="lbl" data-i18n="tileUnassigned">محتاجة تكليف فني</div><div class="val tabular" id="statUnassigned">0</div><div class="sub" data-i18n="tileUnassignedSub">طلبات نشطة من غير فني</div></div>
+      <div class="tile reveal"><div class="lbl" data-i18n="tileLate">طلبات متأخرة</div><div class="val tabular" id="statLate" style="color:var(--st-rejected);">0</div><div class="sub" data-i18n="tileLateSub">تجاوزت الوقت المتوقع لمرحلتها</div></div>
       <div class="tile reveal"><div class="lbl" data-i18n="tileComplaints">شكاوى جديدة</div><div class="val tabular" id="statComplaints">0</div><div class="sub" data-i18n="tileComplaintsSub">محتاجة متابعة</div></div>
       <div class="tile reveal"><div class="lbl" data-i18n="tileCustomers">عملاء مسجّلين</div><div class="val tabular" id="statCustomers">0</div><div class="sub" id="statCustomersSub">—</div></div>
     </div>
@@ -353,6 +354,18 @@
   function stLabel(s){ return currentLang==='en' ? (STATUS_LABEL_EN[s]||s) : s; }
   function cLabel(s){ return currentLang==='en' ? (COMPLAINT_LABEL_EN[s]||s) : s; }
   function tsLabel(s){ return currentLang==='en' ? (TECHSTATUS_LABEL_EN[s]||s) : s; }
+  function actorLabel(changedBy){
+    changedBy = changedBy || '';
+    if (changedBy === 'system') return i18n('actorSystem');
+    if (changedBy === 'staff') return i18n('actorStaff');
+    if (changedBy === 'staff-override') return i18n('actorStaffOverride');
+    if (changedBy === 'customer') return i18n('actorCustomer');
+    if (changedBy.indexOf('tech:') === 0) {
+      var parts = changedBy.split(':');
+      return i18n('actorTech') + (parts[2] ? ' — ' + parts[2] : '');
+    }
+    return changedBy;
+  }
 
   var I18N = {
     ar: {
@@ -360,6 +373,7 @@
       navHome:'الصفحة الرئيسية', navOverview:'نظرة عامة', navOrders:'الطلبات', navTechs:'الفنيين', navServices:'الخدمات', navFinance:'الفواتير والمالية', navReviews:'التقييمات والشكاوى', navCustomers:'العملاء',
       tileTotal:'إجمالي الطلبات', tilePending:'طلبات محتاجة موافقة', tilePendingSub:'لسه ما اتراجعتش',
       tileWaiting:'قائمة الانتظار', tileWaitingSub:'محتاجة فني متاح', tileUnassigned:'محتاجة تكليف فني', tileUnassignedSub:'طلبات نشطة من غير فني',
+      tileLate:'طلبات متأخرة', tileLateSub:'تجاوزت الوقت المتوقع لمرحلتها',
       tileComplaints:'شكاوى جديدة', tileComplaintsSub:'محتاجة متابعة', tileCustomers:'عملاء مسجّلين',
       panelTrend:'الطلبات خلال آخر 14 يوم', panelTrendDesc:'عدد الطلبات الجديدة يوميًا', trendHint:'مرّر على أي عمود لعرض التفاصيل',
       panelStatus:'الطلبات حسب الحالة', panelStatusDesc:'التوزيع الحالي لكل الطلبات',
@@ -391,13 +405,19 @@
       toastErr:'حصل خطأ، حاول تاني', toastErr2:'حصل خطأ', toastTechStatusUpdated:'تم تحديث حالة الفني', toastTechActivated:'تم تفعيل الفني', toastTechDeactivated:'تم تعطيل الفني',
       toastFillTech:'اكتب الاسم ورقم الهاتف وكلمة المرور', toastTechAdded:'تمت إضافة الفني', toastTechErr:'حصل خطأ — تأكد إن رقم الهاتف مش مستخدم قبل كده',
       toastUpdated:'تم التحديث', toastAdded:'تمت الإضافة', toastCatalogErr:'العنصر موجود بالفعل أو حصل خطأ',
-      toastPassChanged:'تم تغيير كلمة المرور بنجاح', toastPassErr:'حصل خطأ في تغيير كلمة المرور', toastPassEmpty:'اكتب كلمة مرور جديدة أولاً'
+      toastPassChanged:'تم تغيير كلمة المرور بنجاح', toastPassErr:'حصل خطأ في تغيير كلمة المرور', toastPassEmpty:'اكتب كلمة مرور جديدة أولاً',
+      lateTag:'⏱ متأخر', confirmedTag:'✅ أكّد العميل الاستلام', awaitingConfirmTag:'⏳ بانتظار تأكيد العميل',
+      timelineBtn:'🕐 السجل الزمني', timelineHideBtn:'إخفاء السجل الزمني', timelineEmpty:'لا يوجد سجل بعد', timelineLoading:'جارِ التحميل…',
+      overridePrompt:'إكمال الطلب مباشرة يحتاج سبب (هيتسجل في السجل الزمني). اكتب السبب:', overrideCancelled:'تم إلغاء العملية — لازم سبب مكتوب (5 أحرف على الأقل)',
+      actorSystem:'النظام', actorStaff:'الفريق', actorStaffOverride:'الفريق (إكمال مباشر)', actorTech:'الفني', actorCustomer:'العميل',
+      flaggedNote:'⚠ '
     },
     en: {
       brandTitle:'SEVENGATES Dashboard', brandSub:'Orders, technicians, invoices & customers', logout:'Logout',
       navHome:'Home Page', navOverview:'Overview', navOrders:'Orders', navTechs:'Technicians', navServices:'Services', navFinance:'Invoices & Finance', navReviews:'Reviews & Complaints', navCustomers:'Customers',
       tileTotal:'Total Orders', tilePending:'Awaiting Approval', tilePendingSub:'Not reviewed yet',
       tileWaiting:'Waiting List', tileWaitingSub:'Needs an available technician', tileUnassigned:'Needs a Technician', tileUnassignedSub:'Active orders with no technician',
+      tileLate:'Delayed Orders', tileLateSub:'Past the expected time for their stage',
       tileComplaints:'New Complaints', tileComplaintsSub:'Needs follow-up', tileCustomers:'Registered Customers',
       panelTrend:'Orders Over the Last 14 Days', panelTrendDesc:'New orders per day', trendHint:'Hover over a bar for details',
       panelStatus:'Orders by Status', panelStatusDesc:'Current distribution of all orders',
@@ -429,7 +449,12 @@
       toastErr:'Something went wrong, try again', toastErr2:'Something went wrong', toastTechStatusUpdated:'Technician status updated', toastTechActivated:'Technician activated', toastTechDeactivated:'Technician deactivated',
       toastFillTech:'Enter the name, phone number and password', toastTechAdded:'Technician added', toastTechErr:'Error — make sure the phone number isn\'t already used',
       toastUpdated:'Updated', toastAdded:'Added', toastCatalogErr:'Item already exists or an error occurred',
-      toastPassChanged:'Password changed successfully', toastPassErr:'Error changing password', toastPassEmpty:'Enter a new password first'
+      toastPassChanged:'Password changed successfully', toastPassErr:'Error changing password', toastPassEmpty:'Enter a new password first',
+      lateTag:'⏱ Delayed', confirmedTag:'✅ Customer confirmed receipt', awaitingConfirmTag:'⏳ Awaiting customer confirmation',
+      timelineBtn:'🕐 Timeline', timelineHideBtn:'Hide Timeline', timelineEmpty:'No history yet', timelineLoading:'Loading…',
+      overridePrompt:'Completing an order directly needs a reason (it will be logged). Enter the reason:', overrideCancelled:'Cancelled — a written reason (5+ characters) is required',
+      actorSystem:'System', actorStaff:'Staff', actorStaffOverride:'Staff (direct completion)', actorTech:'Technician', actorCustomer:'Customer',
+      flaggedNote:'⚠ '
     }
   };
   var currentLang = 'ar';
@@ -496,6 +521,8 @@
     $('statCustomersSub').textContent = allCustomers.length ? (withMulti + (currentLang==='en' ? ' returning' : ' عميل عائد')) : (currentLang==='en' ? 'No customers yet' : 'لسه مفيش عملاء');
     var needsAssign = allOrders.filter(function(o){ return !o.technician_id && ACTIVE_STATUSES.indexOf(o.status)>-1; }).length;
     $('statUnassigned').textContent = needsAssign;
+    var late = allOrders.filter(function(o){ return !!o.sla_flag; }).length;
+    $('statLate').textContent = late;
     var newComplaints = allOrders.filter(function(o){ return o.complaint_text && o.complaint_status==='جديدة'; }).length;
     $('statComplaints').textContent = newComplaints;
     $('dotComplaints').classList.toggle('show', newComplaints>0);
@@ -564,6 +591,13 @@
     var assignTag = o.technician_id ? '<span class="assign-tag">👷 '+esc(o.assigned_to)+'</span>' : (isWaiting ? '<span class="assign-tag waiting">'+i18n('waitingTag')+'</span>' : '<span class="assign-tag unassigned">'+i18n('unassignedTag')+'</span>');
     var complaintTag = (o.complaint_text) ? '<span class="badge" style="background:color-mix(in srgb, var(--st-rejected) 16%, transparent);color:var(--st-rejected);">🚩 '+esc(i18n('complaintField'))+': '+cLabel(o.complaint_status||'جديدة')+'</span>' : '';
     var ratingTag = (o.rating!=null) ? '<span class="badge" style="background:color-mix(in srgb, var(--gold) 16%, transparent);color:var(--gold);">'+stars(o.rating)+'</span>' : '';
+    var lateTag = o.sla_flag ? '<span class="badge" style="background:color-mix(in srgb, var(--st-rejected) 16%, transparent);color:var(--st-rejected);" title="'+esc(o.sla_flag)+'">'+i18n('lateTag')+'</span>' : '';
+    var confirmTag = '';
+    if (status === 'مكتمل') {
+      confirmTag = o.customer_confirmed_at
+        ? '<span class="badge" style="background:color-mix(in srgb, var(--st-done) 16%, transparent);color:var(--st-done);">'+i18n('confirmedTag')+'</span>'
+        : '<span class="badge" style="background:color-mix(in srgb, var(--st-waiting) 16%, transparent);color:var(--st-waiting);">'+i18n('awaitingConfirmTag')+'</span>';
+    }
     var invoiceHtml = o.invoice_photo ? (
       '<div class="kv"><b>'+i18n('kvInvoice')+'</b>'+ (o.invoice_amount ? Number(o.invoice_amount).toLocaleString('ar-EG')+(currentLang==='en'?' EGP':' جنيه') : '') +'</div>' +
       '<img class="order-photo" src="'+o.invoice_photo+'" alt="'+esc(i18n('kvInvoice'))+'" data-lightbox="1">'
@@ -583,7 +617,7 @@
       '<div class="order-head" data-toggle="'+o.id+'">' +
         '<div class="who"><b>#'+o.id+' — '+esc(o.name||"—")+'</b><span>'+esc(o.phone||"")+' · '+esc(o.device||"")+' · '+esc(o.tracking_token||"")+'</span></div>' +
         '<span class="badge" style="background:color-mix(in srgb, '+color+' 16%, transparent);color:'+color+'"><span class="d" style="background:'+color+'"></span>'+stLabel(status)+'</span>' +
-        assignTag + complaintTag + ratingTag +
+        assignTag + complaintTag + ratingTag + lateTag + confirmTag +
         (isPending ? '<button class="btn btn-approve btn-sm" data-approve="'+o.id+'" type="button">'+i18n('approveBtn')+'</button>' : '') +
         '<div class="meta">'+fmtDate(o.created_at)+'</div>' +
       '</div>' +
@@ -604,6 +638,8 @@
           '<div class="field"><label>'+i18n('notesField')+'</label><textarea class="notes-box" data-notes="'+o.id+'" placeholder="'+esc(i18n('notesPh'))+'">'+esc(o.notes||"")+'</textarea>' +
             '<button class="btn btn-ghost btn-sm" style="margin-top:8px;" data-savenote="'+o.id+'">'+i18n('saveNote')+'</button></div>' +
           complaintBlock + reviewBlock +
+          '<div class="field"><button type="button" class="btn btn-ghost btn-sm" data-timeline-toggle="'+o.id+'">'+i18n('timelineBtn')+'</button>' +
+            '<div class="kv" data-timeline-box="'+o.id+'" style="display:none;margin-top:10px;background:var(--surface-sunken);border-radius:10px;padding:10px 12px;"></div></div>' +
         '</div>' +
       '</div></div>' +
     '</div>';
@@ -666,10 +702,51 @@
     }
     var finImg = e.target.closest && e.target.closest('img[data-fin]');
     if(finImg){ openLightbox(finImg.src); return; }
+    var tlBtn = e.target.closest && e.target.closest('[data-timeline-toggle]');
+    if(tlBtn){
+      var tlId = tlBtn.getAttribute('data-timeline-toggle');
+      var box = document.querySelector('[data-timeline-box="'+tlId+'"]');
+      if(!box) return;
+      if(box.style.display === 'none'){
+        box.style.display = 'block';
+        tlBtn.textContent = i18n('timelineHideBtn');
+        box.textContent = i18n('timelineLoading');
+        api('/api/staff/orders/'+tlId+'/history').then(function(r){ return r.json(); }).then(function(data){
+          var hist = data.history || [];
+          if(!hist.length){ box.textContent = i18n('timelineEmpty'); return; }
+          box.innerHTML = hist.map(function(h){
+            var line = '<div style="padding:5px 0;border-bottom:1px solid var(--border);font-size:.82rem;">' +
+              '<b>'+(h.old_status?stLabel(h.old_status)+' → ':'')+stLabel(h.new_status)+'</b>' +
+              ' — '+esc(actorLabel(h.changed_by))+' · '+fmtDate(h.changed_at) +
+              (h.reason ? '<div style="color:var(--text-secondary);">'+esc(h.reason)+'</div>' : '') +
+              (h.flagged ? '<div style="color:var(--st-rejected);">'+i18n('flaggedNote')+esc(h.flag_reason)+'</div>' : '') +
+            '</div>';
+            return line;
+          }).join('');
+        }).catch(function(){ box.textContent = i18n('timelineEmpty'); });
+      } else {
+        box.style.display = 'none';
+        tlBtn.textContent = i18n('timelineBtn');
+      }
+      return;
+    }
   });
   document.addEventListener('change', function(e){
     if(e.target.matches('.status-select[data-order]')){
-      patchOrder(e.target.getAttribute('data-order'), { status: e.target.value }, i18n('toastStatusUpdated'));
+      var oid = e.target.getAttribute('data-order');
+      var newVal = e.target.value;
+      if(newVal === 'مكتمل'){
+        var reason = window.prompt(i18n('overridePrompt'), '');
+        if(!reason || reason.trim().length < 5){
+          toast(i18n('overrideCancelled'));
+          var orig = allOrders.find(function(o){ return String(o.id)===String(oid); });
+          e.target.value = orig ? (orig.status||'قيد المراجعة') : e.target.value;
+          return;
+        }
+        patchOrder(oid, { status: newVal, forceComplete: true, overrideReason: reason.trim() }, i18n('toastStatusUpdated'));
+        return;
+      }
+      patchOrder(oid, { status: newVal }, i18n('toastStatusUpdated'));
     }
     if(e.target.matches('[data-techassign]')){
       var id = e.target.getAttribute('data-techassign');
