@@ -3,30 +3,51 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>بوابة الفنيين — SEVENGATES</title>
+<title data-i18n="pageTitle">بوابة الفنيين — SEVENGATES</title>
 <meta name="robots" content="noindex">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;800;900&family=Tajawal:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;700;800;900&family=Tajawal:wght@400;500;700&display=swap">
 <style>
   :root{
+    --navy:#071626; --indigo:#5B5FE8;
     --surface:#F5F8FA; --surface-card:#ffffff; --surface-sunken:#EEF3F6;
     --text-primary:#0B2027; --text-secondary:#4C6470; --text-muted:#8598A1;
     --accent:#12B5A6; --accent-strong:#0A8F84; --accent-tint:#E3F7F4;
     --gold:#F2A93C; --gold-tint:#FDF1DF; --danger:#C94040;
     --border:rgba(11,32,39,0.10); --shadow:0 14px 34px -20px rgba(6,25,40,0.3); --radius:16px;
   }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --surface:#0a1417; --surface-card:#101e22; --surface-sunken:#0d1a1e;
+      --text-primary:#f2fafb; --text-secondary:#a9c3c8; --text-muted:#6f8c91;
+      --accent:#29c7da; --accent-strong:#63e0ee; --accent-tint:#12333a;
+      --border:rgba(255,255,255,0.12); color-scheme:dark;
+    }
+  }
   *{box-sizing:border-box;} html,body{margin:0;}
   body{background:var(--surface);color:var(--text-primary);font-family:'Tajawal',system-ui,sans-serif;line-height:1.6;padding-bottom:40px;}
+  body.lang-en{font-family:'Inter',system-ui,sans-serif;}
   h1,h2,h3{font-family:'Cairo',system-ui,sans-serif;}
-  .topbar{background:var(--surface-card);border-bottom:1px solid var(--border);padding:14px 18px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:10;}
+  body.lang-en h1,body.lang-en h2,body.lang-en h3{font-family:'Inter',system-ui,sans-serif;}
+  @media(prefers-reduced-motion:reduce){ *{animation:none !important;transition:none !important;} }
+  @keyframes fadeUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+  .card{animation:fadeUp .35s ease;}
+  .topbar{background:var(--surface-card);border-bottom:1px solid var(--border);padding:14px 18px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:10;gap:10px;flex-wrap:wrap;}
   .brand{display:flex;align-items:center;gap:10px;font-family:'Cairo';font-weight:800;}
+  body.lang-en .brand{font-family:'Inter';}
   .mark{width:36px;height:36px;border-radius:10px;background:linear-gradient(155deg,var(--accent),var(--accent-strong));display:flex;align-items:center;justify-content:center;color:#04252b;font-weight:900;}
+  .top-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+  .home-link{display:inline-flex;align-items:center;gap:6px;text-decoration:none;color:var(--text-primary);font-size:.84rem;font-weight:700;}
+  .lang-toggle{display:inline-flex;align-items:center;gap:4px;border:1px solid var(--border);border-radius:100px;padding:4px;background:var(--surface-sunken);}
+  .lang-toggle button{border:none;background:transparent;padding:6px 11px;border-radius:100px;font-weight:700;font-size:.74rem;cursor:pointer;color:var(--text-secondary);font-family:inherit;}
+  .lang-toggle button.active{background:var(--accent);color:#04252b;}
   .wrap{max-width:640px;margin:0 auto;padding:18px;}
-  .status-pill{font-size:.72rem;font-weight:700;padding:4px 10px;border-radius:100px;background:var(--accent-tint);color:var(--accent-strong);}
-  .btn{display:inline-flex;align-items:center;gap:6px;justify-content:center;padding:10px 16px;border-radius:100px;font-weight:700;font-size:.85rem;border:1px solid transparent;cursor:pointer;text-decoration:none;}
+  .status-pill{font-size:.72rem;font-weight:700;padding:4px 10px;border-radius:100px;background:var(--accent-tint);color:var(--accent-strong);white-space:nowrap;}
+  .btn{display:inline-flex;align-items:center;gap:6px;justify-content:center;padding:10px 16px;border-radius:100px;font-weight:700;font-size:.85rem;border:1px solid transparent;cursor:pointer;text-decoration:none;font-family:inherit;transition:transform .15s;}
+  .btn:hover{transform:translateY(-1px);}
   .btn-primary{background:linear-gradient(155deg,var(--accent),var(--accent-strong));color:#04252b;}
   .btn-ghost{background:transparent;border-color:var(--border);color:var(--text-primary);}
   .btn-block{width:100%;}
-  .btn[disabled]{opacity:.5;cursor:not-allowed;}
+  .btn[disabled]{opacity:.5;cursor:not-allowed;transform:none;}
   .card{background:var(--surface-card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);margin-bottom:14px;}
   .order-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:10px;}
   .order-head h3{margin:0;font-size:1.05rem;}
@@ -34,16 +55,16 @@
   .desc-box{background:var(--surface-sunken);border-radius:10px;padding:10px 12px;font-size:.88rem;margin:10px 0;}
   .photo-thumb{width:100%;max-width:220px;border-radius:10px;margin-top:8px;border:1px solid var(--border);}
   .tabs{display:flex;gap:8px;margin-bottom:16px;overflow-x:auto;}
-  .tab{padding:8px 16px;border-radius:100px;font-size:.85rem;font-weight:700;background:var(--surface-sunken);color:var(--text-secondary);cursor:pointer;white-space:nowrap;}
+  .tab{padding:8px 16px;border-radius:100px;font-size:.85rem;font-weight:700;background:var(--surface-sunken);color:var(--text-secondary);cursor:pointer;white-space:nowrap;transition:background .15s,color .15s;}
   .tab.active{background:var(--accent);color:#04252b;}
   .empty-note{color:var(--text-muted);font-size:.9rem;text-align:center;padding:30px;}
   .modal-bg{position:fixed;inset:0;background:rgba(8,20,26,.55);display:none;align-items:flex-end;justify-content:center;z-index:50;}
   .modal-bg.show{display:flex;}
-  .modal{background:var(--surface-card);border-radius:20px 20px 0 0;padding:22px;width:100%;max-width:520px;max-height:88vh;overflow:auto;}
+  .modal{background:var(--surface-card);border-radius:20px 20px 0 0;padding:22px;width:100%;max-width:520px;max-height:88vh;overflow:auto;animation:fadeUp .3s ease;}
   @media(min-width:560px){ .modal-bg{align-items:center;} .modal{border-radius:20px;} }
   .field{margin-bottom:14px;}
   .field label{display:block;font-size:.85rem;font-weight:700;margin-bottom:7px;}
-  input,textarea{width:100%;padding:12px 14px;border-radius:12px;border:1px solid var(--border);background:var(--surface-sunken);color:var(--text-primary);font-family:'Tajawal';font-size:.95rem;}
+  input,textarea{width:100%;padding:12px 14px;border-radius:12px;border:1px solid var(--border);background:var(--surface-sunken);color:var(--text-primary);font-family:inherit;font-size:.95rem;}
   .file-drop{border:1.5px dashed var(--border);border-radius:12px;padding:16px;text-align:center;background:var(--surface-sunken);cursor:pointer;font-size:.85rem;color:var(--text-secondary);}
   .file-drop input{display:none;}
   .file-drop.has-file{border-color:var(--accent);color:var(--text-primary);}
@@ -52,30 +73,37 @@
 </head>
 <body>
   <div class="topbar">
-    <div class="brand"><span class="mark">7G</span><span id="techNameTop">بوابة الفنيين</span></div>
-    <button class="btn btn-ghost" id="logoutBtn">خروج</button>
+    <div class="brand"><span class="mark">7G</span><span id="techNameTop" data-i18n="portalTitle">بوابة الفنيين</span></div>
+    <div class="top-right">
+      <a class="home-link" href="/"><span>🏠</span></a>
+      <div class="lang-toggle" role="group" aria-label="Language">
+        <button type="button" data-lang="ar">عربي</button>
+        <button type="button" data-lang="en">EN</button>
+      </div>
+      <button class="btn btn-ghost" id="logoutBtn" data-i18n="logoutBtn">خروج</button>
+    </div>
   </div>
   <div class="wrap">
     <div class="tabs">
-      <div class="tab active" data-f="active">الحالية</div>
-      <div class="tab" data-f="done">المكتملة</div>
-      <div class="tab" data-f="all">الكل</div>
+      <div class="tab active" data-f="active" data-i18n="tabActive">الحالية</div>
+      <div class="tab" data-f="done" data-i18n="tabDone">المكتملة</div>
+      <div class="tab" data-f="all" data-i18n="tabAll">الكل</div>
     </div>
-    <div id="ordersList"><div class="empty-note">جارِ التحميل…</div></div>
+    <div id="ordersList"><div class="empty-note" data-i18n="loading">جارِ التحميل…</div></div>
   </div>
 
   <div class="modal-bg" id="completeModal">
     <div class="modal">
-      <h3 style="margin:0 0 6px;">إنهاء الطلب ورفع الفاتورة</h3>
-      <p style="color:var(--text-secondary);font-size:.85rem;margin:0 0 16px;">بعد ما العميل يمضي على الفاتورة ويدفع، صوّرها وارفعها هنا.</p>
-      <div class="field"><label>صورة الفاتورة الموقعة</label>
-        <label class="file-drop" id="invoiceDrop"><input type="file" id="invoicePhoto" accept="image/*" capture="environment"><span id="invoiceDropText">اضغط لالتقاط أو اختيار صورة الفاتورة</span></label>
+      <h3 style="margin:0 0 6px;" data-i18n="modalTitle">إنهاء الطلب ورفع الفاتورة</h3>
+      <p style="color:var(--text-secondary);font-size:.85rem;margin:0 0 16px;" data-i18n="modalSub">بعد ما العميل يمضي على الفاتورة ويدفع، صوّرها وارفعها هنا.</p>
+      <div class="field"><label data-i18n="invoicePhotoLabel">صورة الفاتورة الموقعة</label>
+        <label class="file-drop" id="invoiceDrop"><input type="file" id="invoicePhoto" accept="image/*" capture="environment"><span id="invoiceDropText" data-i18n="dropText">اضغط لالتقاط أو اختيار صورة الفاتورة</span></label>
       </div>
-      <div class="field"><label>المبلغ المحصّل (جنيه)</label><input type="number" id="invoiceAmount" min="0" step="1"></div>
+      <div class="field"><label data-i18n="amountLabel">المبلغ المحصّل (جنيه)</label><input type="number" id="invoiceAmount" min="0" step="1"></div>
       <div class="msg" id="completeMsg"></div>
       <div style="display:flex;gap:10px;margin-top:6px;">
-        <button class="btn btn-ghost btn-block" id="cancelCompleteBtn">إلغاء</button>
-        <button class="btn btn-primary btn-block" id="confirmCompleteBtn">تأكيد الإنهاء</button>
+        <button class="btn btn-ghost btn-block" id="cancelCompleteBtn" data-i18n="cancelBtn">إلغاء</button>
+        <button class="btn btn-primary btn-block" id="confirmCompleteBtn" data-i18n="confirmBtn">تأكيد الإنهاء</button>
       </div>
     </div>
   </div>
@@ -85,10 +113,65 @@
   var currentOrders = [];
   var activeFilter = 'active';
   var completingId = null;
+  var techName = '';
+
+  var I18N = {
+    ar: {
+      pageTitle:'بوابة الفنيين — SEVENGATES', portalTitle:'بوابة الفنيين', logoutBtn:'خروج',
+      tabActive:'الحالية', tabDone:'المكتملة', tabAll:'الكل', loading:'جارِ التحميل…',
+      noOrdersHere:'مفيش طلبات هنا دلوقتي.', loadErr:'تعذّر تحميل الطلبات.',
+      startBtn:'▶ بدء التنفيذ', completeBtn:'✔ إنهاء الطلب ورفع الفاتورة', updating:'جارِ التحديث…',
+      doneLbl:'✔ تم — الفاتورة: ', egp:' جنيه', locLink:'📍 عرض الموقع على الخريطة',
+      modalTitle:'إنهاء الطلب ورفع الفاتورة', modalSub:'بعد ما العميل يمضي على الفاتورة ويدفع، صوّرها وارفعها هنا.',
+      invoicePhotoLabel:'صورة الفاتورة الموقعة', dropText:'اضغط لالتقاط أو اختيار صورة الفاتورة',
+      amountLabel:'المبلغ المحصّل (جنيه)', cancelBtn:'إلغاء', confirmBtn:'تأكيد الإنهاء',
+      fileChosen:'تم اختيار: ', uploading:'جارِ الرفع…', needPhoto:'ارفع صورة الفاتورة الأول.',
+      needAmount:'اكتب مبلغ صحيح.', uploadErr:'حصل خطأ أثناء الرفع، جرّب تاني.'
+    },
+    en: {
+      pageTitle:'Technician Portal — SEVENGATES', portalTitle:'Technician Portal', logoutBtn:'Logout',
+      tabActive:'Active', tabDone:'Completed', tabAll:'All', loading:'Loading…',
+      noOrdersHere:'No orders here right now.', loadErr:'Could not load orders.',
+      startBtn:'▶ Start Work', completeBtn:'✔ Finish & Upload Invoice', updating:'Updating…',
+      doneLbl:'✔ Done — Invoice: ', egp:' EGP', locLink:'📍 View location on map',
+      modalTitle:'Finish Order & Upload Invoice', modalSub:'After the customer signs the invoice and pays, photograph it and upload it here.',
+      invoicePhotoLabel:'Signed invoice photo', dropText:'Tap to capture or choose the invoice photo',
+      amountLabel:'Amount collected (EGP)', cancelBtn:'Cancel', confirmBtn:'Confirm Completion',
+      fileChosen:'Selected: ', uploading:'Uploading…', needPhoto:'Upload the invoice photo first.',
+      needAmount:'Enter a valid amount.', uploadErr:'An error occurred during upload, try again.'
+    }
+  };
+  var currentLang = 'ar';
+  try { currentLang = localStorage.getItem('sg_lang') || 'ar'; } catch(e){}
+  function i18n(k){ return (I18N[currentLang] && I18N[currentLang][k]) || I18N.ar[k] || ''; }
+  var STATUS_LABEL_EN = { "قيد المراجعة":"Pending Review", "تمت الموافقة":"Approved", "جاري التنفيذ":"In Progress", "مكتمل":"Completed", "مرفوض":"Rejected", "قائمة انتظار":"Waiting List" };
+  function stLabel(s){ return currentLang==='en' ? (STATUS_LABEL_EN[s]||s) : s; }
+  function applyLang(l){
+    currentLang = l;
+    try { localStorage.setItem('sg_lang', l); } catch(e){}
+    document.documentElement.lang = l;
+    document.documentElement.dir = l === 'ar' ? 'rtl' : 'ltr';
+    document.body.classList.toggle('lang-en', l === 'en');
+    document.querySelectorAll('[data-i18n]').forEach(function(el){
+      var k = el.getAttribute('data-i18n');
+      if (I18N[l][k] !== undefined) el.textContent = I18N[l][k];
+    });
+    document.querySelectorAll('.lang-toggle button').forEach(function(b){
+      b.classList.toggle('active', b.getAttribute('data-lang') === l);
+    });
+    document.title = i18n('pageTitle');
+    if (techName) document.getElementById('techNameTop').textContent = techName;
+    render();
+  }
+  document.querySelectorAll('.lang-toggle button').forEach(function(b){
+    b.addEventListener('click', function(){ applyLang(b.getAttribute('data-lang')); });
+  });
 
   fetch('/api/tech/me').then(function(r){return r.json();}).then(function(data){
     if (!data.authenticated){ location.href = '/tech/login'; return; }
-    document.getElementById('techNameTop').textContent = data.technician.name;
+    techName = data.technician.name;
+    document.getElementById('techNameTop').textContent = techName;
+    applyLang(currentLang);
     loadOrders();
   }).catch(function(){ location.href = '/tech/login'; });
 
@@ -110,7 +193,7 @@
       currentOrders = data.orders || [];
       render();
     }).catch(function(){
-      document.getElementById('ordersList').innerHTML = '<div class="empty-note">تعذّر تحميل الطلبات.</div>';
+      document.getElementById('ordersList').innerHTML = '<div class="empty-note">'+i18n('loadErr')+'</div>';
     });
   }
 
@@ -122,22 +205,22 @@
       return true;
     });
     if (filtered.length === 0){
-      list.innerHTML = '<div class="empty-note">مفيش طلبات هنا دلوقتي.</div>';
+      list.innerHTML = '<div class="empty-note">'+i18n('noOrdersHere')+'</div>';
       return;
     }
     list.innerHTML = filtered.map(function(o){
-      var photo = o.photo_data ? '<img class="photo-thumb" src="'+o.photo_data+'" alt="صورة المشكلة">' : '';
-      var loc = o.location_url ? '<a href="'+o.location_url+'" target="_blank" rel="noopener" style="color:var(--accent-strong);font-weight:700;font-size:.85rem;">📍 عرض الموقع على الخريطة</a>' : '';
+      var photo = o.photo_data ? '<img class="photo-thumb" src="'+o.photo_data+'" alt="">' : '';
+      var loc = o.location_url ? '<a href="'+o.location_url+'" target="_blank" rel="noopener" style="color:var(--accent-strong);font-weight:700;font-size:.85rem;">'+i18n('locLink')+'</a>' : '';
       var actions = '';
       if (o.status === 'تمت الموافقة'){
-        actions = '<button class="btn btn-primary btn-block start-btn" data-id="'+o.id+'" style="margin-top:10px;">▶ بدء التنفيذ</button>';
+        actions = '<button class="btn btn-primary btn-block start-btn" data-id="'+o.id+'" style="margin-top:10px;">'+i18n('startBtn')+'</button>';
       } else if (o.status === 'جاري التنفيذ'){
-        actions = '<button class="btn btn-primary btn-block complete-btn" data-id="'+o.id+'" style="margin-top:10px;">✔ إنهاء الطلب ورفع الفاتورة</button>';
+        actions = '<button class="btn btn-primary btn-block complete-btn" data-id="'+o.id+'" style="margin-top:10px;">'+i18n('completeBtn')+'</button>';
       } else if (o.status === 'مكتمل'){
-        actions = '<div class="meta-line" style="margin-top:10px;color:var(--accent-strong);font-weight:700;">✔ تم — الفاتورة: '+(o.invoice_amount?Number(o.invoice_amount).toLocaleString('ar-EG')+' جنيه':'—')+'</div>';
+        actions = '<div class="meta-line" style="margin-top:10px;color:var(--accent-strong);font-weight:700;">'+i18n('doneLbl')+(o.invoice_amount?Number(o.invoice_amount).toLocaleString('ar-EG')+i18n('egp'):'—')+'</div>';
       }
       return '<div class="card">' +
-        '<div class="order-head"><h3>'+o.device+' — '+o.service+'</h3><span class="status-pill">'+o.status+'</span></div>' +
+        '<div class="order-head"><h3>'+o.device+' — '+o.service+'</h3><span class="status-pill">'+stLabel(o.status)+'</span></div>' +
         '<div class="meta-line">👤 '+o.name+' — <a href="tel:'+o.phone+'" style="color:var(--accent-strong);font-weight:700;">'+o.phone+'</a></div>' +
         (o.address ? '<div class="meta-line">🏠 '+o.address+'</div>' : '') +
         (loc ? '<div class="meta-line">'+loc+'</div>' : '') +
@@ -148,11 +231,11 @@
 
     Array.prototype.forEach.call(list.querySelectorAll('.start-btn'), function(btn){
       btn.addEventListener('click', function(){
-        btn.disabled = true; btn.textContent = 'جارِ التحديث…';
+        btn.disabled = true; btn.textContent = i18n('updating');
         fetch('/api/tech/orders/' + btn.getAttribute('data-id') + '/start', {method:'PATCH'})
           .then(function(r){ if(!r.ok) throw new Error(); return r.json(); })
           .then(function(){ loadOrders(); })
-          .catch(function(){ btn.disabled = false; btn.textContent = '▶ بدء التنفيذ'; });
+          .catch(function(){ btn.disabled = false; btn.textContent = i18n('startBtn'); });
       });
     });
     Array.prototype.forEach.call(list.querySelectorAll('.complete-btn'), function(btn){
@@ -165,15 +248,15 @@
   var invoiceDropText = document.getElementById('invoiceDropText');
   document.getElementById('invoicePhoto').addEventListener('change', function(e){
     invoiceFile = e.target.files && e.target.files[0] ? e.target.files[0] : null;
-    if (invoiceFile){ invoiceDrop.classList.add('has-file'); invoiceDropText.textContent = 'تم اختيار: ' + invoiceFile.name; }
-    else { invoiceDrop.classList.remove('has-file'); invoiceDropText.textContent = 'اضغط لالتقاط أو اختيار صورة الفاتورة'; }
+    if (invoiceFile){ invoiceDrop.classList.add('has-file'); invoiceDropText.textContent = i18n('fileChosen') + invoiceFile.name; }
+    else { invoiceDrop.classList.remove('has-file'); invoiceDropText.textContent = i18n('dropText'); }
   });
 
   function openCompleteModal(id){
     completingId = id;
     invoiceFile = null;
     invoiceDrop.classList.remove('has-file');
-    invoiceDropText.textContent = 'اضغط لالتقاط أو اختيار صورة الفاتورة';
+    invoiceDropText.textContent = i18n('dropText');
     document.getElementById('invoiceAmount').value = '';
     document.getElementById('completeMsg').style.display = 'none';
     document.getElementById('completeModal').classList.add('show');
@@ -205,10 +288,10 @@
   document.getElementById('confirmCompleteBtn').addEventListener('click', function(){
     var msg = document.getElementById('completeMsg');
     var amount = Number(document.getElementById('invoiceAmount').value);
-    if (!invoiceFile){ msg.textContent = 'ارفع صورة الفاتورة الأول.'; msg.style.display='block'; return; }
-    if (!Number.isFinite(amount) || amount < 0){ msg.textContent = 'اكتب مبلغ صحيح.'; msg.style.display='block'; return; }
+    if (!invoiceFile){ msg.textContent = i18n('needPhoto'); msg.style.display='block'; return; }
+    if (!Number.isFinite(amount) || amount < 0){ msg.textContent = i18n('needAmount'); msg.style.display='block'; return; }
     var btn = document.getElementById('confirmCompleteBtn');
-    btn.disabled = true; btn.textContent = 'جارِ الرفع…';
+    btn.disabled = true; btn.textContent = i18n('uploading');
     resizeImage(invoiceFile, 1400, 0.75).then(function(photoData){
       return fetch('/api/tech/orders/' + completingId + '/complete', {
         method:'POST', headers:{'Content-Type':'application/json'},
@@ -219,9 +302,9 @@
         document.getElementById('completeModal').classList.remove('show');
         loadOrders();
       }).catch(function(){
-        msg.textContent = 'حصل خطأ أثناء الرفع، جرّب تاني.'; msg.style.display='block';
+        msg.textContent = i18n('uploadErr'); msg.style.display='block';
       }).finally(function(){
-        btn.disabled = false; btn.textContent = 'تأكيد الإنهاء';
+        btn.disabled = false; btn.textContent = i18n('confirmBtn');
       });
   });
 })();
