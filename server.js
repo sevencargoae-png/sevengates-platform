@@ -26,6 +26,38 @@ if (!JWT_SECRET) {
   console.warn('WARNING: JWT_SECRET is not set — using an insecure fallback. Set a real secret in production.');
 }
 
+// ---------- WhatsApp notifications (Twilio) ----------
+const TWILIO_ACCOUNT_SID = process.env.TWILIO_ACCOUNT_SID || '';
+const TWILIO_AUTH_TOKEN = process.env.TWILIO_AUTH_TOKEN || '';
+const TWILIO_WHATSAPP_FROM = process.env.TWILIO_WHATSAPP_FROM || ''; // e.g. 'whatsapp:+14155238886'
+let twilioClient = null;
+if (TWILIO_ACCOUNT_SID && TWILIO_AUTH_TOKEN) {
+  try {
+    twilioClient = require('twilio')(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN);
+  } catch (e) {
+    console.warn('WARNING: failed to initialize Twilio client:', e.message);
+  }
+} else {
+  console.warn('WARNING: TWILIO_ACCOUNT_SID / TWILIO_AUTH_TOKEN not set — WhatsApp notifications are disabled.');
+}
+function phoneToWhatsApp(localPhone) {
+  let d = String(localPhone || '').replace(/[^0-9]/g, '');
+  if (d.startsWith('0')) d = '20' + d.slice(1); // convert local Egyptian format to country code 20
+  return 'whatsapp:+' + d;
+}
+async function sendWhatsApp(toLocalPhone, message) {
+  if (!twilioClient || !TWILIO_WHATSAPP_FROM || !toLocalPhone) return;
+  try {
+    await twilioClient.messages.create({
+      from: TWILIO_WHATSAPP_FROM,
+      to: phoneToWhatsApp(toLocalPhone),
+      body: message,
+    });
+  } catch (err) {
+    console.error('WhatsApp send failed:', err.message);
+  }
+}
+
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: process.env.DATABASE_URL && process.env.DATABASE_URL.includes('localhost')
@@ -421,16 +453,18 @@ app.patch('/api/staff/orders/:id', requireStaff, async (req, res) => {
       sets.push(`complaint_status = $${i++}`); values.push(body.complaintStatus);
     }
 
+    let assignedTechForNotify = null;
     if (Object.prototype.hasOwnProperty.call(body, 'technicianId')) {
       if (body.technicianId === null) {
         sets.push(`technician_id = NULL`, `assigned_to = ''`, `assigned_at = NULL`);
       } else {
         const techId = Number(body.technicianId);
-        const tech = await pool.query('SELECT id, name FROM technicians WHERE id = $1', [techId]);
+        const tech = await pool.query('SELECT id, name, phone FROM technicians WHERE id = $1', [techId]);
         if (tech.rowCount === 0) return res.status(400).json({ error: 'technician_not_found' });
         sets.push(`technician_id = $${i++}`); values.push(techId);
         sets.push(`assigned_to = $${i++}`); values.push(tech.rows[0].name);
         sets.push(`assigned_at = now()`);
+        assignedTechForNotify = tech.rows[0];
         // moving out of the review/waiting stage once a technician is assigned
         if (!Object.prototype.hasOwnProperty.call(body, 'status')) {
           sets.push(`status = 'تمت الموافقة'`);
@@ -445,6 +479,14 @@ app.patch('/api/staff/orders/:id', requireStaff, async (req, res) => {
     const sql = `UPDATE orders SET ${sets.join(', ')} WHERE id = $${i} RETURNING *`;
     const { rows } = await pool.query(sql, values);
     if (rows.length === 0) return res.status(404).json({ error: 'not_found' });
+    if (assignedTechForNotify) {
+      const order = rows[0];
+      const baseUrl = `${req.protocol}://${req.get('host')}`;
+      sendWhatsApp(
+        order.phone,
+        `مرحبًا ${order.name}، فريق SEVENGATES بيبلغك إن الفني *${assignedTechForNotify.name}* في الطريق إليك لتنفيذ خدمة (${order.device} - ${order.service}).\nرقم التواصل مع الفني: ${assignedTechForNotify.phone}\nتقدر تتابع حالة طلبك من هنا: ${baseUrl}/track/${order.tracking_token}`
+      );
+    }
     res.json({ order: rows[0] });
   } catch (err) {
     console.error(err);
@@ -659,6 +701,12 @@ app.post('/api/tech/orders/:id/complete', requireTech, async (req, res) => {
       [invoicePhoto, invoiceAmount, id, req.technician.id]
     );
     if (rows.length === 0) return res.status(404).json({ error: 'not_found' });
+    const order = rows[0];
+    const baseUrl = `${req.protocol}://${req.get('host')}`;
+    sendWhatsApp(
+      order.phone,
+      `مرحبًا ${order.name}، تم إنجاز خدمة (${order.device} - ${order.service}) بنجاح ✅ شكرًا لثقتك في SEVENGATES.\nياريت تقيّم تجربتك وتكتب رأيك من هنا، ده بيهمنا جدًا: ${baseUrl}/track/${order.tracking_token}`
+    );
     res.json({ order: rows[0] });
   } catch (err) {
     console.error(err);
