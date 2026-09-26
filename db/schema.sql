@@ -107,6 +107,15 @@ CREATE TABLE IF NOT EXISTS order_status_history (
 CREATE INDEX IF NOT EXISTS idx_osh_order_id ON order_status_history (order_id);
 CREATE INDEX IF NOT EXISTS idx_osh_changed_at ON order_status_history (changed_at DESC);
 
+-- generic key/value settings store. Currently used to hold the staff-dashboard login
+-- password (hashed) once it has been changed from inside the dashboard, so it no longer
+-- has to live only in the ADMIN_PASSWORD environment variable on Render.
+CREATE TABLE IF NOT EXISTS app_settings (
+  key TEXT PRIMARY KEY,
+  value TEXT NOT NULL,
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
 -- seed default catalog (only if empty)
 INSERT INTO catalog_items (category, name, sort_order)
 SELECT * FROM (VALUES
