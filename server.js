@@ -137,6 +137,28 @@ function genTrackingToken() {
   return crypto.randomBytes(4).toString('hex').toUpperCase();
 }
 
+// ---------- generic app settings (currently: the staff-dashboard password, once changed
+// from inside the dashboard instead of via the ADMIN_PASSWORD env var) ----------
+async function getSetting(key) {
+  const { rows } = await pool.query('SELECT value FROM app_settings WHERE key = $1', [key]);
+  return rows.length ? rows[0].value : null;
+}
+async function setSetting(key, value) {
+  await pool.query(
+    `INSERT INTO app_settings (key, value, updated_at) VALUES ($1, $2, now())
+     ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value, updated_at = now()`,
+    [key, value]
+  );
+}
+// The effective staff-dashboard password check: a password set from the dashboard's
+// Settings tab (stored hashed in app_settings) always takes priority; until one is set,
+// this falls back to the ADMIN_PASSWORD environment variable, exactly as before.
+async function verifyStaffPassword(suppliedPassword) {
+  const storedHash = await getSetting('admin_password_hash');
+  if (storedHash) return verifyPassword(suppliedPassword, storedHash);
+  return !!ADMIN_PASSWORD && suppliedPassword === ADMIN_PASSWORD;
+}
+
 // ---------- order status: allowed values, audit log, SLA ----------
 const ORDER_STATUSES = ['قيد المراجعة', 'تمت الموافقة', 'جاري التنفيذ', 'مكتمل', 'قائمة انتظار', 'مرفوض'];
 
@@ -503,18 +525,22 @@ app.post('/api/track/:token/confirm-completion', publicLimiter, async (req, res)
 });
 
 // ================= STAFF AUTH =================
-app.post('/api/staff/login', loginLimiter, (req, res) => {
-  const { password } = req.body || {};
-  if (!ADMIN_PASSWORD || password !== ADMIN_PASSWORD) {
-    return res.status(401).json({ error: 'invalid_password' });
+app.post('/api/staff/login', loginLimiter, async (req, res) => {
+  try {
+    const { password } = req.body || {};
+    const ok = await verifyStaffPassword(String(password || ''));
+    if (!ok) return res.status(401).json({ error: 'invalid_password' });
+    res.cookie(STAFF_COOKIE, signToken({ role: 'staff' }), {
+      httpOnly: true,
+      sameSite: 'lax',
+      secure: req.secure,
+      maxAge: 12 * 60 * 60 * 1000,
+    });
+    res.json({ ok: true });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'server_error' });
   }
-  res.cookie(STAFF_COOKIE, signToken({ role: 'staff' }), {
-    httpOnly: true,
-    sameSite: 'lax',
-    secure: req.secure,
-    maxAge: 12 * 60 * 60 * 1000,
-  });
-  res.json({ ok: true });
 });
 app.post('/api/staff/logout', (req, res) => {
   res.clearCookie(STAFF_COOKIE);
@@ -523,6 +549,24 @@ app.post('/api/staff/logout', (req, res) => {
 app.get('/api/staff/me', (req, res) => {
   const payload = verifyJwt(req.cookies[STAFF_COOKIE]);
   res.json({ authenticated: !!(payload && payload.role === 'staff') });
+});
+// Change the staff-dashboard login password from inside the dashboard itself (Settings tab).
+// Uses 400 (not 401) for a wrong current password / weak new password, so the dashboard's
+// generic "401 -> bounce to /staff/login" handling doesn't kick the admin out mid-form.
+app.post('/api/staff/change-password', requireStaff, loginLimiter, async (req, res) => {
+  try {
+    const b = req.body || {};
+    const currentPassword = String(b.currentPassword || '');
+    const newPassword = String(b.newPassword || '');
+    if (newPassword.trim().length < 6) return res.status(400).json({ error: 'weak_password' });
+    const currentOk = await verifyStaffPassword(currentPassword);
+    if (!currentOk) return res.status(400).json({ error: 'wrong_current_password' });
+    await setSetting('admin_password_hash', hashPassword(newPassword.trim()));
+    res.json({ ok: true });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'server_error' });
+  }
 });
 
 // ================= STAFF API (protected) =================
