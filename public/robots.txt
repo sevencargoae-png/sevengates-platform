@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /staff
+Disallow: /tech
+Disallow: /track
+
+Sitemap: https://sevengates.online/sitemap.xml
