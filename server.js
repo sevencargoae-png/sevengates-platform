@@ -591,6 +591,44 @@ app.post('/api/staff/change-password', requireStaff, loginLimiter, async (req, r
   }
 });
 
+// Full self-service data export — lets staff download a complete backup of the platform's
+// business data (orders, customers, technicians, catalog, and the full audit trail) as one
+// JSON file, on demand, from inside the dashboard itself. Deliberately excludes anything
+// secret (technician/staff password hashes, app_settings) — this file may end up stored
+// somewhere less secure than the database itself, so it should never carry credentials.
+app.get('/api/staff/backup', requireStaff, async (req, res) => {
+  try {
+    const [orders, customers, technicians, catalog, history] = await Promise.all([
+      pool.query(`
+        SELECT o.*, t.phone AS technician_phone
+        FROM orders o LEFT JOIN technicians t ON t.id = o.technician_id
+        ORDER BY o.id ASC
+      `),
+      pool.query('SELECT * FROM customers ORDER BY id ASC'),
+      pool.query('SELECT id, name, phone, specialties, status, active, created_at FROM technicians ORDER BY id ASC'),
+      pool.query('SELECT * FROM catalog_items ORDER BY category, sort_order, name'),
+      pool.query('SELECT * FROM order_status_history ORDER BY order_id ASC, changed_at ASC'),
+    ]);
+    const stamp = new Date().toISOString().slice(0, 10);
+    const backup = {
+      generatedAt: new Date().toISOString(),
+      platform: 'SEVENGATES',
+      note: 'Business data export. Passwords and other secrets are intentionally not included.',
+      orders: orders.rows,
+      customers: customers.rows,
+      technicians: technicians.rows,
+      catalog: catalog.rows,
+      orderStatusHistory: history.rows,
+    };
+    res.setHeader('Content-Disposition', `attachment; filename="sevengates-backup-${stamp}.json"`);
+    res.setHeader('Content-Type', 'application/json; charset=utf-8');
+    res.send(JSON.stringify(backup, null, 2));
+  } catch (err) {
+    console.error('Backup export failed:', err.message);
+    res.status(500).json({ error: 'server_error' });
+  }
+});
+
 // ================= STAFF API (protected) =================
 app.get('/api/staff/orders', requireStaff, async (req, res) => {
   try {
