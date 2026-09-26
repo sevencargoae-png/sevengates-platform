@@ -217,6 +217,7 @@
     <div class="tab sidebar-link" data-tab="finance"><span class="ic">💰</span><span data-i18n="navFinance">الفواتير والمالية</span></div>
     <div class="tab sidebar-link" data-tab="reviews"><span class="ic">⭐</span><span data-i18n="navReviews">التقييمات والشكاوى</span><span class="dot" id="dotComplaints"></span></div>
     <div class="tab sidebar-link" data-tab="customers"><span class="ic">👥</span><span data-i18n="navCustomers">العملاء</span></div>
+    <div class="tab sidebar-link" data-tab="settings"><span class="ic">⚙️</span><span data-i18n="navSettings">الإعدادات</span></div>
   </nav>
   <div class="main-col">
 
@@ -334,6 +335,21 @@
     <div class="toolbar"><input type="search" id="custSearch" data-i18n-ph="custSearchPh" placeholder="بحث بالاسم أو رقم الهاتف…"></div>
     <div id="customersList"></div>
   </div>
+
+  <div class="view" id="view-settings">
+    <div class="form-card" style="max-width:480px;">
+      <h3 data-i18n="changeAdminPassTitle">تغيير كلمة مرور الدخول للوحة التحكم</h3>
+      <p style="font-size:.8rem;color:var(--text-muted);margin:-6px 0 14px;" data-i18n="changeAdminPassHint">دي كلمة المرور اللي بيدخل بيها أي حد من الفريق للوحة التحكم. غيّرها من هنا مباشرة من غير ما تحتاج تدخل على إعدادات الاستضافة على Render.</p>
+      <div class="field"><label data-i18n="currentPassLabel">كلمة المرور الحالية</label><input type="password" id="adminCurrentPass" data-i18n-ph="currentPassPh" placeholder="كلمة المرور الحالية" autocomplete="off"></div>
+      <div class="field" style="margin-top:12px;"><label data-i18n="newPassLabel">كلمة المرور الجديدة</label><input type="password" id="adminNewPass" data-i18n-ph="newPassPh2" placeholder="6 أحرف على الأقل" autocomplete="off"></div>
+      <div class="field" style="margin-top:12px;"><label data-i18n="confirmPassLabel">تأكيد كلمة المرور الجديدة</label><input type="password" id="adminConfirmPass" data-i18n-ph="newPassPh2" placeholder="6 أحرف على الأقل" autocomplete="off"></div>
+      <button class="btn btn-primary btn-sm" id="saveAdminPassBtn" style="margin-top:14px;" data-i18n="savePassBtn2">💾 حفظ كلمة المرور</button>
+    </div>
+    <div class="form-card" style="max-width:480px;margin-top:16px;">
+      <h3 data-i18n="techPassHintTitle">كلمات مرور الفنيين</h3>
+      <p style="font-size:.8rem;color:var(--text-muted);margin:0;" data-i18n-html="techPassHintBody">تقدر تغيّر كلمة مرور أي فني في أي وقت من تبويب <b>"الفنيين"</b> — زرار "🔑 تغيير كلمة المرور" جنب اسمه.</p>
+    </div>
+  </div>
   </div>
 </div>
 
@@ -370,7 +386,7 @@
   var I18N = {
     ar: {
       brandTitle:'لوحة تحكم SEVENGATES', brandSub:'الطلبات، الفنيين، الفواتير والعملاء', logout:'خروج',
-      navHome:'الصفحة الرئيسية', navOverview:'نظرة عامة', navOrders:'الطلبات', navTechs:'الفنيين', navServices:'الخدمات', navFinance:'الفواتير والمالية', navReviews:'التقييمات والشكاوى', navCustomers:'العملاء',
+      navHome:'الصفحة الرئيسية', navOverview:'نظرة عامة', navOrders:'الطلبات', navTechs:'الفنيين', navServices:'الخدمات', navFinance:'الفواتير والمالية', navReviews:'التقييمات والشكاوى', navCustomers:'العملاء', navSettings:'الإعدادات',
       tileTotal:'إجمالي الطلبات', tilePending:'طلبات محتاجة موافقة', tilePendingSub:'لسه ما اتراجعتش',
       tileWaiting:'قائمة الانتظار', tileWaitingSub:'محتاجة فني متاح', tileUnassigned:'محتاجة تكليف فني', tileUnassignedSub:'طلبات نشطة من غير فني',
       tileLate:'طلبات متأخرة', tileLateSub:'تجاوزت الوقت المتوقع لمرحلتها',
@@ -410,11 +426,21 @@
       timelineBtn:'🕐 السجل الزمني', timelineHideBtn:'إخفاء السجل الزمني', timelineEmpty:'لا يوجد سجل بعد', timelineLoading:'جارِ التحميل…',
       overridePrompt:'إكمال الطلب مباشرة يحتاج سبب (هيتسجل في السجل الزمني). اكتب السبب:', overrideCancelled:'تم إلغاء العملية — لازم سبب مكتوب (5 أحرف على الأقل)',
       actorSystem:'النظام', actorStaff:'الفريق', actorStaffOverride:'الفريق (إكمال مباشر)', actorTech:'الفني', actorCustomer:'العميل',
-      flaggedNote:'⚠ '
+      flaggedNote:'⚠ ',
+      changeAdminPassTitle:'تغيير كلمة مرور الدخول للوحة التحكم',
+      changeAdminPassHint:'دي كلمة المرور اللي بيدخل بيها أي حد من الفريق للوحة التحكم. غيّرها من هنا مباشرة من غير ما تحتاج تدخل على إعدادات الاستضافة على Render.',
+      currentPassLabel:'كلمة المرور الحالية', currentPassPh:'كلمة المرور الحالية',
+      newPassLabel:'كلمة المرور الجديدة', newPassPh2:'6 أحرف على الأقل',
+      confirmPassLabel:'تأكيد كلمة المرور الجديدة', savePassBtn2:'💾 حفظ كلمة المرور',
+      techPassHintTitle:'كلمات مرور الفنيين',
+      techPassHintBody:'تقدر تغيّر كلمة مرور أي فني في أي وقت من تبويب <b>"الفنيين"</b> — زرار "🔑 تغيير كلمة المرور" جنب اسمه.',
+      toastFillAdminPass:'اكتب كلمة المرور الحالية والجديدة', toastAdminPassWeak:'كلمة المرور الجديدة لازم تكون 6 أحرف على الأقل',
+      toastAdminPassMismatch:'كلمة المرور الجديدة وتأكيدها مش متطابقين', toastAdminPassWrongCurrent:'كلمة المرور الحالية غلط',
+      toastAdminPassErr:'حصل خطأ في تغيير كلمة المرور', toastAdminPassChanged:'تم تغيير كلمة مرور لوحة التحكم بنجاح'
     },
     en: {
       brandTitle:'SEVENGATES Dashboard', brandSub:'Orders, technicians, invoices & customers', logout:'Logout',
-      navHome:'Home Page', navOverview:'Overview', navOrders:'Orders', navTechs:'Technicians', navServices:'Services', navFinance:'Invoices & Finance', navReviews:'Reviews & Complaints', navCustomers:'Customers',
+      navHome:'Home Page', navOverview:'Overview', navOrders:'Orders', navTechs:'Technicians', navServices:'Services', navFinance:'Invoices & Finance', navReviews:'Reviews & Complaints', navCustomers:'Customers', navSettings:'Settings',
       tileTotal:'Total Orders', tilePending:'Awaiting Approval', tilePendingSub:'Not reviewed yet',
       tileWaiting:'Waiting List', tileWaitingSub:'Needs an available technician', tileUnassigned:'Needs a Technician', tileUnassignedSub:'Active orders with no technician',
       tileLate:'Delayed Orders', tileLateSub:'Past the expected time for their stage',
@@ -454,7 +480,17 @@
       timelineBtn:'🕐 Timeline', timelineHideBtn:'Hide Timeline', timelineEmpty:'No history yet', timelineLoading:'Loading…',
       overridePrompt:'Completing an order directly needs a reason (it will be logged). Enter the reason:', overrideCancelled:'Cancelled — a written reason (5+ characters) is required',
       actorSystem:'System', actorStaff:'Staff', actorStaffOverride:'Staff (direct completion)', actorTech:'Technician', actorCustomer:'Customer',
-      flaggedNote:'⚠ '
+      flaggedNote:'⚠ ',
+      changeAdminPassTitle:'Change Dashboard Login Password',
+      changeAdminPassHint:'This is the password anyone on the team uses to log into the dashboard. Change it here directly, no need to go into hosting settings on Render.',
+      currentPassLabel:'Current Password', currentPassPh:'Current password',
+      newPassLabel:'New Password', newPassPh2:'At least 6 characters',
+      confirmPassLabel:'Confirm New Password', savePassBtn2:'💾 Save Password',
+      techPassHintTitle:'Technician Passwords',
+      techPassHintBody:'You can change any technician\'s password at any time from the <b>"Technicians"</b> tab — the "🔑 Change Password" button next to their name.',
+      toastFillAdminPass:'Enter the current and new password', toastAdminPassWeak:'The new password must be at least 6 characters',
+      toastAdminPassMismatch:'The new password and its confirmation don\'t match', toastAdminPassWrongCurrent:'Current password is wrong',
+      toastAdminPassErr:'Error changing password', toastAdminPassChanged:'Dashboard password changed successfully'
     }
   };
   var currentLang = 'ar';
@@ -951,6 +987,29 @@
     $('customersList').innerHTML = list.length ? list.map(custRow).join('') : '<div class="empty">'+i18n('noCustomers')+'</div>';
   }
   $('custSearch').addEventListener('input', renderCustomers);
+
+  // ---------------- settings: dashboard login password ----------------
+  $('saveAdminPassBtn').addEventListener('click', function(){
+    var cur = $('adminCurrentPass').value;
+    var nw = $('adminNewPass').value;
+    var conf = $('adminConfirmPass').value;
+    if(!cur || !nw){ toast(i18n('toastFillAdminPass')); return; }
+    if(nw.length < 6){ toast(i18n('toastAdminPassWeak')); return; }
+    if(nw !== conf){ toast(i18n('toastAdminPassMismatch')); return; }
+    api('/api/staff/change-password', { method:'POST', body: JSON.stringify({ currentPassword: cur, newPassword: nw }) })
+      .then(function(r){ return r.json().then(function(data){ return { ok: r.ok, data: data }; }); })
+      .then(function(res){
+        if(!res.ok){
+          if(res.data && res.data.error === 'wrong_current_password') toast(i18n('toastAdminPassWrongCurrent'));
+          else if(res.data && res.data.error === 'weak_password') toast(i18n('toastAdminPassWeak'));
+          else toast(i18n('toastAdminPassErr'));
+          return;
+        }
+        toast(i18n('toastAdminPassChanged'));
+        $('adminCurrentPass').value = ''; $('adminNewPass').value = ''; $('adminConfirmPass').value = '';
+      })
+      .catch(function(){ toast(i18n('toastAdminPassErr')); });
+  });
 
   function renderAll(){ renderOverview(); renderOrders(); renderTechnicians(); renderCatalog(); renderFinance(); renderReviewsStaff(); renderComplaintsStaff(); renderCustomers(); }
   window.__dashRerender = renderAll;
