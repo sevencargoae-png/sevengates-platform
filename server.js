@@ -66,6 +66,14 @@ const pool = new Pool({
     ? false
     : { rejectUnauthorized: false },
 });
+// Without this handler, an idle pooled connection that drops (a brief network blip, the
+// database restarting for maintenance, Render recycling the connection) throws an uncaught
+// 'error' event and crashes the entire Node process — taking the whole site down instead of
+// just that one query failing. Logging it here keeps the process alive; the pool reconnects
+// on its own for the next query, and /healthz will report the outage in the meantime.
+pool.on('error', (err) => {
+  console.error('Unexpected error on idle database client:', err.message);
+});
 
 async function ensureSchema() {
   const schemaPath = path.join(__dirname, 'db', 'schema.sql');
@@ -105,6 +113,20 @@ const publicLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
   message: { error: 'too_many_requests' },
+});
+
+// ---------- health check (used by Render to detect a hung/broken deploy) ----------
+// Deliberately placed before any auth/rate-limit middleware that could block it, and kept
+// fast and dependency-light: it confirms the process can still reach the database, which is
+// the one failure mode that would otherwise leave the site "up" but completely broken.
+app.get('/healthz', async (req, res) => {
+  try {
+    await pool.query('SELECT 1');
+    res.status(200).json({ status: 'ok' });
+  } catch (err) {
+    console.error('Health check failed:', err.message);
+    res.status(503).json({ status: 'error', error: 'db_unreachable' });
+  }
 });
 
 // ---------- generic helpers ----------
