@@ -44,7 +44,10 @@ if (TWILIO_ACCOUNT_SID && TWILIO_AUTH_TOKEN) {
 }
 function phoneToWhatsApp(localPhone) {
   let d = String(localPhone || '').replace(/[^0-9]/g, '');
-  if (d.startsWith('0')) d = '20' + d.slice(1); // convert local Egyptian format to country code 20
+  // The business and its customers/technicians are UAE-based (see public/index.html's
+  // address and the site's own contact number) — this used to prepend '20' (Egypt) here,
+  // which would have sent every WhatsApp notification to the wrong country entirely.
+  if (d.startsWith('0')) d = '971' + d.slice(1);
   return 'whatsapp:+' + d;
 }
 async function sendWhatsApp(toLocalPhone, message) {
@@ -132,6 +135,7 @@ app.get('/healthz', async (req, res) => {
 // ---------- generic helpers ----------
 function normPhone(raw) {
   let d = String(raw || '').replace(/[^0-9]/g, '');
+  if (d.startsWith('971') && d.length === 12) d = '0' + d.slice(3); // UAE — the business's own country
   if (d.startsWith('966') && d.length === 12) d = '0' + d.slice(3);
   if (d.startsWith('20') && d.length === 12) d = '0' + d.slice(2);
   if (d.length === 9 && d[0] !== '0') d = '0' + d;
